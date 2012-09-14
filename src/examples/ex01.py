@@ -14,20 +14,34 @@ Exemplifies:
 def main(): 
     
     #input formats: .mat .tbl .pkldump
-    space = Space()    
-    space.setCoreMatrix("../data/counts1.mat", "../data/counts1.row", "../data/count1.col", "mat")
     
+    #1 builds space
+    space = Space.build("../data/counts1.mat", "../data/counts1.row", "../data/count1.col", "mat")
+    
+    #2 builds space
+    space = Space.build("../data/counts1.mat", "mat")
+    
+    #3 loads space object
+    space = Space.load(".pickle")
+    
+    space.printInfo()
+        
+    #4
+    space.export(format = "mat")
+        
     # Apply Positive pmi weigthing
-    space = space.applyWeighting    
+    space = space.applyWeighting("ppmi")    
     
     # Apply SVD reduction
-    space = space.Reduce
+    space = space.applyDimReduction("svd", 300)
     
-    # Save resulted matrix
-    space.dumpMatrix()
+    space.printInfo()
+    
+    space.save("..")
+    
 
     # Compute similarity within one space
-    calculator = SimilarityCalculator(space1)
+    calculator = SimilarityCalculator(similarity = "cos", space1)
    
     print calculator.computeSimilarity("man", "car")
 
