@@ -41,7 +41,7 @@ def main():
     
 
     # Compute similarity within one space
-    calculator = SimilarityCalculator(similarity = "cos", space1)
+    calculator = SimilarityCalculator(space, similarity = "cos")
    
     print calculator.computeSimilarity("man", "car")
 
