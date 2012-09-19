@@ -5,7 +5,8 @@ Created on Sep 17, 2012
 '''
 
 import numpy as np
-from composes.utils.num_utils import isNumeric
+from composes.utils.num_utils import is_numeric
+from composes.utils.matrix_utils import is_array
 
 class Matrix(object):
     '''
@@ -23,24 +24,24 @@ class Matrix(object):
     
     def __add__(self, matrix_):
         ''' + operation'''
-        self.__checkType(matrix_)
+        self._assert_same_type(matrix_)
         return type(self)(self.mat + matrix_.mat)
     
     def __sub__(self, matrix_):
         ''' - operation'''
-        self.__checkType(matrix_)
+        self._assert_same_type(matrix_)
         return type(self)(self.mat - matrix_.mat)
     
     def __mul__(self, factor):
         ''' * operation'''
-        if isNumeric(factor):
+        if is_numeric(factor):
             return type(self)(self.mat * factor)
         else:
-            self.__checkType(factor)
+            self._assert_same_type(factor)
             return type(self)(self.mat * factor.mat)
         
     def __div__(self, factor):
-        if isNumeric(factor):
+        if is_numeric(factor):
             if factor == 0:
                 raise ZeroDivisionError("Division by zero")
         else:
@@ -49,21 +50,28 @@ class Matrix(object):
                  
     def __rmul__(self, factor):
         ''' * operation'''
-        if isNumeric(factor):
+        if is_numeric(factor):
             return self.__mul__(factor)
         raise TypeError("expected numeric type, received %s" % (type(factor)))
 
-    def __checkType(self, operand):
+    #TODO move all these asserts somewhere else
+    def _assert_same_type(self, operand):
         if type(self) != type(operand):
             raise TypeError("expected matrix of type %s, received %s" %
                              (type(self), type(operand)))
 
+    def _assert_array(self, operand):        
+        if not is_array(operand):
+            raise TypeError("expected array, received %s" % (type(operand)))
         
     def get_mat(self):
         return self._mat
     
     def set_mat(self, mat_):
         self._mat = mat_
+        
+    def copy(self):
+        return type(self)(self.mat.copy())
         
     mat = property(get_mat, set_mat)
     

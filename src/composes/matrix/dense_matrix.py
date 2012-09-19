@@ -9,6 +9,7 @@ from warnings import warn
 from scipy.sparse import issparse
 from composes.matrix.matrix import Matrix
 
+
 class DenseMatrix(Matrix):
     '''
     classdocs
@@ -18,7 +19,7 @@ class DenseMatrix(Matrix):
         '''
         Constructor, creates a DenseMatrix from a numpy matrix-like
         object.
-        
+        self
         Matrix-like objects (np.ndarray, np.matrix, scipy.sparse.matrix,
          SparseMatrix) are converted into np.matrix.
         
@@ -38,7 +39,7 @@ class DenseMatrix(Matrix):
             self.mat = data
         elif isinstance(data, Matrix):
             warn("Convert DenseMatrix to SparseMatrix")
-            self.mat = data.toDenseMatrix().mat
+            self.mat = data.to_dense_matrix().mat
         else:
             # TODO: raise suitable message
             raise TypeError("expected matrix-like type, received %s"
@@ -48,23 +49,61 @@ class DenseMatrix(Matrix):
         '''
         Component-wise multiplication
         '''
-        #TODO CHECK TYPE HERE
-        if not isinstance(matrix_, DenseMatrix):
-            raise TypeError("expected DenseMatrix, received %s" 
-                            % (type(matrix_)))
+        self._assert_same_type(matrix_)
         if self.mat.shape != matrix_.mat.shape:
             raise ValueError("inconsistent shapes: %s %s" 
                              % (str(self.mat.shape), str(matrix_.mat.shape) ))
         return DenseMatrix(np.multiply(self.mat, matrix_.mat))
     
-    def toSparseMatrix(self):
+    def scale_rows(self, array_):
+        '''
+        Scales rows by elements in array.
+        '''
+        #TODO maybe return a copy here and not destroy the original??
+        self._assert_array(array_)
+        
+        x_dim = self.mat.shape[0]
+        if array_.shape in ((x_dim, 1), (x_dim,)):
+            if array_.shape == (x_dim,):
+                array_ = array_.reshape((x_dim, 1))
+            self.mat = np.multiply(self.mat, array_)
+        else:
+            raise ValueError("inconsistent shapes: %s %s"
+                             % (str(self.mat.shape), str(array_.shape)))    
+        
+    def scale_columns(self, array_):
+        '''
+        Scales columns by elements in array.
+        '''
+        #TODO maybe return a copy here and not destroy the original??
+        self._assert_array(array_)
+                    
+        y_dim = self.mat.shape[1]
+        if array_.shape in ((1, y_dim), (y_dim,)):
+            self.mat = np.multiply(self.mat, array_)
+        else:
+            raise ValueError("inconsistent shapes: %s %s"
+                             % (str(self.mat.shape), str(array_.shape)))    
+    
+    def plog(self):
+        '''
+        Applies positive log to the matrix elements.
+        
+        Elements smaller than 1 (leading to not defined log or negative log)
+        are set to 0. Log is applied on all other elements.
+        '''
+        
+        self.mat[self.mat < 1] = 1
+        self.mat = np.log(self.mat)    
+            
+    def to_sparse_matrix(self):
         '''
         Convert SparseMatrix to DenseMatrix
         '''
         from composes.matrix.sparse_matrix import SparseMatrix
         return SparseMatrix(self.mat)
     
-    def toDenseMatrix(self, copy = False):
+    def to_dense_matrix(self, copy = False):
         if (copy):
             return self.copy()
         else:

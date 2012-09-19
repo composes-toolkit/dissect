@@ -30,8 +30,12 @@ def main():
     space.export(format = "mat")
         
     # Apply Positive pmi weigthing
-    space = space.applyWeighting("ppmi")    
+    w = PpmiWeigthing()
+    space = space.applyWeighting(PpmiWeigthing()).applyWeighting(PlmiWeighting())    
     
+    space = space.applyWeighting("ppmi")
+    
+    PpmiWeighting
     # Apply SVD reduction
     space = space.applyDimReduction("svd", 300)
     
