@@ -12,7 +12,7 @@ from composes.matrix.matrix import Matrix
 
 
 
-class SparseMatrix(object):
+class SparseMatrix(Matrix):
     '''
     classdocs
     '''
@@ -20,40 +20,49 @@ class SparseMatrix(object):
 
     def __init__(self, data, *args, **kwargs):
         '''
-        Constructor, create a SparseMatrix from a scipy sparse matrix.
+        Constructor, creates a SparseMatrix from a numpy matrix-like
+        object.
+        
+        Matrix-like objects (np.ndarray, np.matrix, scipy.sparse.matrix,
+         DenseMatrix) are converted into scipy.csr_matrix.
         
         Params:
-            data<sparse matrix>: a scipy sparse matrix
+            data: numpy matrix-like object or Matrix type
+            
+        Raises:
+            TypeError
         '''
-        if (isinstance(data, csr_matrix)):
-            '''
-            If the input data is a csr_matrix, use it without copying
-            '''
-            self.mat = data
-        elif (issparse(data)):
-            '''
-            If the input data is a sparse matrix, convert it to csr_matrix
-            '''
+        if issparse(data):
             self.mat = data.tocsr()
-        elif (isinstance(data, np.matrix) or isinstance(data, np.ndarray)):
-            '''
-            if the input data is a numpy.matrix, convert it to csr_matrix
-            '''
-            warn("Automatic transform numpy's dense matrix to scipy's sparse matrix")
+        elif isinstance(data, np.matrix) or isinstance(data, np.ndarray):
+            warn("Convert numpy dense matrix/array to scipy sparse matrix")
             self.mat = csr_matrix(data)
-        elif (isinstance(data, Matrix)):
-            warn("Automatic transform DenseMatrix to SparseMatrix")
+        elif isinstance(data, Matrix):
+            warn("Convert DenseMatrix to SparseMatrix")
             self.mat = data.toSparseMatrix().mat
         else:
-            raise TypeError("data should be a scipy sparse matrix instead of" + str(type(data)))
+            raise TypeError("expected scipy sparse matrix, received %s" 
+                            % (type(data)))
         
 
+    def multiply(self, matrix_):
+        '''
+        Component-wise multiplication
+        '''
+        #TODO check type here
+        if not isinstance(matrix_, SparseMatrix):
+            raise TypeError("expected SparseMatrix, received %s" 
+                            % (type(matrix_)))
+        
+        return SparseMatrix(self.mat.multiply(matrix_.mat))
+            
+        
     def toDenseMatrix(self):
         '''
-        Create a DenseMatrix from the matrix's data.
+        Convert to DenseMatrix.
         '''
         from composes.matrix.dense_matrix import DenseMatrix
-        return DenseMatrix(self.todense())
+        return DenseMatrix(self.mat)
     
     def toSparseMatrix(self, copy = False):
         if (copy):
@@ -61,3 +70,5 @@ class SparseMatrix(object):
         else:
             return self    
     
+    
+     
