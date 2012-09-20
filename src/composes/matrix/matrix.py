@@ -63,7 +63,12 @@ class Matrix(object):
     def _assert_array(self, operand):        
         if not is_array(operand):
             raise TypeError("expected array, received %s" % (type(operand)))
-        
+            
+    def sum(self, axis=None):
+        #return type is dense matrix of shape (1, dimy) or (dimx,1)
+        #or a number if **kwargs is None
+        return self.mat.sum(axis)
+            
     def get_mat(self):
         return self._mat
     

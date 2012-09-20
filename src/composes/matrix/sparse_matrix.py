@@ -52,20 +52,24 @@ class SparseMatrix(Matrix):
         self._assert_same_type(matrix_)
         return SparseMatrix(self.mat.multiply(matrix_.mat))
             
+    
+    def assert_positive(self):
+        if not np.all(self.mat.data >= 0):
+            raise ValueError("expected non-negative matrix")
         
     def scale_rows(self, array_):
         
         self._assert_array(array_)
         
         diag_matrix = array_to_csr_diagonal(array_)
-        self.mat = diag_matrix * self.mat
+        return SparseMatrix(diag_matrix * self.mat)
         
     def scale_columns(self, array_):
         
         self._assert_array(array_)
         
         diag_matrix = array_to_csr_diagonal(array_)
-        self.mat = self.mat * diag_matrix
+        return SparseMatrix(self.mat * diag_matrix)
         
     def plog(self):
         '''

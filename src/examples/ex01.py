@@ -30,7 +30,7 @@ def main():
     space.export(format = "mat")
         
     # Apply Positive pmi weigthing
-    w = PpmiWeigthing()
+    
     space = space.applyWeighting(PpmiWeigthing()).applyWeighting(PlmiWeighting())    
     
     space = space.applyWeighting("ppmi")

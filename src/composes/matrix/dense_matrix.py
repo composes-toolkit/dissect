@@ -8,7 +8,7 @@ import numpy as np
 from warnings import warn
 from scipy.sparse import issparse
 from composes.matrix.matrix import Matrix
-
+import gc
 
 class DenseMatrix(Matrix):
     '''
@@ -66,7 +66,7 @@ class DenseMatrix(Matrix):
         if array_.shape in ((x_dim, 1), (x_dim,)):
             if array_.shape == (x_dim,):
                 array_ = array_.reshape((x_dim, 1))
-            self.mat = np.multiply(self.mat, array_)
+            return DenseMatrix(np.multiply(self.mat, array_))
         else:
             raise ValueError("inconsistent shapes: %s %s"
                              % (str(self.mat.shape), str(array_.shape)))    
@@ -80,7 +80,7 @@ class DenseMatrix(Matrix):
                     
         y_dim = self.mat.shape[1]
         if array_.shape in ((1, y_dim), (y_dim,)):
-            self.mat = np.multiply(self.mat, array_)
+            return DenseMatrix(np.multiply(self.mat, array_))
         else:
             raise ValueError("inconsistent shapes: %s %s"
                              % (str(self.mat.shape), str(array_.shape)))    
@@ -89,13 +89,20 @@ class DenseMatrix(Matrix):
         '''
         Applies positive log to the matrix elements.
         
-        Elements smaller than 1 (leading to not defined log or negative log)
+        Elements smaller than 1 (leading to not-defined log or negative log)
         are set to 0. Log is applied on all other elements.
         '''
         
-        self.mat[self.mat < 1] = 1
+        #this line uses 3 x size(mat) to run in the worst case
+        #(if we select the entire matrix - depends on the size of the selection)
+        self.mat[self.mat < 1.0] = 1
         self.mat = np.log(self.mat)    
-            
+    
+    
+    def assert_positive(self):
+        if not np.all(self.mat >= 0):
+            raise ValueError("expected non-negative matrix") 
+                
     def to_sparse_matrix(self):
         '''
         Convert SparseMatrix to DenseMatrix
