@@ -16,6 +16,16 @@ def main():
     #input formats: .mat .tbl .pkldump
     
     #1 builds space
+    space = SpaceBuilder()
+    
+    
+    UberSpace : per space, core space
+    
+    core space . build -> return core space or return per space
+    
+    
+    
+    
     space = Space.build("../data/counts1.mat", "../data/counts1.row", "../data/count1.col", "mat")
     
     #2 builds space
