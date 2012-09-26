@@ -39,8 +39,8 @@ class Test(unittest.TestCase):
         dm = DenseMatrix(matrix_)
         sm = SparseMatrix(matrix_)
     
-        out1 = w.apply_weighting(dm)
-        out2 = w.apply_weighting(sm)
+        out1 = w.apply(dm)
+        out2 = w.apply(sm)
         
         numpy.testing.assert_array_almost_equal(out1.mat, expected, 7)
         numpy.testing.assert_array_almost_equal(out2.mat.todense(), expected, 7)
@@ -53,8 +53,8 @@ class Test(unittest.TestCase):
         dm = DenseMatrix(matrix_)
         sm = SparseMatrix(matrix_)
         
-        self.assertRaises(error_type, w.apply_weighting, dm)
-        self.assertRaises(error_type, w.apply_weighting, sm)
+        self.assertRaises(error_type, w.apply, dm)
+        self.assertRaises(error_type, w.apply, sm)
 
             
     def test_epmi(self):

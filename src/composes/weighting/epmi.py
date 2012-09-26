@@ -13,7 +13,7 @@ class EpmiWeighting(Weighting):
     
     _name = 'epmi'
     
-    def apply_weighting(self, matrix_, column_marginal = None):
+    def apply(self, matrix_, column_marginal=None):
         '''
         Perform EPMI weighting
         
@@ -45,8 +45,3 @@ class EpmiWeighting(Weighting):
         
         return matrix_
     
-    def getName(self):
-        return self.__name
-    
-    def __str__(self):
-        return self.__name

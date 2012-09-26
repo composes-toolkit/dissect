@@ -25,8 +25,7 @@ def assert_dict_match_list(dict_, list_):
             raise match_err
         
     
-def assert_shape_consistent(self, matrix_, id2row, id2column,
-                            row2id, column2id):
+def assert_shape_consistent(matrix_, id2row, id2column, row2id, column2id):
     
     no_rows = matrix_.mat.shape[0]
     no_cols = matrix_.mat.shape[1]

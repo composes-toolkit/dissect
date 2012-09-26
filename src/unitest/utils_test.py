@@ -10,13 +10,14 @@ class UtilsTest(unittest.TestCase):
 
 
     def test_list2dict(self):
-        test_cases = [(["a","v","d"], {"a":0, "v":1, "d":2})]
+        test_cases = [(["a","v","d"], {"a":0, "v":1, "d":2}), ([], {})]
         
         for list_, expected in test_cases:
             outcome = list2dict(list_)
             self.assertDictEqual(outcome, expected)
 
-        self.assertRaises(ValueError, list2dict, ["a","v","a"])    
+        self.assertRaises(ValueError, list2dict, ["a","v","a"]) 
+           
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

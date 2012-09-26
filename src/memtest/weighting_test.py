@@ -20,7 +20,7 @@ def test_plog():
     print "Done creating"
     print "Using %s MB " % (get_mem_usage())
     
-    x = PpmiWeighting().apply_weighting(x)
+    x = PpmiWeighting().apply(x)
     print "Done weighting"
     print "Using %s MB " % (get_mem_usage())    
     

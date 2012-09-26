@@ -14,4 +14,7 @@ class Weighting(object):
     def get_name(self):
         return self._name
     
+    def __str__(self):
+        return self._name
+    
     name = property(get_name)

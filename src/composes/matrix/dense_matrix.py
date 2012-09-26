@@ -8,7 +8,6 @@ import numpy as np
 from warnings import warn
 from scipy.sparse import issparse
 from composes.matrix.matrix import Matrix
-import gc
 
 class DenseMatrix(Matrix):
     '''

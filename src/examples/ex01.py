@@ -16,7 +16,7 @@ def main():
     #input formats: .mat .tbl .pkldump
     
     #1 builds space
-    space = SpaceBuilder()
+    space = 
     
     
     UberSpace : per space, core space
