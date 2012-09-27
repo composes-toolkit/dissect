@@ -16,8 +16,24 @@ class Space(object):
     """
     This class implements semantic spaces.
     
-    A semantic space contains a list of targets (words, phrases, etc.)
-    described in terms of contextual features.
+    A semantic space described a list of targets (words, phrases, etc.)
+    in terms of co-occurrence with contextual features. 
+    
+    A semantic space contains a matrix storing (some type of) co-occurrence
+    strength values between targets and contextual features: by convention,
+    targets are rows and features are columns.
+    
+    In addition to this co-occurrence matrix, the space stores structures
+    that encode the mappings between the matrix row/column indices and the
+    associated target/context-feature strings.
+    
+    A number of transformations can be applied to a semantic space, with the
+    goal of improving the quality of the target representations. 
+    Some transformations, such as weighings, only rescale the values
+    in the space matrix, while others, such as dimensionality
+    reduction, or feature selection, can alter the set of 
+    contextual features.
+    
     """
 
     def __init__(self, matrix_, id2row, id2column, row2id=None, column2id=None,
@@ -48,24 +64,25 @@ class Space(object):
             self._operations = []
 
       
-    def apply_operation(self, transformation):
+    def apply(self, transformation):
         
         #TODO , FeatureSelection, DimReduction ..
                                             
-        assert_is_instance(transformation, [Weighting])
-        op = Operation(transformation)
-        transformed_matrix =  op.apply(self.cooccurrence_matrix)
-        transformed_operations = self.operations.copy()
-        transformed_operations.append(op)
+        assert_is_instance(transformation, (Weighting))
+        op = transformation.create_operation()
+        new_matrix =  op.apply(self.cooccurrence_matrix)
+        
+        new_operations = list(self.operations)
+        new_operations.append(op)
         #TODO
         #if isinstance(transformation, DimReduction) 
         #    return Space(_cooccurrence_matrix,... [],{})
         #elif isinstance(transformation, FeatureSelection)
         #    return Space(_cooccurrence_matrix,... [],{})
         #else:
-        return Space(transformed_matrix, self.id2row.copy(),
-                     self.id2column.copy(), self.row2id.copy(), 
-                     self.column2id.copy(), transformed_operations)
+        return Space(new_matrix, list(self.id2row),
+                     list(self.id2column), self.row2id.copy(), 
+                     self.column2id.copy(), operations = new_operations)
         
         
     def set_cooccurrence_matrix(self, matrix_):

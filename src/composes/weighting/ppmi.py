@@ -12,6 +12,7 @@ class PpmiWeighting(Weighting):
     classdocs
     '''
     _name = "ppmi"
+    _uses_column_stats = True
 
     def apply(self, matrix_, column_marginal=None):
         
@@ -19,3 +20,5 @@ class PpmiWeighting(Weighting):
         matrix_.plog()
         return matrix_
     
+    def get_column_stats(self, matrix_):
+        return matrix_.sum(0)

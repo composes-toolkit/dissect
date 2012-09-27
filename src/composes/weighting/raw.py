@@ -14,5 +14,5 @@ class RawWeighting(Weighting):
     '''
     _name = "raw"
 
-    def apply(self, matrix_, column_marginal=None):
+    def apply(self, matrix_):
         return matrix_

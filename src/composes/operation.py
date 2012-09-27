@@ -40,24 +40,34 @@ class WeightingOperation(Operation):
     """
     def __init__(self, weighting):
         self.__weighting = weighting
-        self.__column_marginal = None
+        self.__column_stats = None
 
     def apply(self, matrix_):
-        
-        if not self.__column_marginal is None:
+      
+        if not self.__column_stats is None:
             raise IllegalStateError("Illegal application of %s. Attempting\
                                      double application." % (self.__weighting))
         
         result_matrix = self.__weighting.apply(matrix_)
-        self.__column_marginal = matrix_.sum(0)
+        
+        if self.__weighting.uses_column_stats:
+            self.__column_stats = self.__weighting.get_column_stats(matrix_)
         
         return result_matrix
     
     def project(self, matrix_):
-        return self.__weighting.apply(matrix_, self.__column_marginal)
+        if self.__column_stats is None and self.__weighting.uses_column_stats:
+            raise IllegalStateError("Illegal projection of %s. Attempting\
+                                     projection before application." 
+                                     % (self.__weighting))
+        
+        if self.__weighting.uses_column_stats:
+            return self.__weighting.apply(matrix_, self.__column_stats)
+        else:
+            return self.__weighting.apply(matrix_)
     
     def __str__(self):
-        return str(self.__weighting_scheme)
+        return str(self.__weighting)
      
 """        
 class FeatureSelectOperation       

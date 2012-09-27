@@ -26,6 +26,11 @@ class Test(unittest.TestCase):
                        {"man":1, "car":0},
                        {},
                        [WeightingOperation(EpmiWeighting())])]
+        
+        self.m1 = np.array([[1,2,3]])
+        self.row1 = ["a"]
+        self.ft1 = ["f1","f2","f3"]
+        self.space1 = Space(DenseMatrix(self.m1),self.row1, self.ft1)
     
     def test_init1(self):
         for (m, id2row, id2col, row2id, col2id, ops) in self.init_test_cases:
@@ -94,7 +99,20 @@ class Test(unittest.TestCase):
         for (m, id2row, id2col, row2id, col2id) in test_cases:
             self.assertRaises(ValueError, Space, m, id2row, id2col,
                               row2id, col2id)
-            
+    
+    def test_apply_weighting_operation(self):
+        test_cases = [(self.space1, np.array([[1,1,1]]))]
+        w = EpmiWeighting()
+        for in_s, expected_mat in test_cases:
+            out_s = in_s.apply(w)
+            np.testing.assert_array_almost_equal(expected_mat, 
+                                                 out_s.cooccurrence_matrix.mat,
+                                                 7)
+            self.assertListEqual(out_s.id2row, in_s.id2row)
+            self.assertListEqual(out_s.id2column, in_s.id2column)
+            self.assertDictEqual(out_s.row2id, in_s.row2id)
+            self.assertDictEqual(out_s.column2id, in_s.column2id)
+            self.assertEqual(1, len(out_s.operations))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

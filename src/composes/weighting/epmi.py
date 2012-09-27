@@ -12,6 +12,7 @@ class EpmiWeighting(Weighting):
     '''
     
     _name = 'epmi'
+    _uses_column_stats = True
     
     def apply(self, matrix_, column_marginal=None):
         '''
@@ -45,3 +46,7 @@ class EpmiWeighting(Weighting):
         
         return matrix_
     
+    def get_column_stats(self, matrix_):
+        return matrix_.sum(0)
+        
+        

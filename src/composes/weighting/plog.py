@@ -13,7 +13,7 @@ class PlogWeighting(Weighting):
     # TODO: implement Weighting
     #       remove constructor 
 
-    def apply(self, matrix_, column_marginal=None):
+    def apply(self, matrix_):
         '''
         Performs positive log weighting.
         
