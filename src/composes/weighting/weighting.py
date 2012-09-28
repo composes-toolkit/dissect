@@ -4,7 +4,7 @@ Created on Sep 20, 2012
 @author: georgianadinu
 '''
 
-from composes.operation import WeightingOperation
+from composes.semantic_space.operation import WeightingOperation
 
 class Weighting(object):
     '''

@@ -33,8 +33,12 @@ class DenseMatrix(Matrix):
             warn("Convert scipy sparse matrix to numpy dense matrix.")
             self.mat = data.todense()
         elif isinstance(data, np.ndarray):
+            if len(data) == 0:
+                raise ValueError("cannot initialize empty matrix")
             self.mat = np.matrix(data)
         elif isinstance(data, np.matrix):
+            if data.shape[0] == 0 or data.shape[1] == 0:
+                raise ValueError("cannot initialize empty matrix")
             self.mat = data
         elif isinstance(data, Matrix):
             warn("Convert DenseMatrix to SparseMatrix")
@@ -54,13 +58,42 @@ class DenseMatrix(Matrix):
                              % (str(self.mat.shape), str(matrix_.mat.shape) ))
         return DenseMatrix(np.multiply(self.mat, matrix_.mat))
     
+    def vstack(self, matrix_):
+        self._assert_same_type(matrix_)
+        return DenseMatrix(np.vstack((self.mat, matrix_.mat)))
+    
+    def svd(self, reduced_dimension):
+        '''
+           - return three outputs
+            + u: u matrix
+            + s: flat version of s matrix
+            + vt: transpose of v matrix
+        '''
+        if reduced_dimension == 0:
+            raise ValueError("Cannot reduce to dimensionality 0.")
+        u, s, vt = np.linalg.svd(self.mat, False, True)
+        tol = 1e-12
+        rank = len(s[s > tol])
+        
+        if reduced_dimension > self.mat.shape[1]:
+            warn("Number of columns smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions (rank)." % (self.mat.shape[1], reduced_dimension, rank))
+        elif reduced_dimension > rank:
+            warn("Rank of matrix smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions." % (rank, reduced_dimension, rank))
+                    
+        no_cols = min(rank, reduced_dimension)
+        u = u[:,0:no_cols]
+        s = s[0:no_cols]
+        vt = vt[0:no_cols,:]
+
+        return DenseMatrix(u), s, DenseMatrix(vt.transpose())
+            
     def scale_rows(self, array_):
         '''
         Scales rows by elements in array.
         '''
         #TODO maybe return a copy here and not destroy the original??
         self._assert_array(array_)
-        
+       
         x_dim = self.mat.shape[0]
         if array_.shape in ((x_dim, 1), (x_dim,)):
             if array_.shape == (x_dim,):

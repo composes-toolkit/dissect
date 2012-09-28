@@ -6,7 +6,7 @@ Created on Sep 26, 2012
 import unittest
 import numpy as np
 from composes.weighting.ppmi import PpmiWeighting
-from composes.operation import WeightingOperation
+from composes.semantic_space.operation import WeightingOperation
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.exception.illegal_state_error import IllegalStateError
 

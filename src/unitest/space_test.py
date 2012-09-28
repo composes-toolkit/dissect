@@ -5,7 +5,7 @@ Created on Sep 26, 2012
 '''
 import numpy as np
 import unittest
-from composes.operation import WeightingOperation
+from composes.semantic_space.operation import WeightingOperation
 from composes.weighting.epmi import EpmiWeighting
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.semantic_space.space import Space

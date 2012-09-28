@@ -62,9 +62,9 @@ class PeripheralSpace(Space):
         self._id2row = self.id2row + id2row
         matrix_ = self._project_core_operations(matrix_)
 
-        #TODO self._cooccurrence_matrix = self._cooccurrence_matrix.vstack(matrix_)
-        #TODO assert_shape_consistent(self.cooccurrence_matrix, self.id2row,
-        #                         self.id2column, row2id, column2id)        
+        self._cooccurrence_matrix = self._cooccurrence_matrix.vstack(matrix_)
+        assert_shape_consistent(self.cooccurrence_matrix, self.id2row,
+                                 self.id2column, self.row2id, self.column2id)        
         
         
         

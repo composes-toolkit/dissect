@@ -10,7 +10,7 @@ from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import assert_is_instance 
 from composes.matrix.matrix import Matrix
 from composes.weighting.weighting import Weighting
-from composes.operation import Operation
+from composes.semantic_space.operation import Operation
 
 class Space(object):
     """
