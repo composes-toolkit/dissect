@@ -8,7 +8,7 @@ from space import Space
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
-#TODO to implement : from composes.utils.space_utils import add_items_to_dict
+from composes.utils.space_utils import add_items_to_dict
 
 class PeripheralSpace(Space):
     '''
@@ -52,12 +52,19 @@ class PeripheralSpace(Space):
         try:
             self._row2id = add_items_to_dict(self.row2id, id2row)
         except ValueError:
-            raise ValueError("Found duplicate keys when appending rows.")
+            raise ValueError("Found duplicate keys when appending rows to\
+                            peripheral space.")
         
+        if matrix_.mat.shape[0] != len(id2row):
+            raise ValueError("Matrix shape inconsistent with no. of rows:%s %s"
+                              % (matrix_.mat.shape, len(id2row)))
+       
         self._id2row = self.id2row + id2row
         matrix_ = self._project_core_operations(matrix_)
-        self._cooccurrence_matrix = self._cooccurrence_matrix.hstack(matrix_)
-        
+
+        #TODO self._cooccurrence_matrix = self._cooccurrence_matrix.vstack(matrix_)
+        #TODO assert_shape_consistent(self.cooccurrence_matrix, self.id2row,
+        #                         self.id2column, row2id, column2id)        
         
         
         

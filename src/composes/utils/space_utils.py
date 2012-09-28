@@ -14,6 +14,16 @@ def list2dict(list_):
 
     return return_dict
     
+def add_items_to_dict(dict_, list_):
+    
+    no_els = len(dict_)
+    for idx, el in enumerate(list_):
+        if el in dict_:
+            raise ValueError("Found duplicate keys when appending elements to\
+                            dictionary.")
+        dict_[el] = no_els + idx
+    return dict_    
+    
 def assert_dict_match_list(dict_, list_):    
     
     match_err = ValueError("expected matching dictionary and list structures.")
