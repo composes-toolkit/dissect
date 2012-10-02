@@ -6,7 +6,6 @@ Created on Sep 19, 2012
 import numpy as np
 from scipy.sparse import spdiags
 
-
 def array_to_csr_diagonal(array_):
     #array_ can't be a sparse matrix, if it is dense, it has to be a row matrix
     #(i.e. shape = (1, x))
@@ -19,6 +18,8 @@ def array_to_csr_diagonal(array_):
 def is_array(operand):
     return hasattr(operand, 'dtype') and hasattr(operand, 'shape')
 
+
+    
     
 def nonzero_invert(matrix_):
     '''

@@ -107,7 +107,11 @@ class SparseMatrix(Matrix):
     def to_non_negative(self):
         self.mat.data = np.where(self.mat.data > 0, self.mat.data, 0)
         self.mat.eliminate_zeros()
-            
+
+    def to_ones(self):
+        self.mat.data = np.where(self.mat.data > 0, 1, 0)
+        self.mat.eliminate_zeros()
+                    
     def assert_positive(self):
         if not np.all(self.mat.data >= 0):
             raise ValueError("expected non-negative matrix")
@@ -119,8 +123,11 @@ class SparseMatrix(Matrix):
         diff = self.mat - matrix_.mat
         return np.allclose(diff.data, np.zeros(len(diff.data)))
 
-    def norm(self):
-        return np.linalg.norm(self.mat.data)
+    def norm(self, axis = None):
+        if axis is None:
+            return np.linalg.norm(self.mat.data)
+        else:
+            return np.sqrt(self.multiply(self).sum(axis))
     
     def pinv(self):
         # TODO: implement pinv

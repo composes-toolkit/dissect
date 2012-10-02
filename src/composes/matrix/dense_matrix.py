@@ -41,7 +41,10 @@ class DenseMatrix(Matrix):
                 raise ValueError("cannot initialize empty matrix")
             self.mat = data
         elif isinstance(data, Matrix):
-            warn("Convert DenseMatrix to SparseMatrix")
+            # TODO: remove warning or remove import somehow fix this!!
+            from composes.matrix.sparse_matrix import SparseMatrix
+            if isinstance(data, SparseMatrix):
+                warn("Convert SparseMatrix to DenseMatrix")
             self.mat = data.to_dense_matrix().mat
         else:
             # TODO: raise suitable message
@@ -95,7 +98,7 @@ class DenseMatrix(Matrix):
         '''
         Scales rows by elements in array.
         '''
-        #TODO maybe return a copy here and not destroy the original??
+        # TODO maybe return a copy here and not destroy the original??
         self._assert_array(array_)
        
         x_dim = self.mat.shape[0]
@@ -148,14 +151,20 @@ class DenseMatrix(Matrix):
     def to_non_negative(self):
         self.mat = np.where(self.mat > 0, self.mat, 0)
     
+    def to_ones(self):
+        self.mat = np.where(self.mat > 0, 1, 0)
+        
     def is_mostly_positive(self):
         return self.mat[self.mat > 0].size > self.mat.size/2 
 
     def all_close(self, matrix_):
         return np.allclose(self.mat, matrix_.mat)
 
-    def norm(self):
-        return np.linalg.norm(self.mat)
+    def norm(self, axis = None):
+        if axis is None:
+            return np.linalg.norm(self.mat)
+        else:
+            return np.sqrt(self.multiply(self).sum(axis))
     
     def pinv(self):
         return DenseMatrix(np.linalg.pinv(self.mat))

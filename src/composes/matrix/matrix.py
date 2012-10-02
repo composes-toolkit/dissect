@@ -69,7 +69,13 @@ class Matrix(object):
         if type(self) != type(operand):
             raise TypeError("expected matrix of type %s, received %s" %
                              (type(self), type(operand)))
-
+    
+    def assert_same_shape(self, matrix_):
+        if self.mat.shape != matrix_.mat.shape:
+            raise ValueError("inconsistent shapes: %s %s" 
+                             % (str(self.mat.shape), str(matrix_.mat.shape) ))
+            
+    #TODO move all these asserts somewhere else
     def _assert_array(self, operand):        
         if not is_array(operand):
             raise TypeError("expected array, received %s" % (type(operand)))
