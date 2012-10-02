@@ -77,10 +77,9 @@ class SparseMatrix(Matrix):
             raise ValueError("Cannot reduce to dimensionality 0.")
         
         ut, s, vt = sparsesvd(self.mat.tocsc(), reduced_dimension)
-        u = ut.transpose()
-        rank = u.shape[1]
-        u_matrix = SparseMatrix(u)
-        vt_matrix = SparseMatrix(csr_matrix(vt.transpose()))
+        rank = ut.shape[0]
+        u = SparseMatrix(ut.transpose())
+        v = SparseMatrix(vt.transpose())
         
         if reduced_dimension > self.mat.shape[1]:
             warn("Number of columns smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions (rank)." % (self.mat.shape[1], reduced_dimension, rank))
@@ -88,16 +87,45 @@ class SparseMatrix(Matrix):
         if reduced_dimension > rank:
             warn("Rank of matrix smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions." % (rank, reduced_dimension, rank))
         
-        return u_matrix, s, vt_matrix
+        if not u.is_mostly_positive():
+            u = -u
+            v = -v
+            
+        return u, s, v
     
     def vstack(self, matrix_):
         self._assert_same_type(matrix_)
         return SparseMatrix(vstack([self.mat, matrix_.mat], format = "csr"))
-        
+       
+    def get_non_negative(self):
+        mat_ = self.mat.copy()
+        #TODO time against : mat_.data[mat_.data < 0] = 0
+        mat_.data = np.where(mat_.data > 0, mat_.data, 0)
+        mat_.eliminate_zeros()
+        return SparseMatrix(mat_)
+            
+    def to_non_negative(self):
+        self.mat.data = np.where(self.mat.data > 0, self.mat.data, 0)
+        self.mat.eliminate_zeros()
+            
     def assert_positive(self):
         if not np.all(self.mat.data >= 0):
             raise ValueError("expected non-negative matrix")
         
+    def is_mostly_positive(self):
+        return self.mat.data[self.mat.data > 0].size > self.mat.data.size/2 
+
+    def all_close(self, matrix_):
+        diff = self.mat - matrix_.mat
+        return np.allclose(diff.data, np.zeros(len(diff.data)))
+
+    def norm(self):
+        return np.linalg.norm(self.mat.data)
+    
+    def pinv(self):
+        # TODO: implement pinv
+        return SparseMatrix(np.linalg.pinv(self.mat.todense()))
+    
     def scale_rows(self, array_):
         
         self._assert_array(array_)

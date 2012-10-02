@@ -9,6 +9,7 @@ from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import add_items_to_dict
+from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
 
 class PeripheralSpace(Space):
     '''
@@ -27,22 +28,27 @@ class PeripheralSpace(Space):
             
         column2id = core_space.column2id
         id2column = core_space.id2column
-            
+        
         self._operations = list(core_space.operations)    
-        self._cooccurrence_matrix = self._project_core_operations(matrix_)
-        
-        assert_shape_consistent(self.cooccurrence_matrix, id2row, id2column, 
-                                     row2id, column2id)
-        
         self._row2id = row2id
         self._id2row = id2row
         self._column2id = column2id
         self._id2column = id2column
-
+        
+        self._cooccurrence_matrix = self._project_core_operations(matrix_)
+        assert_shape_consistent(self.cooccurrence_matrix, self._id2row,
+                                 self._id2column, self._row2id, self._column2id)
+        
                 
     def _project_core_operations(self, matrix_):
        
         for operation in self._operations:
+            if isinstance(operation, DimensionalityReduction):
+                self._id2column, self._column2id = [], {}
+            
+            #if isinstance(operation, FeatureSelection):
+            #    self.id2column, self.column2id = operation.
+            
             matrix_ = operation.project(matrix_)
         return matrix_
         

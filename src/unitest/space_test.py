@@ -7,6 +7,8 @@ import numpy as np
 import unittest
 from composes.semantic_space.operation import WeightingOperation
 from composes.weighting.epmi import EpmiWeighting
+from composes.dim_reduction.svd import Svd
+from composes.dim_reduction.nmf import Nmf
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.semantic_space.space import Space
 
@@ -29,9 +31,17 @@ class Test(unittest.TestCase):
         
         self.m1 = np.array([[1,2,3]])
         self.row1 = ["a"]
+        self.row2 = ["a", "b", "c"]
         self.ft1 = ["f1","f2","f3"]
         self.space1 = Space(DenseMatrix(self.m1),self.row1, self.ft1)
     
+        self.x = np.mat([[1,2,3],[2,4,6],[4,675,43]])
+        self.us = np.mat([[  2.19272110e+00,   3.03174768e+00],
+                               [  4.38544220e+00,   6.06349536e+00],
+                               [  6.76369708e+02,  -4.91431927e-02]])
+        self.space2 = Space(DenseMatrix(self.x), self.row2, self.ft1)
+
+        
     def test_init1(self):
         for (m, id2row, id2col, row2id, col2id, ops) in self.init_test_cases:
             space_ = Space(m, id2row, id2col)
@@ -113,7 +123,33 @@ class Test(unittest.TestCase):
             self.assertDictEqual(out_s.row2id, in_s.row2id)
             self.assertDictEqual(out_s.column2id, in_s.column2id)
             self.assertEqual(1, len(out_s.operations))
-
+            
+    def test_apply_svd_reduction(self):
+        test_cases = [(self.space2, self.us)]
+        red = Svd(2)
+        for in_s, expected_mat in test_cases:
+            out_s = in_s.apply(red)
+            np.testing.assert_array_almost_equal(expected_mat, 
+                                                 out_s.cooccurrence_matrix.mat,
+                                                 2)
+            self.assertListEqual(out_s.id2row, in_s.id2row)
+            self.assertListEqual(out_s.id2column, [])
+            self.assertDictEqual(out_s.row2id, in_s.row2id)
+            self.assertDictEqual(out_s.column2id, {})
+            self.assertEqual(1, len(out_s.operations))
+          
+    def test_apply_nmf_reduction(self):
+        test_cases = [(self.space2, self.us)]
+        red = Nmf(2)
+        
+        for in_s, expected_mat in test_cases:
+            out_s = in_s.apply(red)
+            self.assertListEqual(out_s.id2row, in_s.id2row)
+            self.assertListEqual(out_s.id2column, [])
+            self.assertDictEqual(out_s.row2id, in_s.row2id)
+            self.assertDictEqual(out_s.column2id, {})
+            self.assertEqual(1, len(out_s.operations))
+            
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

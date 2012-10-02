@@ -32,6 +32,9 @@ class Matrix(object):
         self._assert_same_type(matrix_)
         return type(self)(self.mat - matrix_.mat)
     
+    def __neg__(self):
+        return type(self)(-self.mat)
+    
     def __mul__(self, factor):
         ''' * operation'''
         if is_numeric(factor):
@@ -54,6 +57,13 @@ class Matrix(object):
             return self.__mul__(factor)
         raise TypeError("expected numeric type, received %s" % (type(factor)))
 
+    def __getitem__(self, index):
+        result = self.mat[index]
+        if is_numeric(result):
+            return result
+        else:
+            return type(self)(result)
+        
     #TODO move all these asserts somewhere else
     def _assert_same_type(self, operand):
         if type(self) != type(operand):
@@ -64,6 +74,9 @@ class Matrix(object):
         if not is_array(operand):
             raise TypeError("expected array, received %s" % (type(operand)))
             
+    def transpose(self):
+        return type(self)(self.mat.transpose())
+                    
     def sum(self, axis=None):
         #return type is dense matrix of shape (1, dimy) or (dimx,1)
         #or a number if **kwargs is None
@@ -74,11 +87,15 @@ class Matrix(object):
     
     def set_mat(self, mat_):
         self._mat = mat_
+    
+    def get_shape(self):
+        return self.mat.shape
         
     def copy(self):
         return type(self)(self.mat.copy())
         
     mat = property(get_mat, set_mat)
+    shape = property(get_shape)
     
     #TODO: implement scale_rows, scale_columns:
     #sparse: mult with diagonal

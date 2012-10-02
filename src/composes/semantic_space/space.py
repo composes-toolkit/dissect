@@ -10,6 +10,7 @@ from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import assert_is_instance 
 from composes.matrix.matrix import Matrix
 from composes.weighting.weighting import Weighting
+from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
 from composes.semantic_space.operation import Operation
 
 class Space(object):
@@ -68,21 +69,21 @@ class Space(object):
         
         #TODO , FeatureSelection, DimReduction ..
                                             
-        assert_is_instance(transformation, (Weighting))
+        assert_is_instance(transformation, (Weighting, DimensionalityReduction))
         op = transformation.create_operation()
         new_matrix =  op.apply(self.cooccurrence_matrix)
         
         new_operations = list(self.operations)
         new_operations.append(op)
-        #TODO
-        #if isinstance(transformation, DimReduction) 
-        #    return Space(_cooccurrence_matrix,... [],{})
-        #elif isinstance(transformation, FeatureSelection)
-        #    return Space(_cooccurrence_matrix,... [],{})
-        #else:
-        return Space(new_matrix, list(self.id2row),
-                     list(self.id2column), self.row2id.copy(), 
-                     self.column2id.copy(), operations = new_operations)
+
+        if isinstance(transformation, DimensionalityReduction):
+            id2column, column2id = [], {}
+        else:    
+            id2column, column2id = list(self.id2column), self.column2id.copy()
+        
+        id2row, row2id = list(self.id2row), self.row2id.copy() 
+        return Space(new_matrix, id2row, id2column,
+                     row2id, column2id, operations = new_operations)
         
         
     def set_cooccurrence_matrix(self, matrix_):

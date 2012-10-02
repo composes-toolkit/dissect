@@ -81,12 +81,16 @@ class DenseMatrix(Matrix):
             warn("Rank of matrix smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions." % (rank, reduced_dimension, rank))
                     
         no_cols = min(rank, reduced_dimension)
-        u = u[:,0:no_cols]
+        u = DenseMatrix(u[:,0:no_cols])
         s = s[0:no_cols]
-        vt = vt[0:no_cols,:]
+        v = DenseMatrix(vt[0:no_cols,:].transpose())
+        
+        if not u.is_mostly_positive():
+            u = -u
+            v = -v
 
-        return DenseMatrix(u), s, DenseMatrix(vt.transpose())
-            
+        return u, s, v
+
     def scale_rows(self, array_):
         '''
         Scales rows by elements in array.
@@ -134,7 +138,28 @@ class DenseMatrix(Matrix):
     def assert_positive(self):
         if not np.all(self.mat >= 0):
             raise ValueError("expected non-negative matrix") 
-                
+
+    def get_non_negative(self):
+        mat_ = self.mat.copy()
+        #TODO time against : mat_.data[mat_.data < 0] = 0
+        mat_ = np.where(mat_ > 0, mat_, 0)
+        return DenseMatrix(mat_)
+ 
+    def to_non_negative(self):
+        self.mat = np.where(self.mat > 0, self.mat, 0)
+    
+    def is_mostly_positive(self):
+        return self.mat[self.mat > 0].size > self.mat.size/2 
+
+    def all_close(self, matrix_):
+        return np.allclose(self.mat, matrix_.mat)
+
+    def norm(self):
+        return np.linalg.norm(self.mat)
+    
+    def pinv(self):
+        return DenseMatrix(np.linalg.pinv(self.mat))
+    
     def to_sparse_matrix(self):
         '''
         Convert SparseMatrix to DenseMatrix

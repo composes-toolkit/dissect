@@ -69,6 +69,42 @@ class WeightingOperation(Operation):
     def __str__(self):
         return str(self.__weighting)
      
+     
+class DimensionalityReductionOperation(Operation):
+     
+    def __init__(self, dim_reduction):
+        self.__dim_reduction = dim_reduction
+        self.__transmat = None
+        
+    def apply(self, matrix_):
+      
+        if not self.__transmat is None:
+            raise IllegalStateError("Illegal application of %s. Attempting\
+                                     double application." 
+                                     % (self.__dim_reduction))
+        
+        res_mat, self.__transmat = self.__dim_reduction.apply(matrix_)
+        
+        return res_mat         
+     
+    def project(self, matrix_):
+        if self.__transmat is None:
+            raise IllegalStateError("Illegal projection of %s. Attempting\
+                                     projection before application." 
+                                     % (self.__dim_reduction))
+        
+        
+        if self.__dim_reduction.name == "nmf":
+            matrix_.assert_positive()
+        
+        result_mat = matrix_ * self.__transmat
+         
+        if self.__dim_reduction.name == "nmf":
+            result_mat.to_non_negative()
+                
+        return result_mat
+        
+             
 """        
 class FeatureSelectOperation       
         
