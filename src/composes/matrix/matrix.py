@@ -88,6 +88,19 @@ class Matrix(object):
         #or a number if **kwargs is None
         return self.mat.sum(axis)
             
+    def sorted_permutation(self, norm_function, axis_):
+        """
+        Sorts the rows or the columns (as given by axis)
+        of a matrix according to norm_function and returns 
+        the permutation of this as a np.array
+        """    
+        
+        norms = norm_function(axis=axis_)
+        perm_srtd = sorted(range(len(norms)), key = norms.__getitem__, 
+                           reverse=True)
+        
+        return perm_srtd    
+            
     def get_mat(self):
         return self._mat
     

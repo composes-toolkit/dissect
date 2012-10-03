@@ -10,6 +10,8 @@ from scipy.sparse import issparse
 from scipy.sparse import vstack
 from scipy.sparse import csr_matrix
 from sparsesvd import sparsesvd
+from scipy.sparse.sputils import isintlike
+from composes.utils.num_utils import is_numeric
 from composes.matrix.matrix import Matrix
 from composes.utils.matrix_utils import array_to_csr_diagonal
 
@@ -54,7 +56,35 @@ class SparseMatrix(Matrix):
         else:
             raise TypeError("expected scipy sparse matrix, received %s" 
                             % (type(data)))
+
+     
+    def __getitem__(self, key):
+         
+        def __get_row(row):
+            start = self.mat.indptr[row]
+            end = self.mat.indptr[row + 1]
+            return SparseMatrix(csr_matrix((self.mat.data[start:end], 
+                                            self.mat.indices[start:end], 
+                                            [0, end - start]), 
+                                           shape=(1, self.mat.shape[1]),
+                                           copy=True))
+                     
+        if isinstance(key, tuple):
+            row = key[0]
+            col = key[1]
+            if isintlike(row) and isinstance(col, slice):
+                if col == slice(None, None, None):
+                    return __get_row(row)
         
+        if isintlike(key):        
+            return __get_row(key)
+
+        result = self.mat[key]
+        if is_numeric(result):
+            return result
+        else:
+            return SparseMatrix(result)
+    
 
     def multiply(self, matrix_):
         '''
@@ -173,4 +203,6 @@ class SparseMatrix(Matrix):
             return self    
     
     
+
+     
      

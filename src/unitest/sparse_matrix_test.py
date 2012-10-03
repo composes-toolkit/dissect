@@ -85,6 +85,21 @@ class TestSparseMatrix(unittest.TestCase):
         for (term1, term2) in test_cases:
             self.assertRaises(TypeError, term1.__mul__, term2)
 
+    def test_get_item(self):
+        
+        out_mat = SparseMatrix(self.a)[0,:]
+        np.testing.assert_array_equal(out_mat.mat.todense(),np.mat(self.a[0,:]))
+        
+        out_int = SparseMatrix(self.a)[0,1]
+        self.assertEqual(out_int, 2)
+        
+        out_mat = SparseMatrix(self.a)[0,1:2]
+        np.testing.assert_array_equal(out_mat.mat.todense(),np.mat(self.a[0,1:2]))
+        
+        out_mat = SparseMatrix(self.a)[0]
+        np.testing.assert_array_equal(out_mat.mat.todense(),np.mat(self.a[0,:]))
+        
+        
     def test_scale_rows(self):
         outcome = np.mat([[1,2,3],[40,0,50]])
         test_cases = [(self.matrix_a.copy(), self.e, outcome),
