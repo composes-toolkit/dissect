@@ -9,12 +9,11 @@ from warnings import warn
 from scipy.sparse import issparse
 from scipy.sparse import vstack
 from scipy.sparse import csr_matrix
-from sparsesvd import sparsesvd
 from scipy.sparse.sputils import isintlike
 from composes.utils.num_utils import is_numeric
 from composes.matrix.matrix import Matrix
 from composes.utils.matrix_utils import array_to_csr_diagonal
-
+from scipy.sparse import identity
 
 class SparseMatrix(Matrix):
     '''
@@ -86,6 +85,11 @@ class SparseMatrix(Matrix):
             return SparseMatrix(result)
     
 
+    @staticmethod
+    def identity(size):
+        # TODO: should do system-wise
+        return SparseMatrix(identity(size, dtype = np.double, format = "csr"))
+    
     def multiply(self, matrix_):
         '''
         Component-wise multiplication
@@ -93,36 +97,6 @@ class SparseMatrix(Matrix):
         self._assert_same_type(matrix_)
         return SparseMatrix(self.mat.multiply(matrix_.mat))
         
-    def svd(self, reduced_dimension):        
-        '''
-        '''
-        #svds from scipy.sparse.linalg
-        #RAISES ValueError if the rank is smaller than reduced_dimension + 1
-        #TODO : fix this or replace with svdsparse
-        #??? eIGENVALUES ARE NOT SORTED!!!!!!
-        #IF EVER USE THIS; FIX THE PROBLEMS
-        #u, s, vt = svds(self.mat, False, True)
-        
-        if reduced_dimension == 0:
-            raise ValueError("Cannot reduce to dimensionality 0.")
-        
-        ut, s, vt = sparsesvd(self.mat.tocsc(), reduced_dimension)
-        rank = ut.shape[0]
-        u = SparseMatrix(ut.transpose())
-        v = SparseMatrix(vt.transpose())
-        
-        if reduced_dimension > self.mat.shape[1]:
-            warn("Number of columns smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions (rank)." % (self.mat.shape[1], reduced_dimension, rank))
-        
-        if reduced_dimension > rank:
-            warn("Rank of matrix smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions." % (rank, reduced_dimension, rank))
-        
-        if not u.is_mostly_positive():
-            u = -u
-            v = -v
-            
-        return u, s, v
-    
     def vstack(self, matrix_):
         self._assert_same_type(matrix_)
         return SparseMatrix(vstack([self.mat, matrix_.mat], format = "csr"))
@@ -158,10 +132,6 @@ class SparseMatrix(Matrix):
             return np.linalg.norm(self.mat.data)
         else:
             return np.sqrt(self.multiply(self).sum(axis))
-    
-    def pinv(self):
-        # TODO: implement pinv
-        return SparseMatrix(np.linalg.pinv(self.mat.todense()))
     
     def scale_rows(self, array_):
         

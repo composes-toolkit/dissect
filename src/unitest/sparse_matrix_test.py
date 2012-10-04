@@ -140,43 +140,6 @@ class TestSparseMatrix(unittest.TestCase):
             term.plog()
             numpy.testing.assert_array_almost_equal(term.mat.todense(), expected, 3)
 
-    def test_svd(self):
-        test_cases = [(np.mat([[1,2,3],[2,4,6],[4,675,43]]), 
-                       np.mat([[3.2418e-03,4.4720e-01],
-                               [6.4836e-03,8.9440e-01],
-                               [9.9997e-01,-7.2489e-03]]),
-                       np.array([6.7639e+02,6.7794e+00]),
-                       np.mat([[0.0059,0.9979,0.0636],
-                               [0.3255,-0.0621,0.9434]]).transpose())
-                        ]
-        for x, u_expected, s_expected, v_expected in test_cases:
-            u, s, v = SparseMatrix(x).svd(2)
-            np.testing.assert_array_almost_equal(u.mat.todense(), u_expected, 2)
-            np.testing.assert_array_almost_equal(s, s_expected, 2)
-            np.testing.assert_array_almost_equal(v.mat.todense(), v_expected, 2)
-
-            u, s, v = SparseMatrix(x).svd(3)
-            np.testing.assert_array_almost_equal(u.mat.todense(), u_expected, 2)
-            np.testing.assert_array_almost_equal(s, s_expected, 2)
-            np.testing.assert_array_almost_equal(v.mat.todense(), v_expected, 2)
-            
-            u, s, v = SparseMatrix(x).svd(6)
-            np.testing.assert_array_almost_equal(u.mat.todense(), u_expected, 2)
-            np.testing.assert_array_almost_equal(s, s_expected, 2)
-            np.testing.assert_array_almost_equal(v.mat.todense(), v_expected, 2)
-            
-            u, s, v = SparseMatrix(x).svd(1)
-            np.testing.assert_array_almost_equal(u.mat.todense(), u_expected[:,0:1], 2)
-            np.testing.assert_array_almost_equal(s, s_expected[0:1], 2)
-            np.testing.assert_array_almost_equal(v.mat.todense(), v_expected[:,0:1], 2)
-
-
-    def test_svd_raises(self):
-        test_cases = [np.mat([[1,2,3],[2,4,6],[4,675,43]])]
-        
-        for x in test_cases:   
-            self.assertRaises(ValueError, SparseMatrix(x).svd, 0)
-            
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

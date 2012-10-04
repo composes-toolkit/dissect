@@ -61,39 +61,15 @@ class DenseMatrix(Matrix):
                              % (str(self.mat.shape), str(matrix_.mat.shape) ))
         return DenseMatrix(np.multiply(self.mat, matrix_.mat))
     
+    
+    @staticmethod
+    def identity(size):
+        return DenseMatrix(np.eye(size, size, 0, np.double))
+    
     def vstack(self, matrix_):
         self._assert_same_type(matrix_)
         return DenseMatrix(np.vstack((self.mat, matrix_.mat)))
     
-    def svd(self, reduced_dimension):
-        '''
-           - return three outputs
-            + u: u matrix
-            + s: flat version of s matrix
-            + vt: transpose of v matrix
-        '''
-        if reduced_dimension == 0:
-            raise ValueError("Cannot reduce to dimensionality 0.")
-        u, s, vt = np.linalg.svd(self.mat, False, True)
-        tol = 1e-12
-        rank = len(s[s > tol])
-        
-        if reduced_dimension > self.mat.shape[1]:
-            warn("Number of columns smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions (rank)." % (self.mat.shape[1], reduced_dimension, rank))
-        elif reduced_dimension > rank:
-            warn("Rank of matrix smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions." % (rank, reduced_dimension, rank))
-                    
-        no_cols = min(rank, reduced_dimension)
-        u = DenseMatrix(u[:,0:no_cols])
-        s = s[0:no_cols]
-        v = DenseMatrix(vt[0:no_cols,:].transpose())
-        
-        if not u.is_mostly_positive():
-            u = -u
-            v = -v
-
-        return u, s, v
-
     def scale_rows(self, array_):
         '''
         Scales rows by elements in array.
@@ -165,9 +141,6 @@ class DenseMatrix(Matrix):
             return np.linalg.norm(self.mat)
         else:
             return np.sqrt(self.multiply(self).sum(axis))
-    
-    def pinv(self):
-        return DenseMatrix(np.linalg.pinv(self.mat))
     
     def to_sparse_matrix(self):
         '''
