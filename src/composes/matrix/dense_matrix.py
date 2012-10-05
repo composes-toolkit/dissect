@@ -69,7 +69,11 @@ class DenseMatrix(Matrix):
     def vstack(self, matrix_):
         self._assert_same_type(matrix_)
         return DenseMatrix(np.vstack((self.mat, matrix_.mat)))
-    
+ 
+    def hstack(self, matrix_):
+        self._assert_same_type(matrix_)
+        return DenseMatrix(np.hstack((self.mat, matrix_.mat)))
+       
     def scale_rows(self, array_):
         '''
         Scales rows by elements in array.

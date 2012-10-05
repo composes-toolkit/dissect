@@ -10,6 +10,7 @@ from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import add_items_to_dict
 from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
+from composes.feature_selection.feature_selection import FeatureSelection
 
 class PeripheralSpace(Space):
     '''
@@ -46,8 +47,9 @@ class PeripheralSpace(Space):
             if isinstance(operation, DimensionalityReduction):
                 self._id2column, self._column2id = [], {}
             
-            #if isinstance(operation, FeatureSelection):
-            #    self.id2column, self.column2id = operation.
+            if isinstance(operation, FeatureSelection):
+                self._id2column = self.id2column[operation.selected_columns]
+                self._column2id = list2dict(self._id2column)
             
             matrix_ = operation.project(matrix_)
         return matrix_

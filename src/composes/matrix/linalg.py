@@ -6,6 +6,7 @@ Created on Oct 4, 2012
 
 import numpy as np
 import scipy as sp
+import scipy.linalg as splinalg
 from sparsesvd import sparsesvd
 from warnings import warn
 from time import time
@@ -31,6 +32,11 @@ class Linalg(object):
 
     @staticmethod
     def svd(matrix_, reduced_dimension):
+        #TODO: IMPORTANT!! do the sign normalization COLUMN-wise!!!not 
+        #for the full matrix at once!!
+        if reduced_dimension == 0:
+            raise ValueError("Cannot reduce to dimensionality 0.")
+        
         if isinstance(matrix_, SparseMatrix):
             return Linalg._sparse_svd(matrix_, reduced_dimension)
         elif isinstance(matrix_, DenseMatrix):
@@ -58,12 +64,11 @@ class Linalg(object):
         
         matrix_type = type(matrix_a)
         
-        
         if intercept:
             matrix_a = matrix_a.hstack(matrix_type(np.ones((matrix_a.shape[0],
                                                              1))))
         dim = matrix_a.shape[1]
-        lambda_diag = lambda_ * matrix_type.identity(dim)
+        lambda_diag = (lambda_ * lambda_) * matrix_type.identity(dim)
         
         if intercept:
             lambda_diag[-1,-1] = 0.0
@@ -77,11 +82,12 @@ class Linalg(object):
         else:
             return result
     
-    def lstsq_regression(self, matrix_a, matrix_b, intercept=False):
+    @staticmethod
+    def lstsq_regression(matrix_a, matrix_b, intercept=False):
 
         matrix_a._assert_same_type(matrix_b)
         # TODO: check out where to define this assert
-        assert_same_shape(matrix_a, matrix_b)
+        assert_same_shape(matrix_a, matrix_b, 0)
 
         if intercept:
             matrix_a = matrix_a.hstack(type(matrix_a)(np.ones((matrix_a.shape[0],
@@ -96,12 +102,11 @@ class Linalg(object):
         else:
             return result
 
-        
     @staticmethod
     def _dense_lstsq_regression(matrix_a , matrix_b):
-        return DenseMatrix(Linalg._numpy_lst_sq_regression(matrix_a, matrix_b))
+        return DenseMatrix(Linalg._numpy_lstsq_regression(matrix_a, matrix_b))
+        #return DenseMatrix(Linalg._scipy_lstsq_regression(matrix_a, matrix_b))
     
-
     @staticmethod
     def _sparse_lstsq_regression(matrix_a , matrix_b, intercept=False):
         return Linalg.ridge_regression(matrix_a, matrix_b, 0.0)
@@ -114,7 +119,7 @@ class Linalg(object):
     
     @staticmethod
     def _scipy_lstsq_regression(matrix_a, matrix_b):
-        return sp.linalg.lstsq(matrix_a.mat, matrix_b.mat)[0]
+        return splinalg.lstsq(matrix_a.mat, matrix_b.mat)[0]
     
     @staticmethod
     def _sparse_svd(matrix_, reduced_dimension):
@@ -124,9 +129,6 @@ class Linalg(object):
         #??? eIGENVALUES ARE NOT SORTED!!!!!!
         #IF EVER USE THIS; FIX THE PROBLEMS
         #u, s, vt = svds(matrix_.mat, False, True)
-        
-        if reduced_dimension == 0:
-            raise ValueError("Cannot reduce to dimensionality 0.")
         
         ut, s, vt = sparsesvd(matrix_.mat.tocsc(), reduced_dimension)
         rank = ut.shape[0]
@@ -149,8 +151,6 @@ class Linalg(object):
             + s: flat version of s matrix
             + vt: transpose of v matrix
         '''
-        if reduced_dimension == 0:
-            raise ValueError("Cannot reduce to dimensionality 0.")
         u, s, vt = np.linalg.svd(matrix_.mat, False, True)
         tol = 1e-12
         rank = len(s[s > tol])
@@ -237,6 +237,7 @@ class Linalg(object):
         tol: tolerance for a relative stopping condition
         timelimit, maxiter: limit of time and iterations
         """
+
         if not isinstance(v, Matrix):
             raise TypeError("expected Matrix type, received %s" % type(v))
         w = w_init

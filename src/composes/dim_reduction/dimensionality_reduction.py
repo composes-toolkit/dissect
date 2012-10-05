@@ -16,6 +16,9 @@ class DimensionalityReduction(object):
         '''
         Constructor
         '''
+        if reduced_dimension <= 0:
+            raise ValueError("Cannot reduce to non-positive dimensionality: %d"
+                             % reduced_dimension)
         self._reduced_dimension = reduced_dimension
             
     def create_operation(self):

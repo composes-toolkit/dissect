@@ -20,21 +20,6 @@ class Operation(object):
         '''
         pass
     
-"""
-class ReductionOperation(Operation):
-    
-    def __init__(self, reduction_type, transformation_matrix):
-        self.__trans_matrix = transformation_matrix
-        self.__reduction_type = reduction_type
-        
-    def project_operation(self, matrix_):
-        return matrix_ * self.__trans_matrix
-    
-    def apply()
-    
-    def __str__(self):
-        return str(self.__reduction_type) + "_" + str(self.__trans_matrix.get_shape()[1])
-"""
 class WeightingOperation(Operation):
     """
     """
@@ -105,24 +90,35 @@ class DimensionalityReductionOperation(Operation):
         return result_mat
         
              
-"""        
-class FeatureSelectOperation       
+      
+class FeatureSelectionOperation(Operation):       
         
-    def __init__(self, weighting):
-        self.__weighting = weighting
+    def __init__(self, feat_selection):
+        self.__feat_selection = feat_selection
+        self.__selected_columns = None
 
     def apply(self, matrix_):
         
-        result_matrix = self__weighting.apply(matrix_)
-        self.__column_marginal = matrix_.sum(0)
+        if not self.__selected_columns is None:
+            raise IllegalStateError("Illegal application of %s. Attempting\
+                                     double application." 
+                                     % (self.__feat_selection))
         
-        return result_matrix
+        res_mat, self.__selected_columns = self.__feat_selection.apply(matrix_)
+        return res_mat
     
     def project(self, matrix_):
-        return self.__weighting.apply(matrix_, self.__column_marginal)
+        
+        res_mat = matrix_[:, self.__selected_columns]
+        return res_mat
+    
     
     def __str__(self):
         return str(self.__weighting_scheme)  
-"""        
+      
  
+    def get_selected_columns(self):
+        return self.__selected_columns
+    
+    selected_columns = property(get_selected_columns)    
         

@@ -12,7 +12,8 @@ from composes.weighting.epmi import EpmiWeighting
 from composes.weighting.plog import PlogWeighting
 from composes.weighting.ppmi import PpmiWeighting
 from composes.weighting.plmi import PlmiWeighting
-
+from composes.weighting.row_normalization import RowNormalization
+from composes.weighting.normalization import Normalization
 
 class Test(unittest.TestCase):
 
@@ -93,6 +94,69 @@ class Test(unittest.TestCase):
 
         for matrix_, expected in test_cases:
             self.single_case_test(matrix_, expected, w)
+    
+    def test_row_norm(self):
+        w = RowNormalization()
+        test_cases = [(self.b, np.mat([[0.26726124,0.53452248,0.80178373]])),
+                      (self.c, self.c),
+                      (self.e, np.mat([[0.26726124,0.53452248,0.80178373],
+                                       [1.,0.,0.]]))
+                      ]
+
+        for matrix_, expected in test_cases:
+            self.single_case_test(matrix_, expected, w)
+        
+        w = RowNormalization(criterion = "length")
+        test_cases = [(self.b, np.mat([[0.26726124,0.53452248,0.80178373]])),
+                      (self.c, self.c),
+                      (self.e, np.mat([[0.26726124,0.53452248,0.80178373],
+                                       [1.,0.,0.]]))
+                      ]
+        
+        for matrix_, expected in test_cases:
+            self.single_case_test(matrix_, expected, w) 
+            
+        w = RowNormalization(criterion = "sum")
+        test_cases = [(self.b, np.mat([[0.16666667,0.33333333,0.5]])),
+                      (self.c, self.c),
+                      (self.e, np.mat([[0.16666667,0.33333333,0.5],
+                                       [1.,0.,0.]]))
+                      ]
+
+        for matrix_, expected in test_cases:
+            self.single_case_test(matrix_, expected, w)
+            
+    def test_norm(self):
+        w = Normalization()
+        test_cases = [(self.b, np.mat([[1/6.0,2/6.0,3/6.0]])),
+                      (self.c, self.c),
+                      (self.e, np.mat([[1/7.0,2/7.0,3/7.0],
+                                       [1./7.0,0.,0.]]))
+                      ]
+
+        for matrix_, expected in test_cases:
+            self.single_case_test(matrix_, expected, w)
+        
+        w = Normalization(criterion = "length")
+        test_cases = [(self.b, np.mat([[0.26726124,0.53452248,0.80178373]])),
+                      (self.c, self.c),
+                      (self.e, np.mat([[0.25819889,0.51639778,0.77459667],
+                                       [0.25819889,0.        ,0.        ]]))
+                      ]
+        
+        for matrix_, expected in test_cases:
+            self.single_case_test(matrix_, expected, w) 
+           
+            
+        w = Normalization(criterion = "sum")
+        test_cases = [(self.b, np.mat([[1/6.0,2/6.0,3/6.0]])),
+                      (self.c, self.c),
+                      (self.e, np.mat([[1/7.0,2/7.0,3/7.0],
+                                       [1./7.0,0.,0.]]))
+                      ]
+
+        for matrix_, expected in test_cases:
+            self.single_case_test(matrix_, expected, w)                       
     
     def test_epmi_raises(self):    
         w = EpmiWeighting()

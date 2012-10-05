@@ -11,6 +11,7 @@ from composes.utils.space_utils import assert_is_instance
 from composes.matrix.matrix import Matrix
 from composes.weighting.weighting import Weighting
 from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
+from composes.feature_selection.feature_selection import FeatureSelection
 from composes.semantic_space.operation import Operation
 from composes.similarity.similarity import Similarity
 from composes.utils.space_utils import add_items_to_dict
@@ -72,19 +73,24 @@ class Space(object):
         
         #TODO , FeatureSelection, DimReduction ..
                                             
-        assert_is_instance(transformation, (Weighting, DimensionalityReduction))
+        assert_is_instance(transformation, (Weighting, DimensionalityReduction, 
+                                            FeatureSelection))
         op = transformation.create_operation()
         new_matrix =  op.apply(self.cooccurrence_matrix)
         
         new_operations = list(self.operations)
         new_operations.append(op)
 
+        id2row, row2id = list(self.id2row), self.row2id.copy() 
+        
         if isinstance(transformation, DimensionalityReduction):
             id2column, column2id = [], {}
-        else:    
+        elif isinstance(transformation, FeatureSelection):
+            id2column = self.id2column[transformation.selected_columns]
+            column2id = list2dict(id2column)
+        else:
             id2column, column2id = list(self.id2column), self.column2id.copy()
         
-        id2row, row2id = list(self.id2row), self.row2id.copy() 
         return Space(new_matrix, id2row, id2column,
                      row2id, column2id, operations = new_operations)
         
@@ -155,6 +161,16 @@ class Space(object):
         if not word in self.row2id:
             return None
         return self.cooccurrence_matrix[self.row2id[word],:]
+    
+    def get_rows(self, words):
+        row_ids = []
+        for word in words:
+            if not word in self.row2id:
+                raise ValueError("Word not found in space rows: %s" % word)
+            else:
+                row_ids.append(self.row2id[word])
+        
+        return self.cooccurrence_matrix[row_ids,:]
         
     def set_cooccurrence_matrix(self, matrix_):
         assert_is_instance(matrix_, Matrix)

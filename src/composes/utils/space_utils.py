@@ -55,4 +55,6 @@ def assert_shape_consistent(matrix_, id2row, id2column, row2id, column2id):
 def assert_is_instance(object_, class_):
     if not isinstance(object_, class_):
         raise TypeError("expected %s, received %s" % (class_, type(object_)))
+
+
         

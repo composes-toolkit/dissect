@@ -8,6 +8,7 @@ import numpy as np
 from warnings import warn
 from scipy.sparse import issparse
 from scipy.sparse import vstack
+from scipy.sparse import hstack
 from scipy.sparse import csr_matrix
 from scipy.sparse.sputils import isintlike
 from composes.utils.num_utils import is_numeric
@@ -71,11 +72,11 @@ class SparseMatrix(Matrix):
         if isinstance(key, tuple):
             row = key[0]
             col = key[1]
-            if isintlike(row) and isinstance(col, slice):
+            if isintlike(row) and row >= 0 and isinstance(col, slice):
                 if col == slice(None, None, None):
                     return __get_row(row)
         
-        if isintlike(key):        
+        if isintlike(key) and key >= 0:        
             return __get_row(key)
 
         result = self.mat[key]
@@ -100,7 +101,11 @@ class SparseMatrix(Matrix):
     def vstack(self, matrix_):
         self._assert_same_type(matrix_)
         return SparseMatrix(vstack([self.mat, matrix_.mat], format = "csr"))
-       
+    
+    def hstack(self, matrix_):
+        self._assert_same_type(matrix_)
+        return SparseMatrix(hstack([self.mat, matrix_.mat], format = "csr"))
+    
     def get_non_negative(self):
         mat_ = self.mat.copy()
         #TODO time against : mat_.data[mat_.data < 0] = 0

@@ -95,7 +95,9 @@ class Matrix(object):
         the permutation of this as a np.array
         """    
         
-        norms = norm_function(axis=axis_)
+        #norms = norm_function(axis=axis_)
+        
+        norms = norm_function(axis_).getA().flatten()
         perm_srtd = sorted(range(len(norms)), key = norms.__getitem__, 
                            reverse=True)
         
