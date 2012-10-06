@@ -14,7 +14,8 @@ class WeightedAdditive(CompositionModel):
     classdocs
     '''
 
-
+    _name = "weighted_additive"
+    
     def __init__(self, alpha, beta):
         '''
         Constructor
@@ -51,7 +52,6 @@ class WeightedAdditive(CompositionModel):
             
         return alpha_denom / double(nom), beta_denom / double(nom)
         
-    
     def _compose(self, arg1_mat, arg2_mat):    
         return self._alpha * arg1_mat + self._beta * arg2_mat
         
