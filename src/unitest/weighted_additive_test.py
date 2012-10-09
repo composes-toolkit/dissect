@@ -42,9 +42,10 @@ class Test(unittest.TestCase):
                        DenseMatrix(np.mat([[0],[0]])), 0.0, 0.0)
                       ]
         for m1, m2, ph, expected_alpha, expected_beta in test_cases:
-            alpha, beta = WeightedAdditive._train(m1, m2, ph)
-            self.assertAlmostEqual(alpha, expected_alpha, 8) 
-            self.assertAlmostEqual(beta, expected_beta, 8) 
+            model = WeightedAdditive()
+            model._train(m1, m2, ph)
+            self.assertAlmostEqual(model.alpha, expected_alpha, 8) 
+            self.assertAlmostEqual(model.beta, expected_beta, 8) 
 
     def test_compose(self):
         
@@ -52,7 +53,13 @@ class Test(unittest.TestCase):
         np.testing.assert_array_equal(model._compose(self.m11, self.m21).mat,
                                                       self.ph1.mat)
         
+        model = WeightedAdditive()
+        np.testing.assert_array_equal(model._compose(self.m11, self.m21).mat,
+                                                      np.mat([[7/2.],[11/2.]]))
         
+        model = WeightedAdditive(0.5)
+        np.testing.assert_array_equal(model._compose(self.m11, self.m21).mat,
+                                                      np.mat([[7/2.],[11/2.]]))
             
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

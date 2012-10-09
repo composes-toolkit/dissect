@@ -39,21 +39,12 @@ class Test(unittest.TestCase):
         test_cases = self.svd_test_cases
         
         for x, u_expected, s_expected, v_expected in test_cases:
-            u, s, v = Linalg.svd(DenseMatrix(x),2)
-            np.testing.assert_array_almost_equal(u.mat, u_expected, 2)
-            np.testing.assert_array_almost_equal(s, s_expected, 2)
-            np.testing.assert_array_almost_equal(v.mat, v_expected, 2)
+            for dim in [2,3,6]:
+                u, s, v = Linalg.svd(DenseMatrix(x),dim)
+                np.testing.assert_array_almost_equal(u.mat, u_expected, 2)
+                np.testing.assert_array_almost_equal(s, s_expected, 2)
+                np.testing.assert_array_almost_equal(v.mat, v_expected, 2)
 
-            u, s, v = Linalg.svd(DenseMatrix(x),3)
-            np.testing.assert_array_almost_equal(u.mat, u_expected, 2)
-            np.testing.assert_array_almost_equal(s, s_expected, 2)
-            np.testing.assert_array_almost_equal(v.mat, v_expected, 2)
-            
-            u, s, v = Linalg.svd(DenseMatrix(x),6)
-            np.testing.assert_array_almost_equal(u.mat, u_expected, 2)
-            np.testing.assert_array_almost_equal(s, s_expected, 2)
-            np.testing.assert_array_almost_equal(v.mat, v_expected, 2)
-            
             u, s, v = Linalg.svd(DenseMatrix(x),1)
             np.testing.assert_array_almost_equal(u.mat, u_expected[:,0:1], 2)
             np.testing.assert_array_almost_equal(s, s_expected[0:1], 2)
@@ -63,24 +54,12 @@ class Test(unittest.TestCase):
         test_cases = self.svd_test_cases
         
         for x, u_expected, s_expected, v_expected in test_cases:
-            u, s, v = Linalg.svd(SparseMatrix(x),2)
-            print u.mat.todense()
-            print v.mat.transpose().todense()
-            
-            np.testing.assert_array_almost_equal(u.mat.todense(), u_expected, 2)
-            np.testing.assert_array_almost_equal(s, s_expected, 2)
-            np.testing.assert_array_almost_equal(v.mat.todense(), v_expected, 2)
+            for dim in [2,3,6]:
+                u, s, v = Linalg.svd(SparseMatrix(x),dim)
+                np.testing.assert_array_almost_equal(u.mat.todense(), u_expected, 2)
+                np.testing.assert_array_almost_equal(s, s_expected, 2)
+                np.testing.assert_array_almost_equal(v.mat.todense(), v_expected, 2)
 
-            u, s, v = Linalg.svd(SparseMatrix(x),3)
-            np.testing.assert_array_almost_equal(u.mat.todense(), u_expected, 2)
-            np.testing.assert_array_almost_equal(s, s_expected, 2)
-            np.testing.assert_array_almost_equal(v.mat.todense(), v_expected, 2)
-            
-            u, s, v = Linalg.svd(SparseMatrix(x),6)
-            np.testing.assert_array_almost_equal(u.mat.todense(), u_expected, 2)
-            np.testing.assert_array_almost_equal(s, s_expected, 2)
-            np.testing.assert_array_almost_equal(v.mat.todense(), v_expected, 2)
-            
             u, s, v = Linalg.svd(SparseMatrix(x),1)
             np.testing.assert_array_almost_equal(u.mat.todense(), u_expected[:,0:1], 2)
             np.testing.assert_array_almost_equal(s, s_expected[0:1], 2)
@@ -175,7 +154,7 @@ class Test(unittest.TestCase):
                               
             #print "norm", norm1, norm2
 
-            #THIS SHOULD HOLD, MAYBE ROUNDING ERROR?                              
+            #THIS SHOULD HOLD, BUT DOES NOT, MAYBE ROUNDING ERROR?                              
             #self.assertGreaterEqual(error2, error1)
             self.assertGreaterEqual(norm1, norm2)
 

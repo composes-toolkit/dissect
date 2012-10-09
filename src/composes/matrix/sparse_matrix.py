@@ -102,6 +102,11 @@ class SparseMatrix(Matrix):
         self._assert_same_type(matrix_)
         return SparseMatrix(vstack([self.mat, matrix_.mat], format = "csr"))
     
+    @classmethod
+    def nary_vstack(cls, mat_list):
+        np_mat_list = [matrix_.mat for matrix_ in mat_list]
+        return SparseMatrix(vstack(np_mat_list))
+    
     def hstack(self, matrix_):
         self._assert_same_type(matrix_)
         return SparseMatrix(hstack([self.mat, matrix_.mat], format = "csr"))

@@ -17,8 +17,8 @@ class Multiplicative(CompositionModel):
         Constructor
         '''
         
-    @classmethod    
-    def train(cls):    
+        
+    def train(self):    
         raise NotImplementedError("Cannot train multiplicative model!")
     
     def _compose(self, arg1_mat, arg2_mat):

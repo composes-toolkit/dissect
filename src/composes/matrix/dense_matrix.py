@@ -70,6 +70,11 @@ class DenseMatrix(Matrix):
         self._assert_same_type(matrix_)
         return DenseMatrix(np.vstack((self.mat, matrix_.mat)))
  
+    @classmethod
+    def nary_vstack(cls, mat_list):
+        np_mat_list = [matrix_.mat for matrix_ in mat_list]
+        return DenseMatrix(np.vstack(np_mat_list))
+    
     def hstack(self, matrix_):
         self._assert_same_type(matrix_)
         return DenseMatrix(np.hstack((self.mat, matrix_.mat)))

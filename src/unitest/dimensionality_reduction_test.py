@@ -5,7 +5,6 @@ Created on Sep 28, 2012
 '''
 import unittest
 import numpy as np
-import numpy.testing
 from composes.dim_reduction.svd import Svd
 from composes.dim_reduction.nmf import Nmf
 from composes.matrix.linalg import Linalg

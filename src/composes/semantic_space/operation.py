@@ -88,7 +88,9 @@ class DimensionalityReductionOperation(Operation):
             result_mat.to_non_negative()
                 
         return result_mat
-        
+
+    def __str__(self):
+        return str(self.__dim_reduction)        
              
       
 class FeatureSelectionOperation(Operation):       
@@ -109,12 +111,17 @@ class FeatureSelectionOperation(Operation):
     
     def project(self, matrix_):
         
+        if self.__selected_columns is None:        
+            raise IllegalStateError("Illegal projection of %s. Attempting\
+                                    projection before application." 
+                                    % (self.__dim_reduction))
+                    
         res_mat = matrix_[:, self.__selected_columns]
         return res_mat
     
     
     def __str__(self):
-        return str(self.__weighting_scheme)  
+        return str(self.__feat_selection)  
       
  
     def get_selected_columns(self):

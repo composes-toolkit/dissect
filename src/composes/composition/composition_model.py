@@ -18,18 +18,18 @@ class CompositionModel(object):
         '''
         Constructor
         '''
-    
-    @classmethod    
-    def train(cls, train_data, arg_space, phrase_space):    
+            
+    def train(self, train_data, arg_space, phrase_space):    
         
-        arg1_space, arg2_space = cls.extract_arg_spaces(arg_space)
-        arg1_list, arg2_list, phrase_list = cls.data_to_lists(train_data)
+        arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
+        arg1_list, arg2_list, phrase_list = self.data_to_lists(train_data)
 
         arg1_mat = arg1_space.get_rows(arg1_list)
         arg2_mat = arg2_space.get_rows(arg2_list)
         phrase_mat = phrase_space.get_rows(phrase_list)
-        
-        return cls(cls._train(arg1_mat, arg2_mat, phrase_mat))
+
+        self._train(arg1_mat, arg2_mat, phrase_mat)
+        self.composed_id2column = phrase_space.id2column
     
     def compose(self, data, arg_space):
         
@@ -40,9 +40,10 @@ class CompositionModel(object):
         arg2_mat = arg2_space.get_rows(arg2_list)
         
         composed_phrase_mat = self._compose(arg1_mat, arg2_mat)
-        composed_id2column = self._build_id2column(arg1_space, arg2_space)
+        if self.composed_id2column is None:
+            self.composed_id2column = self._build_id2column(arg1_space, arg2_space)
         
-        return Space(composed_phrase_mat, phrase_list, composed_id2column)
+        return Space(composed_phrase_mat, phrase_list, self.composed_id2column)
     
     @classmethod
     def extract_arg_spaces(cls, arg_space):
@@ -71,7 +72,7 @@ class CompositionModel(object):
         
         if not phrase_space is None:
             if arg1_space.id2column != phrase_space.id2column:
-                raise ValueError("Argument spaces do not have identical columns!")
+                raise ValueError("Argument and phrase space do not have identical columns!")
     
     def _build_id2column(self, arg1_space, arg2_space):
         return arg1_space.id2column

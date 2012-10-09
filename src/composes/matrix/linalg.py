@@ -46,6 +46,7 @@ class Linalg(object):
     
     @staticmethod
     def ridge_regression(matrix_a , matrix_b, lambda_, intercept=False):
+    
         '''
         This method use the general formulae:
             X = (A^T * A + P^T * P)^-1 * A^T * Y 
@@ -77,13 +78,10 @@ class Linalg(object):
         
         result = (tmp_mat * matrix_a.transpose()) * matrix_b
         
-        if intercept:
-            return result[0:-1, :], result[-1, :]
-        else:
-            return result
+        return result
     
-    @staticmethod
-    def lstsq_regression(matrix_a, matrix_b, intercept=False):
+    @classmethod
+    def lstsq_regression(cls, matrix_a, matrix_b, intercept=False):
 
         matrix_a._assert_same_type(matrix_b)
         # TODO: check out where to define this assert
@@ -97,10 +95,7 @@ class Linalg(object):
         else:
             result = Linalg._sparse_lstsq_regression(matrix_a, matrix_b)
         
-        if intercept:
-            return result[0:-1, :], result[-1, :]
-        else:
-            return result
+        return result
 
     @staticmethod
     def _dense_lstsq_regression(matrix_a , matrix_b):
