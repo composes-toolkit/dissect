@@ -12,6 +12,7 @@ from composes.similarity.dot_prod import DotProdSimilarity
 from composes.similarity.cos import CosSimilarity
 from composes.similarity.euclidean import EuclideanSimilarity
 from composes.similarity.lin import LinSimilarity
+from composes.utils.matrix_utils2 import to_compatible_matrix_types
 
 class SimilarityTest(unittest.TestCase):
 
@@ -43,7 +44,7 @@ class SimilarityTest(unittest.TestCase):
         for v1, v2, expected_matrix_type in test_cases:
             out = s.get_sim(v1, v2)
             self.assertEqual(expected_output, out)
-            v1, v2 = s._to_compatible_matrix_types(v1, v2)
+            v1, v2 = to_compatible_matrix_types(v1, v2)
             self.assertIsInstance(v1, expected_matrix_type)
             self.assertIsInstance(v2, expected_matrix_type) 
 

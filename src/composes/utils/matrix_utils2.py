@@ -25,14 +25,14 @@ def assert_is_array_or_matrix(data):
         raise TypeError("expected array-like or matrix, received %s" 
                         % (type(data)))
         
-def padd_ones(matrix_, axis):
+def padd_matrix(matrix_, axis, value=1):
     matrix_type = type(matrix_)
     if axis == 0:  
-        ones_mat = matrix_type(np.ones((1, matrix_.shape[1])))
-        return matrix_.vstack(ones_mat)
+        append_mat = matrix_type(np.ones((1, matrix_.shape[1]))*value)
+        return matrix_.vstack(append_mat)
     elif axis == 1:
-        ones_mat = matrix_type(np.ones((matrix_.shape[0], 1)))
-        return matrix_.hstack(ones_mat)
+        append_mat = matrix_type(np.ones((matrix_.shape[0], 1))*value)
+        return matrix_.hstack(append_mat)
     else:
         raise ValueError("Invalid axis value:%s" % axis)
           
@@ -48,3 +48,17 @@ def assert_same_shape(matrix1, matrix2, axis=None):
         if matrix1.shape[axis] != matrix2.shape[axis]:
             raise ValueError("Inconsistent shapes")     
         
+
+def to_compatible_matrix_types(v1, v2):
+
+    if isinstance(v1, Matrix) and isinstance(v2, Matrix):
+        v2 = type(v1)(v2)
+    elif not isinstance(v1, Matrix) and isinstance(v2, Matrix):
+        v1 = type(v2)(v1)
+    elif not isinstance(v2, Matrix) and isinstance(v1, Matrix):
+        v2 = type(v1)(v2)   
+    else:           
+        v1 = to_matrix(v1)
+        v2 = type(v1)(v2)
+        
+    return v1, v2

@@ -9,7 +9,7 @@ from composes.utils.matrix_utils2 import to_matrix
 from composes.utils.matrix_utils2 import assert_is_array_or_matrix
 #from composes.utils.matrix_utils2 import assert_same_shape
 from composes.matrix.matrix import Matrix
-
+from composes.utils.matrix_utils2 import to_compatible_matrix_types
 
 class Similarity(object):
     '''
@@ -29,7 +29,7 @@ class Similarity(object):
         assert_is_array_or_matrix(v1)
         assert_is_array_or_matrix(v2)
         
-        v1, v2 = self._to_compatible_matrix_types(v1, v2)
+        v1, v2 = to_compatible_matrix_types(v1, v2)
         # TODO: figure out where these asserts belong!!
         v1.assert_same_shape(v2)
 
@@ -40,7 +40,7 @@ class Similarity(object):
         assert_is_array_or_matrix(vector)
         assert_is_array_or_matrix(matrix_)
         
-        vector, matrix_ = self._to_compatible_matrix_types(vector, matrix_)
+        vector, matrix_ = to_compatible_matrix_types(vector, matrix_)
         
         if vector.shape[1] != matrix_.shape[1] or vector.shape[0] != 1:
             raise ValueError("Inconsistent shapes %s %s" 
@@ -55,20 +55,6 @@ class Similarity(object):
             result[i] = self._sim(vector, matrix_[i,:])
         return type(matrix_)(result)    
         
-        
-    def _to_compatible_matrix_types(self, v1, v2):
-    
-        if isinstance(v1, Matrix) and isinstance(v2, Matrix):
-            v2 = type(v1)(v2)
-        elif not isinstance(v1, Matrix) and isinstance(v2, Matrix):
-            v1 = type(v2)(v1)
-        elif not isinstance(v2, Matrix) and isinstance(v1, Matrix):
-            v2 = type(v1)(v2)   
-        else:           
-            v1 = to_matrix(v1)
-            v2 = type(v1)(v2)
-            
-        return v1, v2
         
         
     def get_name(self):

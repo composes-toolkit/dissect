@@ -15,6 +15,7 @@ from composes.matrix.matrix import Matrix
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
 from composes.utils.matrix_utils2 import assert_same_shape
+from composes.utils.matrix_utils2 import padd_matrix
 
 class Linalg(object):
     '''
@@ -64,15 +65,15 @@ class Linalg(object):
         assert_same_shape(matrix_a, matrix_b, 0)
         
         matrix_type = type(matrix_a)
+        dim = matrix_a.shape[1]
         
         if intercept:
             matrix_a = matrix_a.hstack(matrix_type(np.ones((matrix_a.shape[0],
                                                              1))))
-        dim = matrix_a.shape[1]
         lambda_diag = (lambda_ * lambda_) * matrix_type.identity(dim)
         
         if intercept:
-            lambda_diag[-1,-1] = 0.0
+            lambda_diag = padd_matrix(padd_matrix(lambda_diag, 0, 0.0), 1, 0.0)
         
         tmp_mat = Linalg.pinv(((matrix_a.transpose() * matrix_a) + lambda_diag))
         

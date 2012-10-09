@@ -17,8 +17,6 @@ def array_to_csr_diagonal(array_):
 
 def is_array(operand):
     return hasattr(operand, 'dtype') and hasattr(operand, 'shape')
-
-
     
     
 def nonzero_invert(matrix_):

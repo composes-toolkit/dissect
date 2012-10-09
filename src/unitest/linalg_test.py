@@ -107,8 +107,7 @@ class Test(unittest.TestCase):
 
             approx1 = (m1 * res).mat.todense()
             
-            res, intercept = Linalg.lstsq_regression(m1, id_, intercept=True)
-            res2 = res.vstack(SparseMatrix(intercept))
+            res2 = Linalg.lstsq_regression(m1, id_, intercept=True)
             new_a = m1.hstack(SparseMatrix(np.ones((m1.shape[0], 1))))
             
             approx2 = (new_a * res2).mat.todense()
@@ -124,12 +123,11 @@ class Test(unittest.TestCase):
         res = DenseMatrix(np.matrix([[1, 2, 3],[4, 5, 6],[7, 8, 9]]))
         
         res1 = Linalg.lstsq_regression(a, b)
-        res2, intercept = Linalg.lstsq_regression(a, b, intercept=True)
+        res2 = Linalg.lstsq_regression(a, b, intercept=True)
         
-        np.testing.assert_array_almost_equal(res2.mat, res[0:2,:].mat, 6)
-        np.testing.assert_array_almost_equal(intercept.mat, res[2:3,:].mat, 6)
+        np.testing.assert_array_almost_equal(res2.mat[:-1,:], res[0:2,:].mat, 6)
+        np.testing.assert_array_almost_equal(res2.mat[-1,:], res[2:3,:].mat, 6)
         
-        res2 = res2.vstack(DenseMatrix(intercept))
         new_a = a.hstack(DenseMatrix(np.ones((a.shape[0], 1))))
         self.assertGreater(((a * res1) - b).norm(), ((new_a * res2) - b).norm())
 
