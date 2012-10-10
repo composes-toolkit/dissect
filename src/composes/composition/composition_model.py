@@ -12,7 +12,7 @@ class CompositionModel(object):
     classdocs
     '''
     _name = "no name"
-
+    composed_id2column = None
 
     def __init__(self):
         '''
@@ -42,7 +42,7 @@ class CompositionModel(object):
         composed_phrase_mat = self._compose(arg1_mat, arg2_mat)
         if self.composed_id2column is None:
             self.composed_id2column = self._build_id2column(arg1_space, arg2_space)
-        
+
         return Space(composed_phrase_mat, phrase_list, self.composed_id2column)
     
     @classmethod
@@ -87,7 +87,7 @@ class CompositionModel(object):
         return arg1_list, arg2_list, phrase_list 
                 
     def extract_list_from_tuples(self, tuples, position):        
-        return [tuples[i][0] for i in xrange(len(tuples))]
+        return [tuples[i][position] for i in xrange(len(tuples))]
     
     
     def get_name(self):

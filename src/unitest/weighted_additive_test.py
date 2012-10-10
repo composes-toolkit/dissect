@@ -8,6 +8,7 @@ import numpy as np
 from composes.composition.weighted_additive import WeightedAdditive
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
+from composes.semantic_space.space import Space
 
 class Test(unittest.TestCase):
 
@@ -21,6 +22,11 @@ class Test(unittest.TestCase):
         self.m22 = DenseMatrix(np.mat([[4,3],[2,1]]))
         self.ph2 = DenseMatrix(np.mat([[18,11],[24,7]]))
 
+        
+        self.row = ["a", "b"]
+        self.ft = ["f1","f2"]
+        self.space1 = Space(DenseMatrix(self.m12), self.row, self.ft)
+        
 
     def tearDown(self):
         pass
@@ -60,6 +66,34 @@ class Test(unittest.TestCase):
         model = WeightedAdditive(0.5)
         np.testing.assert_array_equal(model._compose(self.m11, self.m21).mat,
                                                       np.mat([[7/2.],[11/2.]]))
+        
+    #def test_space_train(self):
+            
+    def test_space_compose(self):
+        
+        test_cases = [(WeightedAdditive(1, 1), 
+                       [("a", "b", "a_b"), ("a", "a", "a_a")],
+                       self.space1,
+                        ["a_b", "a_a"],
+                        {"a_b":0, "a_a":1},
+                        ["f1", "f2"],
+                        {"f1":0, "f2":1},
+                        np.mat([[12, 3],[6,2]])
+                       )
+                      ]
+
+        for 
+        model = WeightedAdditive(1, 1)
+        comp_sp = model.compose([("a", "b", "a_b"), ("a", "a", "a_a")], 
+                                self.space1)
+        self.assertListEqual(comp_sp.id2row, ["a_b", "a_a"])
+        self.assertDictEqual(comp_sp.row2id, {"a_b":0, "a_a":1})
+             
+        self.assertListEqual(comp_sp.id2column, ["f1", "f2"])
+        self.assertDictEqual(comp_sp.column2id, {"f1":0, "f2":1})
+             
+        np.testing.assert_array_equal(comp_sp.cooccurrence_matrix.mat, 
+                                      np.mat([[12, 3],[6,2]]))     
             
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
