@@ -4,6 +4,8 @@ Created on Sep 21, 2012
 @author: georgianadinu
 '''
 
+from numpy import array
+from numpy import prod
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
@@ -12,7 +14,8 @@ from composes.matrix.matrix import Matrix
 from composes.weighting.weighting import Weighting
 from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
 from composes.feature_selection.feature_selection import FeatureSelection
-from composes.semantic_space.operation import Operation
+from composes.semantic_space.operation import FeatureSelectionOperation
+from composes.semantic_space.operation import DimensionalityReductionOperation
 from composes.similarity.similarity import Similarity
 from composes.utils.space_utils import add_items_to_dict
 from warnings import warn
@@ -34,9 +37,9 @@ class Space(object):
     
     A number of transformations can be applied to a semantic space, with the
     goal of improving the quality of the target representations. 
-    Some transformations, such as weighings, only rescale the values
+    Some transformations, such as weighings, only scale the values
     in the space matrix, while others, such as dimensionality
-    reduction, or feature selection, can alter the set of 
+    reduction, or feature selection, alter the set of 
     contextual features.
     
     """
@@ -68,6 +71,20 @@ class Space(object):
         else:
             self._operations = []
 
+        if "element_shape" in kwargs:
+            elem_shape = kwargs["element_shape"]
+            if prod(elem_shape) != self._cooccurrence_matrix.shape[1]:
+                raise ValueError("Trying to assign invalid element shape:\
+                                    element_shape: %s, matrix columns: %s" 
+                                    % (str(elem_shape), 
+                                       str(self._cooccurrence_matrix.shape[1])))
+          
+        # NOTE: watch out here, can cause bugs, if we change the dimension 
+        # of a regular space and we do not create a new space         
+            self._element_shape = kwargs["element_shape"]
+        else:    
+            self._element_shape = (self._cooccurrence_matrix.shape[1],)    
+        
       
     def apply(self, transformation):
         
@@ -83,10 +100,11 @@ class Space(object):
 
         id2row, row2id = list(self.id2row), self.row2id.copy() 
         
-        if isinstance(transformation, DimensionalityReduction):
+        if isinstance(op, DimensionalityReductionOperation):
             id2column, column2id = [], {}
-        elif isinstance(transformation, FeatureSelection):
-            id2column = self.id2column[transformation.selected_columns]
+        elif isinstance(op, FeatureSelectionOperation):
+            op.original_columns = self.id2column
+            id2column = list(array(op.original_columns)[op.selected_columns])
             column2id = list2dict(id2column)
         else:
             id2column, column2id = list(self.id2column), self.column2id.copy()
@@ -202,7 +220,12 @@ class Space(object):
         return self._id2column
             
     id2column = property(get_id2column)
-    
+   
+    def get_element_shape(self):
+        return self._element_shape
+            
+    element_shape = property(get_element_shape)
+     
     def get_operations(self):
         return self._operations
             

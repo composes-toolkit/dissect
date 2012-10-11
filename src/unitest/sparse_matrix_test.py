@@ -7,7 +7,8 @@ import unittest
 import numpy as np
 import numpy.testing 
 from scipy.sparse import csr_matrix
-from scipy.sparse import csc_matrix 
+from scipy.sparse import csc_matrix
+from scipy.sparse.sputils import isintlike
 from composes.matrix.sparse_matrix import SparseMatrix
 from composes.matrix.dense_matrix import DenseMatrix
 
@@ -34,6 +35,29 @@ class TestSparseMatrix(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_reshape(self):
+        
+        test_cases = [(self.matrix_a, (1,6), self.a.reshape((1,6))),
+                      (self.matrix_a, (3,2), self.a.reshape((3,2))),
+                      (self.matrix_b, (1,6), self.b.reshape((1,6))),
+                      (self.matrix_b, (6,1), self.b.reshape((6,1))),
+                      (self.matrix_b, (2,3), self.b.reshape((2,3))),
+                      ] 
+        
+        for mat, shape, expected in test_cases:
+            mat.reshape(shape)
+            np.testing.assert_array_equal(mat.mat.todense(), expected)
+            self.assertTupleEqual(shape, mat.shape)
+        
+        
+    def test_reshape_raises(self):
+            
+        test_cases = [(3,0), (3,3), 3, (3,3,3), ("3","5"), (2,"4")]
+        
+        for shape in test_cases:
+            self.assertRaises(ValueError, self.matrix_a.reshape, shape)
+        
+        
     def test_init(self):
         nparr = self.a
         test_cases = [nparr,

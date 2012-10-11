@@ -5,8 +5,6 @@ Created on Oct 5, 2012
 '''
 
 from composition_model import CompositionModel
-from numpy import linspace
-from composes.matrix.linalg import Linalg  
 from composes.utils.space_utils import assert_is_instance
 from composes.utils.matrix_utils2 import is_array_or_matrix
 from composes.utils.matrix_utils2 import padd_matrix
@@ -44,12 +42,12 @@ class FullAdditive(CompositionModel):
             self._regression_learner = RidgeRegressionLearner()
             if "learner" in kwargs:
                 self._regression_learner = kwargs["learner"] 
-            self._has_intercept = self._regression_learner.has_intercept
+            self._has_intercept = self._regression_learner.has_intercept()
         
         
     def _train(self, arg1_mat, arg2_mat, phrase_mat):
 
-        self._has_intercept = self._regression_learner.has_intercept
+        self._has_intercept = self._regression_learner.has_intercept()
         
         result = self._regression_learner.train(arg1_mat.hstack(arg2_mat), phrase_mat)
 

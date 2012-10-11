@@ -114,8 +114,6 @@ class RidgeRegressionLearner(RegressionLearner):
                 if mean_sqr_err < min_err:
                     min_err = mean_sqr_err
                     min_err_param = param
-            
-            print "best lambda: ", min_err_param 
                 
             return Linalg.ridge_regression(matrix_a, matrix_b, min_err_param, 
                                      self._intercept)  

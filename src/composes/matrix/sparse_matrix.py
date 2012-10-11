@@ -12,6 +12,7 @@ from scipy.sparse import hstack
 from scipy.sparse import csr_matrix
 from scipy.sparse.sputils import isintlike
 from composes.utils.num_utils import is_numeric
+from composes.utils.num_utils import is_integer
 from composes.matrix.matrix import Matrix
 from composes.utils.matrix_utils import array_to_csr_diagonal
 from scipy.sparse import identity
@@ -85,7 +86,27 @@ class SparseMatrix(Matrix):
         else:
             return SparseMatrix(result)
     
-
+    def reshape(self, new_shape):
+        # TODO: change this is necessary to make a copy
+        if not isinstance(new_shape, tuple) or len(new_shape) != 2:
+            raise ValueError("shape must be integer pair")
+        
+        no_rows, no_cols = self.mat.shape
+        new_no_rows, new_no_cols = new_shape
+        
+        if not is_integer(new_no_rows) or not is_integer(new_no_cols):
+            raise ValueError("shape must be integer pair")
+        if no_rows * no_cols != new_no_rows * new_no_cols:
+            raise ValueError("total size of new matrix must be unchanged.")
+        
+        mat = self.mat.tocoo()
+        liniar_pos = mat.row * no_cols + mat.col
+        mat.row = liniar_pos // new_no_cols
+        mat.col = liniar_pos - (mat.row * new_no_cols)
+        
+        #TODO: change here if we want a copy!!
+        self.mat = csr_matrix((mat.data, (mat.row, mat.col)), shape=new_shape)
+        
     @staticmethod
     def identity(size):
         # TODO: should do system-wise

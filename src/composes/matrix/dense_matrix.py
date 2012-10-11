@@ -62,6 +62,10 @@ class DenseMatrix(Matrix):
         return DenseMatrix(np.multiply(self.mat, matrix_.mat))
     
     
+    def reshape(self, new_shape):
+        # TODO: change this is necessary to make a copy
+        self.mat = self.mat.reshape(new_shape)
+        
     @staticmethod
     def identity(size):
         return DenseMatrix(np.eye(size, size, 0, np.double))

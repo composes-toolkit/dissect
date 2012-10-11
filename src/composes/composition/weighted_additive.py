@@ -47,22 +47,23 @@ class WeightedAdditive(CompositionModel):
         arg1_norm_sqr = pow(arg1_mat.norm(), 2)
         arg2_norm_sqr = pow(arg2_mat.norm(), 2)
          
-        #alpha_denom = (arg2_norm_sqr * arg1_phrase_dot -
-        #               arg1_arg2_dot * arg2_phrase_dot)
-        #beta_denom = (arg1_norm_sqr * arg2_phrase_dot - 
-        #              arg1_arg2_dot * arg1_phrase_dot)
+        alpha_denom = (arg2_norm_sqr * arg1_phrase_dot -
+                       arg1_arg2_dot * arg2_phrase_dot)
+        beta_denom = (arg1_norm_sqr * arg2_phrase_dot - 
+                      arg1_arg2_dot * arg1_phrase_dot)
         
-        #nom = arg1_norm_sqr * arg2_norm_sqr - arg1_arg2_dot * arg1_arg2_dot
+        nom = arg1_norm_sqr * arg2_norm_sqr - arg1_arg2_dot * arg1_arg2_dot
         
         #if the system is under-determined we use pinv to get a solution
-        #if nom == 0:
-        a = np.linalg.pinv(np.mat([[arg1_norm_sqr,arg1_arg2_dot],
+        if nom == 0:
+            a = np.linalg.pinv(np.mat([[arg1_norm_sqr,arg1_arg2_dot],
                                        [arg1_arg2_dot,arg2_norm_sqr]]))
-        a = a * np.mat([[arg1_phrase_dot],[arg2_phrase_dot]])
-        self._alpha = a[0, 0]
-        self._beta = a[1, 0]
-            
-        #return alpha_denom / double(nom), beta_denom / double(nom)
+            a = a * np.mat([[arg1_phrase_dot],[arg2_phrase_dot]])
+            self._alpha = a[0, 0]
+            self._beta = a[1, 0]
+        else:    
+            self._alpha =  alpha_denom / double(nom)
+            self._beta = beta_denom / double(nom)
         
     def _compose(self, arg1_mat, arg2_mat):    
         return self._alpha * arg1_mat + self._beta * arg2_mat

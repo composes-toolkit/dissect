@@ -5,12 +5,14 @@ Created on Sep 26, 2012
 '''
 
 from space import Space
+from numpy import array
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import add_items_to_dict
-from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
-from composes.feature_selection.feature_selection import FeatureSelection
+from composes.semantic_space.operation import FeatureSelectionOperation
+from composes.semantic_space.operation import DimensionalityReductionOperation
+
 
 class PeripheralSpace(Space):
     '''
@@ -40,15 +42,17 @@ class PeripheralSpace(Space):
         assert_shape_consistent(self.cooccurrence_matrix, self._id2row,
                                  self._id2column, self._row2id, self._column2id)
         
+        self._element_shape = (self._cooccurrence_matrix.shape[1],)
+        
                 
     def _project_core_operations(self, matrix_):
        
         for operation in self._operations:
-            if isinstance(operation, DimensionalityReduction):
+            if isinstance(operation, DimensionalityReductionOperation):
                 self._id2column, self._column2id = [], {}
             
-            if isinstance(operation, FeatureSelection):
-                self._id2column = self.id2column[operation.selected_columns]
+            if isinstance(operation, FeatureSelectionOperation):
+                self._id2column = list(array(operation.original_columns)[operation.selected_columns])
                 self._column2id = list2dict(self._id2column)
             
             matrix_ = operation.project(matrix_)
