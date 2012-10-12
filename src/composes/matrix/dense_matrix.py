@@ -32,14 +32,14 @@ class DenseMatrix(Matrix):
         if issparse(data):
             warn("Convert scipy sparse matrix to numpy dense matrix.")
             self.mat = data.todense()
-        elif isinstance(data, np.ndarray):
-            if len(data) == 0:
-                raise ValueError("cannot initialize empty matrix")
-            self.mat = np.matrix(data)
         elif isinstance(data, np.matrix):
             if data.shape[0] == 0 or data.shape[1] == 0:
                 raise ValueError("cannot initialize empty matrix")
             self.mat = data
+        elif isinstance(data, np.ndarray):
+            if len(data) == 0:
+                raise ValueError("cannot initialize empty matrix")
+            self.mat = np.matrix(data)
         elif isinstance(data, Matrix):
             # TODO: remove warning or remove import somehow fix this!!
             from composes.matrix.sparse_matrix import SparseMatrix

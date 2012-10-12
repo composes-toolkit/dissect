@@ -11,6 +11,7 @@ from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import assert_is_instance 
 from composes.matrix.matrix import Matrix
+from composes.matrix.dense_matrix import DenseMatrix
 from composes.weighting.weighting import Weighting
 from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
 from composes.feature_selection.feature_selection import FeatureSelection
@@ -19,6 +20,7 @@ from composes.semantic_space.operation import DimensionalityReductionOperation
 from composes.similarity.similarity import Similarity
 from composes.utils.space_utils import add_items_to_dict
 from warnings import warn
+from composes.utils.matrix_utils2 import resolve_type_conflict
 
 class Space(object):
     """
@@ -129,6 +131,7 @@ class Space(object):
             warn("Row string %s not found, returning 0.0" % (word2))
             return 0.0
         
+        [v1, v2] = resolve_type_conflict([v1, v2], DenseMatrix)
         return similarity.get_sim(v1, v2)
       
     def get_neighbours(self, word, no_neighbours, similarity, 
@@ -144,6 +147,10 @@ class Space(object):
             sims_to_matrix = similarity.get_sims_to_matrix(vector, 
                                                           self.cooccurrence_matrix)
         else:
+            mat_type = type(neighbour_space.cooccurrence_matrix)
+            if not isinstance(vector, mat_type):
+                vector = mat_type(vector)
+            
             sims_to_matrix = similarity.get_sims_to_matrix(vector, 
                                          neighbour_space.cooccurrence_matrix)
             id2row = neighbour_space.id2row 

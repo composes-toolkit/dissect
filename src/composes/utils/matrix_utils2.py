@@ -5,7 +5,7 @@ from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.matrix import Matrix
 from scipy.sparse import issparse
 from matrix_utils import is_array
-
+from warnings import warn
 
 def to_matrix(matrix_):
     """
@@ -62,3 +62,42 @@ def to_compatible_matrix_types(v1, v2):
         v2 = type(v1)(v2)
         
     return v1, v2
+
+
+
+def get_type_of_largest(matrix_list):
+    max_dim = 0
+    max_type = None
+    for matrix_ in matrix_list:
+        if matrix_.shape[0] * matrix_.shape[1] > max_dim:
+            max_type = type(matrix_)
+                
+    return max_type
+
+def resolve_type_conflict(matrix_list, matrix_type):
+    new_matrix_list = []
+    
+    if matrix_type_conflict(matrix_list):
+        warn("Efficiency warning: matrices should have the same dense/sparse type!")
+              
+        for matrix_ in matrix_list:
+            new_matrix_list.append(matrix_type(matrix_))
+            
+    return new_matrix_list        
+    
+    
+def matrix_type_conflict(matrix_list):
+    
+    if not matrix_list:
+        return False    
+    
+    matrix_type = type(matrix_list[0])
+    for matrix_ in matrix_list:
+        if not isinstance(matrix_, matrix_type):
+            return True
+        
+    return False    
+        
+        
+         
+    

@@ -9,6 +9,7 @@ from composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from collections import Counter
 from composes.utils.regression_learner import RidgeRegressionLearner
+from composes.utils.matrix_utils2 import resolve_type_conflict
 
 class LexicalFunction(CompositionModel):
     '''
@@ -32,6 +33,7 @@ class LexicalFunction(CompositionModel):
                                    Use learn_function_space instead!")
         
     def learn_function_space(self, train_data, arg_space, phrase_space):
+ 
  
         if not isinstance(arg_space, Space):
             raise ValueError("expected one input spaces!")  

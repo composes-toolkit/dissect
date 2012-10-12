@@ -5,7 +5,9 @@ Created on Oct 5, 2012
 '''
 
 from composes.semantic_space.space import Space
+from composes.matrix.dense_matrix import DenseMatrix
 from composes.utils.space_utils import assert_is_instance
+from composes.utils.matrix_utils2 import resolve_type_conflict
 
 class CompositionModel(object):
     '''
@@ -28,6 +30,10 @@ class CompositionModel(object):
         arg2_mat = arg2_space.get_rows(arg2_list)
         phrase_mat = phrase_space.get_rows(phrase_list)
 
+        [arg1_mat, arg2_mat, phrase_mat] = resolve_type_conflict([arg1_mat, 
+                                                                  arg2_mat,
+                                                                  phrase_mat],
+                                                                  DenseMatrix) 
         self._train(arg1_mat, arg2_mat, phrase_mat)
         self.composed_id2column = phrase_space.id2column
     
@@ -38,6 +44,8 @@ class CompositionModel(object):
 
         arg1_mat = arg1_space.get_rows(arg1_list)
         arg2_mat = arg2_space.get_rows(arg2_list)
+        
+        [arg1_mat, arg2_mat] = resolve_type_conflict([arg1_mat, arg2_mat], DenseMatrix) 
         
         composed_phrase_mat = self._compose(arg1_mat, arg2_mat)
         if self.composed_id2column is None:

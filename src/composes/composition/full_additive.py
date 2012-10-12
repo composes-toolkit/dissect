@@ -11,6 +11,7 @@ from composes.utils.matrix_utils2 import padd_matrix
 from composes.utils.matrix_utils2 import to_compatible_matrix_types
 from composes.utils.regression_learner import RidgeRegressionLearner
 from composes.utils.regression_learner import RegressionLearner
+from composes.utils.matrix_utils2 import resolve_type_conflict
 
 class FullAdditive(CompositionModel):
     '''
@@ -56,10 +57,15 @@ class FullAdditive(CompositionModel):
 
     
     def _compose(self, arg1_mat, arg2_mat):
+        #NOTE when we get in this compose arg1 mat and arg2 mat have the same type
+        [mat_a_t, mat_b_t, arg1_mat] = resolve_type_conflict([self._mat_a_t, 
+                                                              self._mat_b_t, 
+                                                              arg1_mat],
+                                                             type(arg1_mat))   
         if self._has_intercept:
-            return arg1_mat * self._mat_a_t + padd_matrix(arg2_mat, 1) * self._mat_b_t
+            return arg1_mat * mat_a_t + padd_matrix(arg2_mat, 1) * mat_b_t
         else:
-            return arg1_mat * self._mat_a_t + arg2_mat * self._mat_b_t
+            return arg1_mat * mat_a_t + arg2_mat * mat_b_t
         
     def set_regression_learner(self, regression_learner):
         assert_is_instance(regression_learner, RegressionLearner)
