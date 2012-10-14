@@ -79,11 +79,11 @@ def resolve_type_conflict(matrix_list, matrix_type):
     
     if matrix_type_conflict(matrix_list):
         warn("Efficiency warning: matrices should have the same dense/sparse type!")
-              
         for matrix_ in matrix_list:
             new_matrix_list.append(matrix_type(matrix_))
-            
-    return new_matrix_list        
+        return new_matrix_list
+    
+    return list(matrix_list)            
     
     
 def matrix_type_conflict(matrix_list):

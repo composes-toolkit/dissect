@@ -6,7 +6,8 @@ Created on Jun 6, 2012
 
 #from weighting_scheme import Weighting
 from composes.exception.illegal_state_error import IllegalStateError
-
+from composes.utils.matrix_utils2 import resolve_type_conflict
+from warnings import warn
 # TODO: exception handling
 class Operation(object):
     '''
@@ -83,7 +84,13 @@ class DimensionalityReductionOperation(Operation):
         if self.__dim_reduction.name == "nmf":
             matrix_.assert_positive()
         
-        result_mat = matrix_ * self.__transmat
+        if not isinstance(matrix_, type(self.__transmat)):
+            warn("WARNING: peripheral matrix type (dense/sparse) should be the same as the core space matrix type!!")
+        
+        [matrix_, transmat] = resolve_type_conflict([matrix_, self.__transmat], 
+                                                        type(matrix_))
+        
+        result_mat = matrix_ * transmat
          
         if self.__dim_reduction.name == "nmf":
             result_mat.to_non_negative()

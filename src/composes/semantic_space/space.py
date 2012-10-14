@@ -6,21 +6,23 @@ Created on Sep 21, 2012
 
 from numpy import array
 from numpy import prod
+from warnings import warn
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import assert_is_instance 
+from composes.utils.space_utils import add_items_to_dict
+from composes.utils.matrix_utils2 import resolve_type_conflict
+from composes.utils.matrix_utils2 import get_type_of_largest
 from composes.matrix.matrix import Matrix
 from composes.matrix.dense_matrix import DenseMatrix
-from composes.weighting.weighting import Weighting
-from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
-from composes.feature_selection.feature_selection import FeatureSelection
+from composes.matrix.sparse_matrix import SparseMatrix
 from composes.semantic_space.operation import FeatureSelectionOperation
 from composes.semantic_space.operation import DimensionalityReductionOperation
 from composes.similarity.similarity import Similarity
-from composes.utils.space_utils import add_items_to_dict
-from warnings import warn
-from composes.utils.matrix_utils2 import resolve_type_conflict
+from composes.weighting.weighting import Weighting
+from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
+from composes.feature_selection.feature_selection import FeatureSelection
 
 class Space(object):
     """
@@ -165,23 +167,36 @@ class Space(object):
 
         return result    
 
-    def vstack(self, space_):
-        if self.cooccurrence_matrix.shape[1] != space_.cooccurrence_matrix.shape[1]:
+    @classmethod
+    def vstack(cls, space1, space2):
+        if space1.cooccurrence_matrix.shape[1] != space2.cooccurrence_matrix.shape[1]:
             raise ValueError("Inconsistent shapes: %s, %s" 
-                             % (self.cooccurrence_matrix.shape[1], 
-                                space_.cooccurrence_matrix.shape[1]))
+                             % (space1.cooccurrence_matrix.shape[1], 
+                                space2.cooccurrence_matrix.shape[1]))
         
-        if self.id2column != space_.id2column:
+        if space1.id2column != space2.id2column:
             raise ValueError("Identical columns required")
         
-        new_row2id = add_items_to_dict(self.row2id.copy(), space_.id2row)
-        new_id2row = self.id2row + space_.id2row
-        new_mat = self.cooccurrence_matrix.vstack(space_.cooccurrence_matrix)
+        new_row2id = add_items_to_dict(space1.row2id.copy(), space2.id2row)
+        new_id2row = space1.id2row + space2.id2row
         
-        return Space(new_mat, new_id2row, list(self.id2column), new_row2id, 
-                     self.column2id.copy(), operations=[])
+        matrix_type = get_type_of_largest([space1.cooccurrence_matrix,
+                                           space2.cooccurrence_matrix])
+        [new_mat1, new_mat2] = resolve_type_conflict([space1.cooccurrence_matrix, 
+                                                      space2.cooccurrence_matrix],
+                                                     matrix_type)
         
-            
+        new_mat = new_mat1.vstack(new_mat2)
+        
+        return Space(new_mat, new_id2row, list(space1.id2column), new_row2id, 
+                     space1.column2id.copy(), operations=[])
+        
+    def to_dense(self):
+        self.cooccurrence_matrix = DenseMatrix(self.cooccurrence_matrix)
+        
+    def to_sparse(self):
+        self.cooccurrence_matrix = SparseMatrix(self.cooccurrence_matrix)
+                
     def get_row(self, word):
         if not word in self.row2id:
             return None

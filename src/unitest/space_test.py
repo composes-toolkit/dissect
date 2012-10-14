@@ -182,7 +182,7 @@ class Test(unittest.TestCase):
         
         test_cases = [(self.space2, space3, space4)]
         for space1, space2, expected_space in test_cases:
-            outcome = space1.vstack(space2)
+            outcome = space1.vstack(space1, space2)
             np.testing.assert_array_equal(expected_space.cooccurrence_matrix.mat,
                                           outcome.cooccurrence_matrix.mat)
             
@@ -211,7 +211,7 @@ class Test(unittest.TestCase):
                       ]
         
         for space1, space2 in test_cases:
-            self.assertRaises(ValueError, space1.vstack, space2)
+            self.assertRaises(ValueError, space1.vstack, space1, space2)
             
                          
     def test_apply_svd_reduction(self):

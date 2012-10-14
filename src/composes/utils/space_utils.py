@@ -4,6 +4,19 @@ Created on Sep 26, 2012
 @author: georgianadinu
 '''
 
+def get_partitions(sorted_list):
+    
+    new_elem_index_list = [0]
+    for i in range(1, len(sorted_list) - 1):
+        if sorted_list[i] != sorted_list[i-1]:
+            new_elem_index_list.append(i)
+    new_elem_index_list.append(len(sorted_list))
+    
+    keys = [sorted_list[new_elem_index_list[i]] for i in range(0, len(new_elem_index_list) - 1)]
+    
+    return keys, new_elem_index_list
+            
+
 def list2dict(list_):
     return_dict = {}
     

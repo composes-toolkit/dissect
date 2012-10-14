@@ -29,8 +29,8 @@ class Similarity(object):
         assert_is_array_or_matrix(v1)
         assert_is_array_or_matrix(v2)
         
-        v1, v2 = to_compatible_matrix_types(v1, v2)
         # TODO: figure out where these asserts belong!!
+        v1, v2 = to_compatible_matrix_types(v1, v2)
         v1.assert_same_shape(v2)
 
         return self._sim(v1, v2) 
