@@ -38,10 +38,10 @@ class Dilation(CompositionModel):
         
         dot_prod_arg1_arg2 = row_normd_arg1.multiply(arg2_mat).sum()
         
-        if norm_arg1 * dot_prod_arg1_arg2 == -1:
+        if norm_arg1 * dot_prod_arg1_arg2 == 0:
             self._lambda = 2
         else:    
-            self._lambda = dot_prod_arg1_ph/(norm_arg1 * dot_prod_arg1_arg2) + 1
+            self._lambda = (dot_prod_arg1_ph/(norm_arg1 * dot_prod_arg1_arg2)) + 1
         
 
     def _compose(self, arg1_mat, arg2_mat):
@@ -49,8 +49,8 @@ class Dilation(CompositionModel):
         # we do a for in get_rows in parent.compose() and a for here
         result_vecs = []
         for i in range(arg1_mat.shape[0]):
-            v1 = arg1_mat[i]
-            v2 = arg2_mat[i]
+            v1 = arg1_mat[i,:]
+            v2 = arg2_mat[i,:]
             comp = ((self._lambda -1) * v1.multiply(v2).sum()/pow(v1.norm(),2)) * v1 + v2
             
             result_vecs.append(comp)    
