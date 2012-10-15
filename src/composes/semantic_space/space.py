@@ -23,6 +23,7 @@ from composes.similarity.similarity import Similarity
 from composes.weighting.weighting import Weighting
 from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
 from composes.feature_selection.feature_selection import FeatureSelection
+from composes.exception.illegal_state_error import IllegalOperationError
 
 class Space(object):
     """
@@ -105,8 +106,10 @@ class Space(object):
         id2row, row2id = list(self.id2row), self.row2id.copy() 
         
         if isinstance(op, DimensionalityReductionOperation):
+            self.assert_1dim_element()
             id2column, column2id = [], {}
         elif isinstance(op, FeatureSelectionOperation):
+            self.assert_1dim_element()
             op.original_columns = self.id2column
             id2column = list(array(op.original_columns)[op.selected_columns])
             column2id = list2dict(id2column)
@@ -252,4 +255,12 @@ class Space(object):
         return self._operations
             
     operations = property(get_operations)
+    
+    def assert_1dim_element(self):
+        if len(self.element_shape) > 1:
+            raise IllegalOperationError("Operation not allowed on spaces with\
+                                       element shape: %s" % self.element_shape)
+            
+        
+    
     
