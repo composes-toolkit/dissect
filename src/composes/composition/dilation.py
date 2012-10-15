@@ -7,6 +7,7 @@ Created on Oct 15, 2012
 from composition_model import CompositionModel
 from composes.utils.num_utils import is_numeric
 from composes.utils.matrix_utils import nonzero_invert
+from composes.matrix.dense_matrix import DenseMatrix
 
 class Dilation(CompositionModel):
     '''
@@ -28,21 +29,21 @@ class Dilation(CompositionModel):
 
     def _train(self, arg1_mat, arg2_mat, phrase_mat):
         
-        dot_prod_arg1_ph = arg1_mat.multiply(phrase_mat).sum()
-        norm_arg1 = pow(arg1_mat.norm(),2)
-
-        #row_normalize matrix u
-        row_norms = arg1_mat.norm(axis=1)
-        inv_row_norm = nonzero_invert(row_norms)
-        row_normd_arg1 = arg1_mat.scale_rows(inv_row_norm)
+        v2_minus_p = arg2_mat - phrase_mat
         
-        dot_prod_arg1_arg2 = row_normd_arg1.multiply(arg2_mat).sum()
+        v1_row_norms = arg1_mat.norm(1)
+        v1_row_norms_mat = DenseMatrix(v1_row_norms)
+        v1_row_sqr_norms_mat = v1_row_norms_mat.multiply(v1_row_norms_mat)
         
-        if norm_arg1 * dot_prod_arg1_arg2 == 0:
-            self._lambda = 2
-        else:    
-            self._lambda = (dot_prod_arg1_ph/(norm_arg1 * dot_prod_arg1_arg2)) + 1
+        C = DenseMatrix((arg1_mat.multiply(arg2_mat).sum(1)/v1_row_norms)/v1_row_norms)
         
+        nom = v1_row_sqr_norms_mat.multiply(C.multiply(C)).sum()
+        
+        v1_dot_prod_v2_minus_p = DenseMatrix(arg1_mat.multiply(v2_minus_p).sum(1))
+        denom = C.multiply(v1_dot_prod_v2_minus_p).sum()
+ 
+        if nom != 0:
+            self._lambda = 1 - denom/nom
 
     def _compose(self, arg1_mat, arg2_mat):
         # TO DO: this is inefficient here, we do 2 for s instead of one
@@ -55,6 +56,6 @@ class Dilation(CompositionModel):
             
             result_vecs.append(comp)    
          
-        result = type(comp).vstack(result_vecs)        
+        result = type(comp).nary_vstack(result_vecs)        
         return result
     

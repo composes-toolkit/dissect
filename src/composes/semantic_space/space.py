@@ -24,7 +24,10 @@ from composes.weighting.weighting import Weighting
 from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
 from composes.feature_selection.feature_selection import FeatureSelection
 from composes.exception.illegal_state_error import IllegalOperationError
+import logging
+from composes.utils import log_utils as log
 
+logger = logging.getLogger(__name__)
 class Space(object):
     """
     This class implements semantic spaces.
@@ -90,6 +93,7 @@ class Space(object):
         else:    
             self._element_shape = (self._cooccurrence_matrix.shape[1],)    
         
+        log.print_matrix_info(logger, self._cooccurrence_matrix, 1)
       
     def apply(self, transformation):
         

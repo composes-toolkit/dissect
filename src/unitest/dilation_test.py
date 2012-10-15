@@ -32,6 +32,8 @@ class Test(unittest.TestCase):
             m = Dilation()
             m._train(arg1, arg2, phrase)
             self.assertAlmostEqual(m._lambda, lambda_)
+#            res = m._compose(arg1, arg2)
+            #np.testing.assert_array_almost_equal(res.mat, phrase.mat)
     
     def test_train_random(self):
         scale_y = 1.5
