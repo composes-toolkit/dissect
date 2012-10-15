@@ -51,7 +51,7 @@ class Dilation(CompositionModel):
         for i in range(arg1_mat.shape[0]):
             v1 = arg1_mat[i]
             v2 = arg2_mat[i]
-            comp = ((1 - self._lambda) * v1.multiply(v2).sum()/pow(v1.norm(),2)) * v1 + v2
+            comp = ((self._lambda -1) * v1.multiply(v2).sum()/pow(v1.norm(),2)) * v1 + v2
             
             result_vecs.append(comp)    
          
