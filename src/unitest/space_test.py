@@ -10,6 +10,7 @@ from composes.weighting.epmi import EpmiWeighting
 from composes.dim_reduction.svd import Svd
 from composes.dim_reduction.nmf import Nmf
 from composes.matrix.dense_matrix import DenseMatrix
+from composes.matrix.sparse_matrix import SparseMatrix
 from composes.semantic_space.space import Space
 from composes.similarity.dot_prod import DotProdSimilarity
 
@@ -239,7 +240,36 @@ class Test(unittest.TestCase):
             self.assertDictEqual(out_s.row2id, in_s.row2id)
             self.assertDictEqual(out_s.column2id, {})
             self.assertEqual(1, len(out_s.operations))
+     
+    def test_build(self):
+        
+        dir_ = "space_test_resources/" 
+        test_cases = [("data1",["red", "blue"], ["car", "man"], 
+                       np.mat([[3,5],[0,10]]))
+                      ]
+        for data_file, rows, cols, mat in test_cases:
+            data_file1 = dir_ + data_file + ".sparse"
+
+            sp = Space.build(data=data_file1, format="sm")
+            self.assertListEqual(rows, sp.id2row)
+            self.assertListEqual(cols, sp.id2column)
             
+            self.assertIsInstance(sp.cooccurrence_matrix, SparseMatrix)
+            np.testing.assert_array_equal(mat, 
+                                          sp.cooccurrence_matrix.mat.todense())
+         
+            
+            data_file2 = dir_ + data_file + ".dense"
+                
+            sp = Space.build(data=data_file2, format="dm")
+            self.assertListEqual(rows, sp.id2row)
+            self.assertListEqual([], sp.id2column)
+                       
+            self.assertIsInstance(sp.cooccurrence_matrix, DenseMatrix)
+            np.testing.assert_array_equal(mat, sp.cooccurrence_matrix.mat) 
+             
+         
+                
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
