@@ -99,7 +99,7 @@ class SparseMatrix(Matrix):
         if no_rows * no_cols != new_no_rows * new_no_cols:
             raise ValueError("total size of new matrix must be unchanged.")
         
-        mat = self.mat.tocoo()
+        mat = self.mat.tocoo(copy=False)
         liniar_pos = mat.row * no_cols + mat.col
         mat.row = liniar_pos // new_no_cols
         mat.col = liniar_pos - (mat.row * new_no_cols)

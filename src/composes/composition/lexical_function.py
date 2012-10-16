@@ -5,6 +5,7 @@ Created on Oct 11, 2012
 '''
 
 import numpy as np
+import time
 from composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from composes.utils.space_utils import get_partitions
@@ -13,6 +14,11 @@ from composes.utils.matrix_utils2 import resolve_type_conflict
 from composes.utils.matrix_utils2 import get_type_of_largest
 from composes.utils.matrix_utils2 import padd_matrix
 from composes.utils.space_utils import assert_is_instance
+
+import logging
+from composes.utils import log_utils as log
+
+logger = logging.getLogger(__name__)
 
 class LexicalFunction(CompositionModel):
     '''
@@ -50,6 +56,8 @@ class LexicalFunction(CompositionModel):
             self._regression_learner = kwargs["learner"] 
         
     def train(self, train_data, arg_space, phrase_space):
+        
+        start = time.time()
  
         self._has_intercept = self._regression_learner.has_intercept()
         if not isinstance(arg_space, Space):
@@ -93,8 +101,21 @@ class LexicalFunction(CompositionModel):
         self._function_space = Space(new_space_mat, keys, [], 
                                     element_shape=new_element_shape)
         
+        log.print_composition_model_info(logger, self, 1, "\nTrained composition model:")
+        log.print_info(logger, 3, "Trained: %s lexical functions" % len(keys))
+        log.print_info(logger, 3, "With total data points:%s" % len(train_data))
+        log.print_matrix_info(logger, arg_space.cooccurrence_matrix, 3, 
+                              "Semantic space of arguments:")
+        log.print_info(logger, 3, "Shape of lexical functions learned:%s" 
+                       % (new_element_shape,))
+        log.print_matrix_info(logger, new_space_mat, 3, 
+                              "Semantic space of lexical functions:")
+        
+        log.print_time_info(logger, time.time(), start, 2)
         
     def compose(self, data, arg_space):
+        
+        start = time.time()
         
         assert_is_instance(arg_space, Space)
         arg1_list, arg2_list, phrase_list = self.data_to_lists(data)
@@ -110,6 +131,14 @@ class LexicalFunction(CompositionModel):
                                                              arg2_mat,
                                                              self._function_space.element_shape)
 
+        log.print_name(logger, self, 1, "\nComposed with composition model:")
+        log.print_info(logger, 3, "Composed total data points:%s" % arg1_mat.shape[0])
+        log.print_info(logger, 3, "Functional shape of the resulted (composed) elements:%s" 
+                       % (composed_elem_shape,))
+        log.print_matrix_info(logger, composed_ph_mat, 4, 
+                              "Resulted (composed) semantic space:")
+        log.print_time_info(logger, time.time(), start, 2)
+        
         return Space(composed_ph_mat, phrase_list, self.composed_id2column, 
                      element_shape = composed_elem_shape)
     
@@ -138,7 +167,11 @@ class LexicalFunction(CompositionModel):
     @classmethod
     def _assert_space_match(cls, arg1_space, arg2_space, phrase_space=None):
         pass
-    
+ 
+    def get_regression_learner(self):
+        return self._regression_learner
+    regression_learner = property(get_regression_learner)   
+       
     def get_function_space(self):
         return self._function_space
     

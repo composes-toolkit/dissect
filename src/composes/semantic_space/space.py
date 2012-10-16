@@ -7,6 +7,7 @@ Created on Sep 21, 2012
 from numpy import array
 from numpy import prod
 from warnings import warn
+import time
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
@@ -27,12 +28,13 @@ from composes.exception.illegal_state_error import IllegalOperationError
 import logging
 from composes.utils import log_utils as log
 from composes.utils.space_utils import read_sparse_space_data
-from composes.utils.space_utils import read_rows_and_columns
+from composes.utils.space_utils import extract_indexing_structs
 from composes.utils.space_utils import read_dense_space_data
 from composes.utils.space_utils import read_words
 from composes.utils.io_utils import create_parent_directories
 from composes.utils.io_utils import print_list
 from pyparsing import col
+
 logger = logging.getLogger(__name__)
 
 
@@ -100,13 +102,12 @@ class Space(object):
             self._element_shape = kwargs["element_shape"]
         else:    
             self._element_shape = (self._cooccurrence_matrix.shape[1],)    
-        
-        log.print_matrix_info(logger, self._cooccurrence_matrix, 1)
+
       
     def apply(self, transformation):
         
+        start = time.time()
         #TODO , FeatureSelection, DimReduction ..
-                                            
         assert_is_instance(transformation, (Weighting, DimensionalityReduction, 
                                             FeatureSelection))
         op = transformation.create_operation()
@@ -127,7 +128,14 @@ class Space(object):
             column2id = list2dict(id2column)
         else:
             id2column, column2id = list(self.id2column), self.column2id.copy()
-        
+
+        log.print_transformation_info(logger, transformation, 1, 
+                                      "\nApplied transformation:")
+        log.print_matrix_info(logger, self.cooccurrence_matrix, 2, 
+                              "Original semantic space:")
+        log.print_matrix_info(logger, new_matrix, 2, "Resulted semantic space:")
+        log.print_time_info(logger, time.time(), start, 2)
+                        
         return Space(new_matrix, id2row, id2column,
                      row2id, column2id, operations = new_operations)
         
@@ -154,6 +162,7 @@ class Space(object):
     def get_neighbours(self, word, no_neighbours, similarity, 
                        neighbour_space=None):            
        
+        start = time.time()
         assert_is_instance(similarity, Similarity)       
         vector = self.get_row(word)
         if vector is None:
@@ -180,6 +189,9 @@ class Space(object):
             i = sorted_perm[count]
             result.append((id2row[i], sims_to_matrix[i,0]))
 
+        log.print_info(logger, 1, "\nGetting neighbours of:%s" % (word))
+        log.print_name(logger, similarity, 1, "Similarity:")
+        log.print_time_info(logger, time.time(), start, 2)
         return result    
 
     @classmethod
@@ -202,6 +214,13 @@ class Space(object):
                                                      matrix_type)
         
         new_mat = new_mat1.vstack(new_mat2)
+        
+        log.print_info(logger, 1, "\nVertical stack of two spaces")
+        log.print_matrix_info(logger, space1.cooccurrence_matrix, 2, 
+                              "Semantic space 1:")
+        log.print_matrix_info(logger, space2.cooccurrence_matrix, 2, 
+                              "Semantic space 2:")
+        log.print_matrix_info(logger, new_mat, 2, "Resulted semantic space:")
         
         return Space(new_mat, new_id2row, list(space1.id2column), new_row2id, 
                      space1.column2id.copy(), operations=[])
@@ -229,7 +248,7 @@ class Space(object):
         
     def set_cooccurrence_matrix(self, matrix_):
         assert_is_instance(matrix_, Matrix)
-        self.assert_shape_consistent(matrix_, self.row2id, self.id2row,
+        assert_shape_consistent(matrix_, self.row2id, self.id2row,
                                        self.column2id, self.id2column)
         self._cooccurrence_matrix = matrix_
         
@@ -274,9 +293,11 @@ class Space(object):
                                        element shape: %s" % self.element_shape)
    
     @classmethod
-    def build(cls, kwargs):
+    def build(cls, **kwargs):
         # TODO: check arguments
-
+        id2row = None
+        id2column = None
+        
         if "data" in kwargs:
             data_file = kwargs["data"]
         else:
@@ -284,35 +305,39 @@ class Space(object):
             
         if "format" in kwargs:
             format_ = kwargs["format"]
-            if format_ != "dm" or format_ != "sm":
-                raise ValueError("Unrecognized format: %s" %format_)
+            if not format_ in ["dm","sm"]:
+                raise ValueError("Unrecognized format: %s" % format_)
         else:
             raise ValueError("Format of input files needs to be specified")
         
         if "rows" in kwargs:
-            id2row, row2id = read_words(kwargs["rows"])
+            [id2row], [row2id] = extract_indexing_structs(kwargs["rows"], [0])
         if "cols" in kwargs:
-            id2column, column2id = read_words(kwargs["cols"])
+            [id2column], [column2id] = extract_indexing_structs(kwargs["cols"], [0])
         
-        if format_ == "sp":
-            if id2row is None or id2column is None:    
-                tmp_id2row, tmp_row2id, tmp_id2column, tmp_column2id = read_rows_and_columns(data_file)
+        if format_ == "sm":
+            if id2row is None and id2column is None:
+                ([id2row, id2column],
+                 [row2id, column2id]) = extract_indexing_structs(data_file, [0, 1])
             if id2row is None:
-                id2row = tmp_id2row
-                row2id = tmp_row2id
+                [id2row], [row2id] = extract_indexing_structs(data_file, [0])
             if id2column is None:
-                id2column = tmp_id2column
-                column2id = tmp_column2id
+                [id2column], [column2id] = extract_indexing_structs(data_file, [1])
+                
             mat = read_sparse_space_data(data_file, row2id, column2id)
         else:
             if id2row is None:
-                mat, id2row = read_dense_space_data(data_file)
-            else:
-                mat, tmp = read_dense_space_data(data_file, row2id)
+                [id2row],[row2id] = extract_indexing_structs(data_file, [0])
             if id2column is None:
-                id2column = [] 
-        
-        return Space(mat, id2row, id2column)
+
+                id2column, column2id = [], {}
+             
+            mat = read_dense_space_data(data_file, row2id)
+                
+        if id2column and len(id2column) != mat.shape[1]:
+            raise ValueError("Columns provided inconsistent with shape of input matrix!")
+            
+        return Space(mat, id2row, id2column, row2id, column2id)
     
     def export(self, file_prefix, **kwargs):
         create_parent_directories(file_prefix)
@@ -362,4 +387,3 @@ class Space(object):
             for i, row in enumerate(self.id2row):
                 v = DenseMatrix(self.cooccurrence_matrix[i]).mat.flat
                 f.write("\t".join([row] + [repr(v[j]) for j in range(len(v))]))
-    
