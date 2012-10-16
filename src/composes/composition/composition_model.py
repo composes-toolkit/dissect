@@ -3,11 +3,16 @@ Created on Oct 5, 2012
 
 @author: georgianadinu
 '''
-
+import time
 from composes.semantic_space.space import Space
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.utils.space_utils import assert_is_instance
 from composes.utils.matrix_utils2 import resolve_type_conflict
+
+import logging
+from composes.utils import log_utils as log
+
+logger = logging.getLogger(__name__)
 
 class CompositionModel(object):
     '''
@@ -22,6 +27,7 @@ class CompositionModel(object):
         '''
             
     def train(self, train_data, arg_space, phrase_space):    
+        start = time.time()
         
         arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
         arg1_list, arg2_list, phrase_list = self.data_to_lists(train_data)
@@ -36,9 +42,21 @@ class CompositionModel(object):
                                                                   DenseMatrix) 
         self._train(arg1_mat, arg2_mat, phrase_mat)
         self.composed_id2column = phrase_space.id2column
+        
+        log.print_composition_model_info(logger, self, 1, "\nTrained composition model:")
+        log.print_info(logger, 2, "With total data points:%s" % arg1_mat.shape[0])
+        log.print_matrix_info(logger, arg1_space.cooccurrence_matrix, 3, 
+                              "Semantic space of argument 1:")
+        log.print_matrix_info(logger, arg2_space.cooccurrence_matrix, 3, 
+                              "Semantic space of argument 2:")
+        log.print_matrix_info(logger, phrase_space.cooccurrence_matrix, 3, 
+                              "Semantic space of phrases:")
+        log.print_time_info(logger, time.time(), start, 2)
+    
     
     def compose(self, data, arg_space):
-        
+        start = time.time()
+         
         arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
         arg1_list, arg2_list, phrase_list = self.data_to_lists(data)
 
@@ -51,6 +69,12 @@ class CompositionModel(object):
         if self.composed_id2column is None:
             self.composed_id2column = self._build_id2column(arg1_space, arg2_space)
 
+        log.print_name(logger, self, 1, "\nComposed with composition model:")
+        log.print_info(logger, 3, "Composed total data points:%s" % arg1_mat.shape[0])
+        log.print_matrix_info(logger, composed_phrase_mat, 4, 
+                              "Resulted (composed) semantic space::")
+        log.print_time_info(logger, time.time(), start, 2)
+                
         return Space(composed_phrase_mat, phrase_list, self.composed_id2column)
     
     @classmethod

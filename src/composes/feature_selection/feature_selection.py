@@ -19,4 +19,9 @@ class FeatureSelection(object):
         self._reduced_dimension = reduced_dimension
 
     def create_operation(self):
-        return FeatureSelectionOperation(self)        
+        return FeatureSelectionOperation(self)
+    
+    def get_reduced_dimension(self):
+        return self._reduced_dimension
+    
+    reduced_dimension = property(get_reduced_dimension)        
