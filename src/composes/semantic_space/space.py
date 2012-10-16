@@ -26,8 +26,13 @@ from composes.feature_selection.feature_selection import FeatureSelection
 from composes.exception.illegal_state_error import IllegalOperationError
 import logging
 from composes.utils import log_utils as log
-
+from composes.utils.space_utils import read_sparse_space_data
+from composes.utils.space_utils import read_rows_and_columns
+from composes.utils.space_utils import read_dense_space_data
+from composes.utils.space_utils import read_words
 logger = logging.getLogger(__name__)
+
+
 class Space(object):
     """
     This class implements semantic spaces.
@@ -264,7 +269,45 @@ class Space(object):
         if len(self.element_shape) > 1:
             raise IllegalOperationError("Operation not allowed on spaces with\
                                        element shape: %s" % self.element_shape)
+   
+    @classmethod
+    def build(cls, kwargs):
+        # TODO: check arguments
+
+        if "data" in kwargs:
+            data_file = kwargs["data"]
+        else:
+            raise ValueError("Space data file needs to be specified")
             
+        if "format" in kwargs:
+            format_ = kwargs["format"]
+            if format_ != "dm" or format_ != "sm":
+                raise ValueError("Unrecognized format: %s" %format_)
+        else:
+            raise ValueError("Format of input files needs to be specified")
         
-    
-    
+        if "rows" in kwargs:
+            id2row, row2id = read_words(kwargs["rows"])
+        if "cols" in kwargs:
+            id2column, column2id = read_words(kwargs["cols"])
+        
+        if format_ == "sp":
+            if id2row is None or id2column is None:    
+                tmp_id2row, tmp_row2id, tmp_id2column, tmp_column2id = read_rows_and_columns(data_file)
+            if id2row is None:
+                id2row = tmp_id2row
+                row2id = tmp_row2id
+            if id2column is None:
+                id2column = tmp_id2column
+                column2id = tmp_column2id
+            mat = read_sparse_space_data(data_file, row2id, column2id)
+        else:
+            if id2row is None:
+                mat, id2row = read_dense_space_data(data_file)
+            else:
+                mat, tmp = read_dense_space_data(data_file, row2id)
+            if id2column is None:
+                id2column = [] 
+        
+        return Space(mat, id2row, id2column)
+            
