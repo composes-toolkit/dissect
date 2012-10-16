@@ -66,7 +66,7 @@ def assert_shape_consistent(matrix_, id2row, id2column, row2id, column2id):
                          % (no_rows, len(id2row), len(row2id)))
     
     if (has_column_maps and 
-        (not no_rows == len(id2row) or not no_rows == len(row2id))):
+        (not no_cols == len(id2column) or not no_cols == len(column2id))):
         raise ValueError("expected consistent shapes: %d %d %d" 
                          % (no_cols, len(id2column), len(column2id))) 
 
@@ -80,24 +80,29 @@ def extract_indexing_structs(filename, field_list):
     str2id = {}
     id2str = []
     no_fields = len(field_list)
+    
     str2id_list = [str2id.copy() for i in xrange(no_fields)]
     id2str_list = [list(id2str) for i in xrange(no_fields)]
     index_list = [0 for i in xrange(no_fields)]
+    max_field = max(field_list)
     
     with open(filename, "rb") as input_stream:
         for line in input_stream:
             if line.strip() != "":
                 elements = line.strip().split()
-                if len(elements) < no_fields:
-                    warn("Invalid input line:%s" % line.strip())
+                if len(elements) <= max_field:
+                    warn("Invalid input line:%s. Skipping it" % line.strip())
                 else:
-                    for field in field_list:
+                    for field_idx, field in enumerate(field_list):
                         current_str = elements[field]
-                        if not current_str in str2id_list[field]:
-                            str2id_list[field][current_str] = index_list[field]
-                            id2str_list[field].append(current_str)
-                            index_list[field] += 1
+                        if not current_str in str2id_list[field_idx]:
+                            str2id_list[field_idx][current_str] = index_list[field_idx]
+                            id2str_list[field_idx].append(current_str)
+                            index_list[field_idx] += 1
  
+    for id2str in id2str_list:
+        if not id2str:
+            raise ValueError("Found no valid data in file: %s!" % filename)
     return (id2str_list, str2id_list)
 
 
@@ -122,16 +127,19 @@ def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
         for line in f:
             if line.strip() != "":
                 line_elements = line.strip().split()
-                if len(line_elements) == 3:
-                    [word1, word2, count] = line_elements
+                if len(line_elements) >= 3:
+                    [word1, word2, count] = line_elements[0:3]
                     if word1 in row2id and word2 in column2id:
                         row[i] = row2id[word1]
                         col[i] = column2id[word2]
                         data[i] = element_type(count)
                         i += 1
-                else:
-                    warn("Invalid input line:%s" % line.strip())        
-    
+                if len(line_elements) > 3:
+                    warn("Invalid input line:%s. Expected 3 fields, ignoring additional ones!" % line.strip())        
+                if len(line_elements) < 3:
+                    raise ValueError("Invalid row: %s, expected at least %d fields" 
+                                     % (line.strip(), 3))
+          
     # eliminate the extra zeros created when word1 or word2 is not row2id or col2id!!    
     data = data[0:i]
     row = row[0:i]
@@ -191,8 +199,12 @@ def read_dense_space_data(matrix_file, row2id, **kwargs):
     with open(matrix_file, "rb") as f:
         first_line = f.next()
         no_cols = len(first_line.strip().split()) - 1
+        if no_cols <= 0:
+            raise ValueError("Invalid row: %s, expected at least %d fields" 
+                                     % (first_line.strip(), 2))
 
     no_rows = len(row2id)
+    row_string_set = set([])
     
     if "dtype" in kwargs:
         element_type = kwargs["dtype"]
@@ -205,9 +217,16 @@ def read_dense_space_data(matrix_file, row2id, **kwargs):
         for line in f:
             if not line.strip() == "":
                 elements = line.strip().split()
+                if len(elements) != no_cols + 1:
+                    raise ValueError("Invalid row: %s, expected %d fields" 
+                                     % (line.strip(), no_cols + 1))
                 word = elements[0]
                 if word in row2id:
                     i = row2id[word]
-                    m[i, :] = elements[1:]
-
+                    if word in row_string_set != 0:
+                        warn("Found duplicate row: %s. Ignoring it." % word)
+                    else:
+                        m[i,:] = elements[1:]
+                        row_string_set.add(word)
+                        
     return DenseMatrix(m)

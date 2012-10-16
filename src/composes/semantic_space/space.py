@@ -243,7 +243,7 @@ class Space(object):
         
     def set_cooccurrence_matrix(self, matrix_):
         assert_is_instance(matrix_, Matrix)
-        self.assert_shape_consistent(matrix_, self.row2id, self.id2row,
+        assert_shape_consistent(matrix_, self.row2id, self.id2row,
                                        self.column2id, self.id2column)
         self._cooccurrence_matrix = matrix_
         
@@ -312,12 +312,11 @@ class Space(object):
         
         if format_ == "sm":
             if id2row is None and id2column is None:
-                [id2row, id2column],[row2id, column2id] = extract_indexing_structs(data_file, [0, 1])
-                print id2row
-                print id2column
-            elif id2row is None:
+                ([id2row, id2column],
+                 [row2id, column2id]) = extract_indexing_structs(data_file, [0, 1])
+            if id2row is None:
                 [id2row], [row2id] = extract_indexing_structs(data_file, [0])
-            elif id2column is None:
+            if id2column is None:
                 [id2column], [column2id] = extract_indexing_structs(data_file, [1])
                 
             mat = read_sparse_space_data(data_file, row2id, column2id)
@@ -327,7 +326,10 @@ class Space(object):
             if id2column is None:
                 id2column, column2id = [], {}
              
-            mat = read_dense_space_data(data_file, row2id)    
-
+            mat = read_dense_space_data(data_file, row2id)
+                
+        if id2column and len(id2column) != mat.shape[1]:
+            raise ValueError("Columns provided inconsistent with shape of input matrix!")
+            
         return Space(mat, id2row, id2column, row2id, column2id)
             

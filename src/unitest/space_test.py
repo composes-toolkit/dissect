@@ -42,6 +42,7 @@ class Test(unittest.TestCase):
                                [  6.76369708e+02,  -4.91431927e-02]])
         self.space2 = Space(DenseMatrix(self.x), self.row2, self.ft1)
 
+        self.dir_ = "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/space_test_resources/"
         
     def test_init1(self):
         for (m, id2row, id2col, row2id, col2id, ops) in self.init_test_cases:
@@ -241,35 +242,135 @@ class Test(unittest.TestCase):
             self.assertDictEqual(out_s.column2id, {})
             self.assertEqual(1, len(out_s.operations))
      
-    def test_build(self):
+    def test_build_data(self):
         
-        dir_ = "space_test_resources/" 
         test_cases = [("data1",["red", "blue"], ["car", "man"], 
-                       np.mat([[3,5],[0,10]]))
+                       np.mat([[3,5],[0,10]]), np.mat([[3,5],[0,10]])),
+                      ("data2",["red"], ["car"], 
+                       np.mat([[3]]), np.mat([[3]])),
+                      ("data3",["red", "blue"], ["car", "man"], 
+                       np.mat([[15,0],[0,6]]), np.mat([[5,0],[0,6]])),
+                      ("data7",["red"], ["car"], np.mat([[0]]), np.mat([[0]])),
+                      ("data9",["man"], ["car"], np.mat([[4]]), None),
                       ]
-        for data_file, rows, cols, mat in test_cases:
-            data_file1 = dir_ + data_file + ".sparse"
+        for data_file, rows, cols, smat, dmat in test_cases:
+            data_file1 = self.dir_ + data_file + ".sparse"
 
             sp = Space.build(data=data_file1, format="sm")
             self.assertListEqual(rows, sp.id2row)
             self.assertListEqual(cols, sp.id2column)
             
             self.assertIsInstance(sp.cooccurrence_matrix, SparseMatrix)
-            np.testing.assert_array_equal(mat, 
+            np.testing.assert_array_equal(smat, 
                                           sp.cooccurrence_matrix.mat.todense())
          
+            data_file2 = self.dir_ + data_file + ".dense"
+            if not dmat is None:    
+                sp = Space.build(data=data_file2, format="dm")
+                self.assertListEqual(rows, sp.id2row)
+                self.assertListEqual([], sp.id2column)
+                           
+                self.assertIsInstance(sp.cooccurrence_matrix, DenseMatrix)
+                np.testing.assert_array_equal(dmat, sp.cooccurrence_matrix.mat) 
+             
+
+    def test_build_data_row(self):
+        test_cases = [("data1", "row1.row", ["red"], ["car", "man"], 
+                       np.mat([[3,5]]), np.mat([[3,5]])),
+                      ("data2", "row1.row",["red"], ["car"], 
+                       np.mat([[3]]), np.mat([[3]])),
+                      ("data3", "row2.row", ["blue", "red"], ["car", "man"], 
+                       np.mat([[0,6],[15,0]]), np.mat([[0,6],[5,0]])),
+                      ("data3", "row3.row", ["blue", "red"], ["car", "man"], 
+                       np.mat([[0,6],[15,0]]), np.mat([[0,6],[5,0]])),
+                      ("data7", "row2.row", ["blue", "red"], ["car"], 
+                       np.mat([[0],[0]]), np.mat([[0],[0]])),
+                      ]         
+                        
+        for data_file, row_file, rows, cols, smat, dmat in test_cases:
+            row_file = self.dir_ + row_file
             
-            data_file2 = dir_ + data_file + ".dense"
+            data_file1 = self.dir_ + data_file + ".sparse"
+
+            sp = Space.build(data=data_file1, rows= row_file, format="sm")
+            self.assertListEqual(rows, sp.id2row)
+            self.assertListEqual(cols, sp.id2column)
+            
+            self.assertIsInstance(sp.cooccurrence_matrix, SparseMatrix)
+            np.testing.assert_array_equal(smat, 
+                                          sp.cooccurrence_matrix.mat.todense())
+         
+            data_file2 = self.dir_ + data_file + ".dense"
                 
-            sp = Space.build(data=data_file2, format="dm")
+            sp = Space.build(data=data_file2, rows= row_file, format="dm")
             self.assertListEqual(rows, sp.id2row)
             self.assertListEqual([], sp.id2column)
                        
             self.assertIsInstance(sp.cooccurrence_matrix, DenseMatrix)
-            np.testing.assert_array_equal(mat, sp.cooccurrence_matrix.mat) 
-             
-         
+            np.testing.assert_array_equal(dmat, sp.cooccurrence_matrix.mat)
+
+    def test_build_data_row_col(self):
+        test_cases = [("data1", "row1.row", "col1.col", ["red"], ["man", "car"], 
+                       np.mat([[5,3]]), np.mat([[3,5]])),
+                      ("data1", "row1.row", "col5.col", ["red"], ["man", "car"], 
+                       np.mat([[5,3]]), np.mat([[3,5]])),
+                      ("data3", "row2.row", "col2.col", ["blue", "red"], ["car"], 
+                       np.mat([[0],[15]]), None),
+                      ("data2", "row1.row","col1.col", ["red"], ["man","car"], 
+                       np.mat([[0,3]]), None),
+                      ("data3", "row3.row", "col3.col", ["blue", "red"], ["man", "car"], 
+                       np.mat([[6,0],[0,15]]), np.mat([[0,6],[5,0]])),
+                      ("data7", "row2.row", "col3.col", ["blue", "red"], ["man", "car"],  
+                       np.mat([[0,0],[0,0]]), None),
+                      ("data3", "row2.row", "col4.col", ["blue", "red"], ["airplane"], 
+                       np.mat([[0],[0]]), None)
+                      ]         
+
+        for data_file, row_file, col_file, rows, cols, smat, dmat in test_cases:
+            row_file = self.dir_ + row_file
+            col_file = self.dir_ + col_file
+
+            data_file1 = self.dir_ + data_file + ".sparse"
+
+            if smat is None:
+                self.assertRaises(ValueError, Space.build, data=data_file1, rows= row_file, cols=col_file, format="sm")
+
+            else:
+                sp = Space.build(data=data_file1, rows= row_file, cols=col_file, format="sm")
+                self.assertListEqual(rows, sp.id2row)
+                self.assertListEqual(cols, sp.id2column)
                 
+                self.assertIsInstance(sp.cooccurrence_matrix, SparseMatrix)
+                np.testing.assert_array_equal(smat, 
+                                              sp.cooccurrence_matrix.mat.todense())
+         
+            data_file2 = self.dir_ + data_file + ".dense"
+            
+            if dmat is None:
+                self.assertRaises(ValueError, Space.build, data=data_file2, rows= row_file, cols=col_file, format="dm")
+                
+            else:        
+                sp = Space.build(data=data_file2, rows= row_file, cols=col_file, format="dm")
+                self.assertListEqual(rows, sp.id2row)
+                self.assertListEqual(cols, sp.id2column)
+                           
+                self.assertIsInstance(sp.cooccurrence_matrix, DenseMatrix)
+                np.testing.assert_array_equal(dmat, sp.cooccurrence_matrix.mat)              
+      
+    def test_build_raises(self):
+        
+        dense_test_cases = ["data10.dense", "data9.dense", "data8.dense"] 
+     
+        for data_file in dense_test_cases:
+            data_file = self.dir_ + data_file
+            self.assertRaises(ValueError, Space.build, data=data_file, format="dm")  
+
+        sparse_test_cases = ["data8.sparse", "data10.sparse"] 
+     
+        for data_file in sparse_test_cases:
+            data_file = self.dir_ + data_file
+            self.assertRaises(ValueError, Space.build, data=data_file, format="sm")
+                                            
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
