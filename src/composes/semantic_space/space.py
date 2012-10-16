@@ -7,6 +7,7 @@ Created on Sep 21, 2012
 from numpy import array
 from numpy import prod
 from warnings import warn
+import time
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
@@ -26,8 +27,13 @@ from composes.feature_selection.feature_selection import FeatureSelection
 from composes.exception.illegal_state_error import IllegalOperationError
 import logging
 from composes.utils import log_utils as log
-
+from composes.utils.space_utils import read_sparse_space_data
+from composes.utils.space_utils import read_rows_and_columns
+from composes.utils.space_utils import read_dense_space_data
+from composes.utils.space_utils import read_words
 logger = logging.getLogger(__name__)
+
+
 class Space(object):
     """
     This class implements semantic spaces.
@@ -92,13 +98,12 @@ class Space(object):
             self._element_shape = kwargs["element_shape"]
         else:    
             self._element_shape = (self._cooccurrence_matrix.shape[1],)    
-        
-        log.print_matrix_info(logger, self._cooccurrence_matrix, 1)
+
       
     def apply(self, transformation):
         
+        start = time.time()
         #TODO , FeatureSelection, DimReduction ..
-                                            
         assert_is_instance(transformation, (Weighting, DimensionalityReduction, 
                                             FeatureSelection))
         op = transformation.create_operation()
@@ -119,7 +124,14 @@ class Space(object):
             column2id = list2dict(id2column)
         else:
             id2column, column2id = list(self.id2column), self.column2id.copy()
-        
+
+        log.print_transformation_info(logger, transformation, 1, 
+                                      "\nApplied transformation:")
+        log.print_matrix_info(logger, self.cooccurrence_matrix, 2, 
+                              "Original semantic space:")
+        log.print_matrix_info(logger, new_matrix, 2, "Resulted semantic space:")
+        log.print_time_info(logger, time.time(), start, 2)
+                        
         return Space(new_matrix, id2row, id2column,
                      row2id, column2id, operations = new_operations)
         
@@ -146,6 +158,7 @@ class Space(object):
     def get_neighbours(self, word, no_neighbours, similarity, 
                        neighbour_space=None):            
        
+        start = time.time()
         assert_is_instance(similarity, Similarity)       
         vector = self.get_row(word)
         if vector is None:
@@ -172,6 +185,9 @@ class Space(object):
             i = sorted_perm[count]
             result.append((id2row[i], sims_to_matrix[i,0]))
 
+        log.print_info(logger, 1, "\nGetting neighbours of:%s" % (word))
+        log.print_name(logger, similarity, 1, "Similarity:")
+        log.print_time_info(logger, time.time(), start, 2)
         return result    
 
     @classmethod
@@ -194,6 +210,13 @@ class Space(object):
                                                      matrix_type)
         
         new_mat = new_mat1.vstack(new_mat2)
+        
+        log.print_info(logger, 1, "\nVertical stack of two spaces")
+        log.print_matrix_info(logger, space1.cooccurrence_matrix, 2, 
+                              "Semantic space 1:")
+        log.print_matrix_info(logger, space2.cooccurrence_matrix, 2, 
+                              "Semantic space 2:")
+        log.print_matrix_info(logger, new_mat, 2, "Resulted semantic space:")
         
         return Space(new_mat, new_id2row, list(space1.id2column), new_row2id, 
                      space1.column2id.copy(), operations=[])
@@ -264,7 +287,45 @@ class Space(object):
         if len(self.element_shape) > 1:
             raise IllegalOperationError("Operation not allowed on spaces with\
                                        element shape: %s" % self.element_shape)
+   
+    @classmethod
+    def build(cls, kwargs):
+        # TODO: check arguments
+
+        if "data" in kwargs:
+            data_file = kwargs["data"]
+        else:
+            raise ValueError("Space data file needs to be specified")
             
+        if "format" in kwargs:
+            format_ = kwargs["format"]
+            if format_ != "dm" or format_ != "sm":
+                raise ValueError("Unrecognized format: %s" %format_)
+        else:
+            raise ValueError("Format of input files needs to be specified")
         
-    
-    
+        if "rows" in kwargs:
+            id2row, row2id = read_words(kwargs["rows"])
+        if "cols" in kwargs:
+            id2column, column2id = read_words(kwargs["cols"])
+        
+        if format_ == "sp":
+            if id2row is None or id2column is None:    
+                tmp_id2row, tmp_row2id, tmp_id2column, tmp_column2id = read_rows_and_columns(data_file)
+            if id2row is None:
+                id2row = tmp_id2row
+                row2id = tmp_row2id
+            if id2column is None:
+                id2column = tmp_id2column
+                column2id = tmp_column2id
+            mat = read_sparse_space_data(data_file, row2id, column2id)
+        else:
+            if id2row is None:
+                mat, id2row = read_dense_space_data(data_file)
+            else:
+                mat, tmp = read_dense_space_data(data_file, row2id)
+            if id2column is None:
+                id2column = [] 
+        
+        return Space(mat, id2row, id2column)
+            
