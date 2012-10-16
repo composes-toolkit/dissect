@@ -30,6 +30,9 @@ from composes.utils.space_utils import read_sparse_space_data
 from composes.utils.space_utils import read_rows_and_columns
 from composes.utils.space_utils import read_dense_space_data
 from composes.utils.space_utils import read_words
+from composes.utils.io_utils import create_parent_directories
+from composes.utils.io_utils import print_list
+from pyparsing import col
 logger = logging.getLogger(__name__)
 
 
@@ -310,4 +313,53 @@ class Space(object):
                 id2column = [] 
         
         return Space(mat, id2row, id2column)
-            
+    
+    def export(self, file_prefix, **kwargs):
+        create_parent_directories(file_prefix)
+        format_ = "dm"
+        if "format" in kwargs:
+            format_ = kwargs["format"]
+            if format_ != "dm" and format_ != "sm":
+                raise ValueError("Unrecognized format: %s" %format_)
+            elif format_ == "dm":
+                self._dense_format_export(file_prefix)
+            else:
+                self._sparse_format_export(file_prefix)
+        self._export_row_column(file_prefix)
+        
+    def _export_row_column(self, file_prefix):
+        row_file = "%s.%s" %(file_prefix, "row")
+        column_file = "%s.%s" %(file_prefix, "col")
+        
+        if self.column2id != []:
+            print_list(self.id2column, column_file)
+        print_list(self.id2row, row_file)
+
+    def _sparse_format_export(self, file_prefix):
+        matrix_file = "%s.%s" %(file_prefix, "sm")
+        with open(matrix_file, 'w') as f: 
+            if isinstance(self.cooccurrence_matrix,SparseMatrix):
+                mat = self.cooccurrence_matrix.mat
+
+                data = mat.data
+                row_indices = mat.indptr
+                col_indices = mat.indices
+                
+                row_index = 0;
+                next_row = row_indices[1]
+                row = self.id2row[0]  
+                for i in xrange(len(data)):
+                    while i == next_row:
+                        row_index +=1
+                        next_row = row_indices[row_index + 1]
+                        row = self.id2row[row_index]  
+                    col = self.id2column[col_indices[i]]
+                    f.write("%s\t%s\t%f\n" %(row,col,data[i]))
+        
+    def _dense_format_export(self, file_prefix):
+        matrix_file = "%s.%s" %(file_prefix, "dm")
+        with open(matrix_file, 'w') as f: 
+            for i, row in enumerate(self.id2row):
+                v = DenseMatrix(self.cooccurrence_matrix[i]).mat.flat
+                f.write("\t".join([row] + [repr(v[j]) for j in range(len(v))]))
+    
