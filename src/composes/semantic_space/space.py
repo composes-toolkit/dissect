@@ -30,7 +30,6 @@ from composes.utils import log_utils as log
 from composes.utils.space_utils import read_sparse_space_data
 from composes.utils.space_utils import extract_indexing_structs
 from composes.utils.space_utils import read_dense_space_data
-from composes.utils.space_utils import read_words
 from composes.utils.io_utils import create_parent_directories
 from composes.utils.io_utils import print_list
 from pyparsing import col
