@@ -12,8 +12,6 @@ from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import add_items_to_dict
 from composes.semantic_space.operation import FeatureSelectionOperation
 from composes.semantic_space.operation import DimensionalityReductionOperation
-from composes.utils.space_utils import read_sparse_space_data
-from composes.utils.space_utils import read_dense_space_data
 
 class PeripheralSpace(Space):
     '''

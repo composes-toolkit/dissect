@@ -370,7 +370,92 @@ class Test(unittest.TestCase):
         for data_file in sparse_test_cases:
             data_file = self.dir_ + data_file
             self.assertRaises(ValueError, Space.build, data=data_file, format="sm")
-                                            
+  
+    def reset_export_files(self, out_file):
+        with open(out_file + ".dm", "w"):
+            pass
+        with open(out_file + ".row", "w"):
+            pass
+        with open(out_file + ".col", "w"):
+            pass
+        
+    def test_export(self):
+        
+        out_file = self.dir_ + "tmp"
+        mat1 = np.mat([[1,2],[3,0]])
+        mat1row, mat1col = ["a","b"], ["f1","f2"]
+        
+        mat2 = np.mat([[0,0]])
+        mat2row, mat2col = ["a"], []
+         
+        test_cases = [(Space(DenseMatrix(mat1), mat1row, mat1col), 
+                       Space(SparseMatrix(mat1), mat1row, mat1col)),
+                       (Space(DenseMatrix(mat2), mat2row, mat1col), 
+                       Space(SparseMatrix(mat2), mat2row, mat1col))]
+        
+        #3 cases allowed at the moment
+        for sp_d, sp_s in test_cases:
+
+            self.reset_export_files(out_file)
+            sp_d.export(out_file, format="dm")
+            new_sp = Space.build(data=out_file + ".dm",
+                                 rows=out_file + ".row",
+                                 cols=out_file + ".col", format="dm")
+            self._test_equal_spaces_dense(sp_d, new_sp)
+            
+            self.reset_export_files(out_file)
+            sp_s.export(out_file, format="sm")
+            new_sp = Space.build(data=out_file + ".sm",
+                                 rows=out_file + ".row",
+                                 cols=out_file + ".col", format="sm")
+            self._test_equal_spaces_sparse(sp_s, new_sp)
+
+            self.reset_export_files(out_file)       
+            sp_s.export(out_file, format="dm")
+            new_sp = Space.build(data=out_file + ".dm",
+                                 rows=out_file + ".row",
+                                 cols=out_file + ".col", format="dm")
+                                              
+            self._test_equal_spaces_dense(sp_d, new_sp)
+            
+        test_cases = [(Space(DenseMatrix(mat2), mat2row, mat2col), 
+                       Space(SparseMatrix(mat2), mat2row, mat2col))]
+        
+        for sp_d, sp_s in test_cases:
+
+            self.reset_export_files(out_file)
+            sp_d.export(out_file, format="dm")
+            new_sp = Space.build(data=out_file + ".dm",
+                                 rows=out_file + ".row",
+                                 format="dm")
+            self._test_equal_spaces_dense(sp_d, new_sp)
+            
+            self.reset_export_files(out_file)       
+            sp_s.export(out_file, format="dm")
+            new_sp = Space.build(data=out_file + ".dm",
+                                 rows=out_file + ".row",
+                                 format="dm")
+            
+            self._test_equal_spaces_dense(sp_d, new_sp)
+            
+    def _test_equal_spaces_structs(self, sp, new_sp):     
+        self.assertListEqual(sp.id2row, new_sp.id2row)
+        self.assertListEqual(sp.id2column, new_sp.id2column)
+        self.assertDictEqual(sp.row2id, new_sp.row2id)
+        self.assertDictEqual(sp.column2id, new_sp.column2id)
+        
+    def _test_equal_spaces_dense(self, sp, new_sp):
+
+        self._test_equal_spaces_structs(sp, new_sp)
+        np.testing.assert_array_equal(sp.cooccurrence_matrix.mat, 
+                                      new_sp.cooccurrence_matrix.mat)
+            
+    def _test_equal_spaces_sparse(self, sp, new_sp):
+
+        self._test_equal_spaces_structs(sp, new_sp)
+        np.testing.assert_array_equal(sp.cooccurrence_matrix.mat.todense(), 
+                                      new_sp.cooccurrence_matrix.mat.todense())
+                       
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

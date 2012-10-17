@@ -5,7 +5,7 @@ Created on Sep 26, 2012
 '''
 import unittest
 from composes.utils.space_utils import list2dict 
-from composes.utils.matrix_utils import coo 
+#from composes.utils.matrix_utils import coo 
 
 class UtilsTest(unittest.TestCase):
 
@@ -19,8 +19,8 @@ class UtilsTest(unittest.TestCase):
 
         self.assertRaises(ValueError, list2dict, ["a","v","a"]) 
      
-    def test_coo(self):
-        coo()      
+    #def test_coo(self):
+    #    coo()      
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

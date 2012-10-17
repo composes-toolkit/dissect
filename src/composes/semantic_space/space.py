@@ -66,6 +66,8 @@ class Space(object):
         '''
         Constructor
         '''
+        assert_is_instance(matrix_, Matrix)
+        
         if row2id is None:
             row2id = list2dict(id2row)
         else:    
@@ -343,7 +345,7 @@ class Space(object):
         format_ = "dm"
         if "format" in kwargs:
             format_ = kwargs["format"]
-            if format_ != "dm" and format_ != "sm":
+            if not format_ in ["dm","sm"]:
                 raise ValueError("Unrecognized format: %s" %format_)
             elif format_ == "dm":
                 self._dense_format_export(file_prefix)
@@ -355,21 +357,24 @@ class Space(object):
         row_file = "%s.%s" %(file_prefix, "row")
         column_file = "%s.%s" %(file_prefix, "col")
         
-        if self.column2id != []:
+        if self.column2id:
             print_list(self.id2column, column_file)
+            
         print_list(self.id2row, row_file)
 
     def _sparse_format_export(self, file_prefix):
         matrix_file = "%s.%s" %(file_prefix, "sm")
         with open(matrix_file, 'w') as f: 
             if isinstance(self.cooccurrence_matrix,SparseMatrix):
+                if not self.id2column:
+                    raise ValueError("Cannot print matrix with no column info in sparse format!")
                 mat = self.cooccurrence_matrix.mat
 
                 data = mat.data
                 row_indices = mat.indptr
                 col_indices = mat.indices
                 
-                row_index = 0;
+                row_index = 0
                 next_row = row_indices[1]
                 row = self.id2row[0]  
                 for i in xrange(len(data)):
@@ -385,4 +390,5 @@ class Space(object):
         with open(matrix_file, 'w') as f: 
             for i, row in enumerate(self.id2row):
                 v = DenseMatrix(self.cooccurrence_matrix[i]).mat.flat
-                f.write("\t".join([row] + [repr(v[j]) for j in range(len(v))]))
+                line = "\t".join([row] + [repr(v[j]) for j in range(len(v))])
+                f.write("%s\n" % (line))
