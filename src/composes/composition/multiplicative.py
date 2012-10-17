@@ -5,6 +5,7 @@ Created on Oct 5, 2012
 '''
 
 from composition_model import CompositionModel
+from composes.exception.illegal_state_error import IllegalOperationError
 
 class Multiplicative(CompositionModel):
     '''
@@ -23,4 +24,7 @@ class Multiplicative(CompositionModel):
     
     def _compose(self, arg1_mat, arg2_mat):
         return arg1_mat.multiply(arg2_mat)
+    
+    def export(self, filename):
+        raise IllegalOperationError("cannot export a Multiplicative model.")
             

@@ -14,6 +14,7 @@ from composes.utils.matrix_utils2 import resolve_type_conflict
 from composes.utils.matrix_utils2 import get_type_of_largest
 from composes.utils.matrix_utils2 import padd_matrix
 from composes.utils.space_utils import assert_is_instance
+from composes.exception.illegal_state_error import IllegalStateError
 
 import logging
 from composes.utils import log_utils as log
@@ -177,7 +178,10 @@ class LexicalFunction(CompositionModel):
     
     function_space = property(get_function_space)
     
-    
+    def _export(self, filename):
+        if self._function_space is None:
+            raise IllegalStateError("cannot export an untrained LexicalFunction model.")
+        self._function_space.export(filename, format="dm")
             
         
         
