@@ -7,7 +7,7 @@ Created on Oct 2, 2012
 import numpy as np
 from similarity import Similarity
 from dot_prod import DotProdSimilarity
-from composes.utils.matrix_utils import nonzero_invert
+from composes.utils.py_matrix_utils import nonzero_invert
 
 class CosSimilarity(Similarity):
     '''

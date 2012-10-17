@@ -70,8 +70,8 @@ class WeightedAdditive(CompositionModel):
     
     def _export(self, filename):
         with open(filename, "w") as output_stream:
-            output_stream.write("alpha\t%f\n" %self._alpha)
-            output_stream.write("beta\t%f" %self._beta)
+            output_stream.write("alpha\t%f\n" % self._alpha)
+            output_stream.write("beta\t%f" % self._beta)
         
     def get_alpha(self):
         return self._alpha

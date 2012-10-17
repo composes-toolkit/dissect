@@ -4,7 +4,7 @@ Created on Jun 3, 2012
 @author: thenghia.pham
 '''
 from weighting import Weighting
-from composes.utils.matrix_utils import nonzero_invert
+from composes.utils.py_matrix_utils import nonzero_invert
 
 class EpmiWeighting(Weighting):
     '''

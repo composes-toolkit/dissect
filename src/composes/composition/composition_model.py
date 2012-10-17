@@ -7,7 +7,7 @@ import time
 from composes.semantic_space.space import Space
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.utils.space_utils import assert_is_instance
-from composes.utils.matrix_utils2 import resolve_type_conflict
+from composes.utils.matrix_utils import resolve_type_conflict
 from composes.utils.io_utils import create_parent_directories
 
 import logging

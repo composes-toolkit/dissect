@@ -6,7 +6,7 @@ Created on Sep 17, 2012
 
 import numpy as np
 from composes.utils.num_utils import is_numeric
-from composes.utils.matrix_utils import is_array
+from composes.utils.py_matrix_utils import is_array
 
 class Matrix(object):
     '''

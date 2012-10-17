@@ -6,12 +6,12 @@ Created on Oct 5, 2012
 
 from composition_model import CompositionModel
 from composes.utils.space_utils import assert_is_instance
-from composes.utils.matrix_utils2 import is_array_or_matrix
-from composes.utils.matrix_utils2 import padd_matrix
-from composes.utils.matrix_utils2 import to_compatible_matrix_types
+from composes.utils.matrix_utils import is_array_or_matrix
+from composes.utils.matrix_utils import padd_matrix
+from composes.utils.matrix_utils import to_compatible_matrix_types
 from composes.utils.regression_learner import RidgeRegressionLearner
 from composes.utils.regression_learner import RegressionLearner
-from composes.utils.matrix_utils2 import resolve_type_conflict
+from composes.utils.matrix_utils import resolve_type_conflict
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.exception.illegal_state_error import IllegalStateError
 
@@ -92,7 +92,7 @@ class FullAdditive(CompositionModel):
             output_stream.write("\nB\n")
             mat_b = DenseMatrix(self._mat_b_t[:-1,]).mat.T
             output_stream.write(str(mat_b))
-            output_stream.write("\nintercepts\n")
+            output_stream.write("\nIntercept\n")
             intercept = DenseMatrix(self._mat_b_t[-1:,]).mat.T
             output_stream.write(str(intercept))
            

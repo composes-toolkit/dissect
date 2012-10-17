@@ -4,17 +4,18 @@ Created on Sep 21, 2012
 @author: georgianadinu
 '''
 
+import time
+import logging
 from numpy import array
 from numpy import prod
 from warnings import warn
-import time
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import assert_is_instance 
 from composes.utils.space_utils import add_items_to_dict
-from composes.utils.matrix_utils2 import resolve_type_conflict
-from composes.utils.matrix_utils2 import get_type_of_largest
+from composes.utils.matrix_utils import resolve_type_conflict
+from composes.utils.matrix_utils import get_type_of_largest
 from composes.matrix.matrix import Matrix
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
@@ -25,14 +26,15 @@ from composes.weighting.weighting import Weighting
 from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
 from composes.feature_selection.feature_selection import FeatureSelection
 from composes.exception.illegal_state_error import IllegalOperationError
-import logging
 from composes.utils import log_utils as log
 from composes.utils.space_utils import read_sparse_space_data
-from composes.utils.space_utils import extract_indexing_structs
+from composes.utils.io_utils import extract_indexing_structs
 from composes.utils.space_utils import read_dense_space_data
 from composes.utils.io_utils import create_parent_directories
 from composes.utils.io_utils import print_list
-from pyparsing import col
+from composes.utils.io_utils import print_cooc_mat_dense_format
+from composes.utils.io_utils import print_cooc_mat_sparse_format
+
 
 logger = logging.getLogger(__name__)
 
@@ -348,9 +350,12 @@ class Space(object):
             if not format_ in ["dm","sm"]:
                 raise ValueError("Unrecognized format: %s" %format_)
             elif format_ == "dm":
-                self._dense_format_export(file_prefix)
+                print_cooc_mat_dense_format(self.cooccurrence_matrix,
+                                            self.id2row, file_prefix)
             else:
-                self._sparse_format_export(file_prefix)
+                print_cooc_mat_sparse_format(self.cooccurrence_matrix,
+                                             self.id2row,
+                                             self.id2column, file_prefix)
         self._export_row_column(file_prefix)
         
     def _export_row_column(self, file_prefix):
@@ -362,33 +367,4 @@ class Space(object):
             
         print_list(self.id2row, row_file)
 
-    def _sparse_format_export(self, file_prefix):
-        matrix_file = "%s.%s" %(file_prefix, "sm")
-        with open(matrix_file, 'w') as f: 
-            if isinstance(self.cooccurrence_matrix,SparseMatrix):
-                if not self.id2column:
-                    raise ValueError("Cannot print matrix with no column info in sparse format!")
-                mat = self.cooccurrence_matrix.mat
 
-                data = mat.data
-                row_indices = mat.indptr
-                col_indices = mat.indices
-                
-                row_index = 0
-                next_row = row_indices[1]
-                row = self.id2row[0]  
-                for i in xrange(len(data)):
-                    while i == next_row:
-                        row_index +=1
-                        next_row = row_indices[row_index + 1]
-                        row = self.id2row[row_index]  
-                    col = self.id2column[col_indices[i]]
-                    f.write("%s\t%s\t%f\n" %(row,col,data[i]))
-        
-    def _dense_format_export(self, file_prefix):
-        matrix_file = "%s.%s" %(file_prefix, "dm")
-        with open(matrix_file, 'w') as f: 
-            for i, row in enumerate(self.id2row):
-                v = DenseMatrix(self.cooccurrence_matrix[i]).mat.flat
-                line = "\t".join([row] + [repr(v[j]) for j in range(len(v))])
-                f.write("%s\n" % (line))

@@ -5,7 +5,7 @@ Created on Sep 26, 2012
 '''
 import unittest
 from composes.utils.space_utils import list2dict 
-#from composes.utils.matrix_utils import coo 
+#from composes.utils.py_matrix_utils import coo 
 
 class UtilsTest(unittest.TestCase):
 

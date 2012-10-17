@@ -12,7 +12,7 @@ from composes.similarity.dot_prod import DotProdSimilarity
 from composes.similarity.cos import CosSimilarity
 from composes.similarity.euclidean import EuclideanSimilarity
 from composes.similarity.lin import LinSimilarity
-from composes.utils.matrix_utils2 import to_compatible_matrix_types
+from composes.utils.matrix_utils import to_compatible_matrix_types
 
 class SimilarityTest(unittest.TestCase):
 

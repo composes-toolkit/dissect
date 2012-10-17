@@ -4,12 +4,12 @@ Created on Oct 2, 2012
 @author: georgianadinu
 '''
 import numpy as np
-from composes.utils.matrix_utils import is_array
-from composes.utils.matrix_utils2 import to_matrix
-from composes.utils.matrix_utils2 import assert_is_array_or_matrix
-#from composes.utils.matrix_utils2 import assert_same_shape
+from composes.utils.py_matrix_utils import is_array
+from composes.utils.matrix_utils import to_matrix
+from composes.utils.matrix_utils import assert_is_array_or_matrix
+#from composes.utils.matrix_utils import assert_same_shape
 from composes.matrix.matrix import Matrix
-from composes.utils.matrix_utils2 import to_compatible_matrix_types
+from composes.utils.matrix_utils import to_compatible_matrix_types
 
 class Similarity(object):
     '''

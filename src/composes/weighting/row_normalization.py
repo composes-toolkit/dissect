@@ -5,7 +5,7 @@ Created on Oct 4, 2012
 '''
 
 from weighting import Weighting
-from composes.utils.matrix_utils import nonzero_invert
+from composes.utils.py_matrix_utils import nonzero_invert
 
 class RowNormalization(Weighting):
     '''

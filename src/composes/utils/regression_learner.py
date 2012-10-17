@@ -8,7 +8,7 @@ import numpy as np
 from composes.matrix.linalg import Linalg
 from crossvalidation_utils import get_split_indices
 from crossvalidation_utils import get_submatrix_list
-from matrix_utils2 import padd_matrix 
+from matrix_utils import padd_matrix 
 
 class RegressionLearner(object):
     '''

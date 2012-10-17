@@ -10,9 +10,9 @@ from composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from composes.utils.space_utils import get_partitions
 from composes.utils.regression_learner import RidgeRegressionLearner
-from composes.utils.matrix_utils2 import resolve_type_conflict
-from composes.utils.matrix_utils2 import get_type_of_largest
-from composes.utils.matrix_utils2 import padd_matrix
+from composes.utils.matrix_utils import resolve_type_conflict
+from composes.utils.matrix_utils import get_type_of_largest
+from composes.utils.matrix_utils import padd_matrix
 from composes.utils.space_utils import assert_is_instance
 from composes.exception.illegal_state_error import IllegalStateError
 

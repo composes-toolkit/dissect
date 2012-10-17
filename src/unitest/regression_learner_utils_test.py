@@ -9,7 +9,7 @@ from composes.utils.regression_learner import RegressionLearner
 from composes.utils.regression_learner import RidgeRegressionLearner
 from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.matrix.dense_matrix import DenseMatrix
-from composes.utils.matrix_utils2 import padd_matrix 
+from composes.utils.matrix_utils import padd_matrix 
 
 class Test(unittest.TestCase):
 

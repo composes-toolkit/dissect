@@ -75,37 +75,6 @@ def assert_is_instance(object_, class_):
     if not isinstance(object_, class_):
         raise TypeError("expected %s, received %s" % (class_, type(object_)))
 
-
-def extract_indexing_structs(filename, field_list):
-    str2id = {}
-    id2str = []
-    no_fields = len(field_list)
-    
-    str2id_list = [str2id.copy() for i in xrange(no_fields)]
-    id2str_list = [list(id2str) for i in xrange(no_fields)]
-    index_list = [0 for i in xrange(no_fields)]
-    max_field = max(field_list)
-    
-    with open(filename, "rb") as input_stream:
-        for line in input_stream:
-            if line.strip() != "":
-                elements = line.strip().split()
-                if len(elements) <= max_field:
-                    warn("Invalid input line:%s. Skipping it" % line.strip())
-                else:
-                    for field_idx, field in enumerate(field_list):
-                        current_str = elements[field]
-                        if not current_str in str2id_list[field_idx]:
-                            str2id_list[field_idx][current_str] = index_list[field_idx]
-                            id2str_list[field_idx].append(current_str)
-                            index_list[field_idx] += 1
- 
-    for id2str in id2str_list:
-        if not id2str:
-            raise ValueError("Found no valid data in file: %s!" % filename)
-    return (id2str_list, str2id_list)
-
-
 def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
     #TODO: duplicate (row,col) pairs are not detected, 
     #the csr_matrix construction sums them up

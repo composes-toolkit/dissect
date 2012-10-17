@@ -7,7 +7,7 @@ import unittest
 import numpy as np
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
-from composes.utils.matrix_utils2 import resolve_type_conflict
+from composes.utils.matrix_utils import resolve_type_conflict
 from scipy.sparse import csr_matrix
 
 class Test(unittest.TestCase):

@@ -6,7 +6,7 @@ Created on Jun 6, 2012
 
 #from weighting_scheme import Weighting
 from composes.exception.illegal_state_error import IllegalStateError
-from composes.utils.matrix_utils2 import resolve_type_conflict
+from composes.utils.matrix_utils import resolve_type_conflict
 from warnings import warn
 # TODO: exception handling
 class Operation(object):

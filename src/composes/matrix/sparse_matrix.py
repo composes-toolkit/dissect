@@ -14,7 +14,7 @@ from scipy.sparse.sputils import isintlike
 from composes.utils.num_utils import is_numeric
 from composes.utils.num_utils import is_integer
 from composes.matrix.matrix import Matrix
-from composes.utils.matrix_utils import array_to_csr_diagonal
+from composes.utils.py_matrix_utils import array_to_csr_diagonal
 from scipy.sparse import identity
 
 class SparseMatrix(Matrix):

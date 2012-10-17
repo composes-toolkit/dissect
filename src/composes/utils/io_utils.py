@@ -6,6 +6,9 @@ Created on Oct 16, 2012
 
 import pickle
 import os
+from warnings import warn
+from composes.matrix.dense_matrix import DenseMatrix
+from composes.matrix.sparse_matrix import SparseMatrix
 
 def save(object_, file_name):
     create_parent_directories(file_name)
@@ -28,7 +31,71 @@ def create_parent_directories(file_name):
             print parent_dir
             os.makedirs(parent_dir)
 
+def extract_indexing_structs(filename, field_list):
+    str2id = {}
+    id2str = []
+    no_fields = len(field_list)
+    
+    str2id_list = [str2id.copy() for i in xrange(no_fields)]
+    id2str_list = [list(id2str) for i in xrange(no_fields)]
+    index_list = [0 for i in xrange(no_fields)]
+    max_field = max(field_list)
+    
+    with open(filename, "rb") as input_stream:
+        for line in input_stream:
+            if line.strip() != "":
+                elements = line.strip().split()
+                if len(elements) <= max_field:
+                    warn("Invalid input line:%s. Skipping it" % line.strip())
+                else:
+                    for field_idx, field in enumerate(field_list):
+                        current_str = elements[field]
+                        if not current_str in str2id_list[field_idx]:
+                            str2id_list[field_idx][current_str] = index_list[field_idx]
+                            id2str_list[field_idx].append(current_str)
+                            index_list[field_idx] += 1
+ 
+    for id2str in id2str_list:
+        if not id2str:
+            raise ValueError("Found no valid data in file: %s!" % filename)
+    return (id2str_list, str2id_list)
+
 def print_list(list_, file_name):
     with open(file_name,'w') as f:
         for item in list_:
             f.write(item + "\n")
+            
+            
+def print_cooc_mat_sparse_format(matrix_, id2row, id2column, file_prefix):
+    matrix_file = "%s.%s" %(file_prefix, "sm")
+    with open(matrix_file, 'w') as f: 
+        if isinstance(matrix_, SparseMatrix):
+            if not id2column:
+                raise ValueError("Cannot print matrix with no column info in sparse format!")
+            mat = matrix_.mat
+
+            data = mat.data
+            row_indices = mat.indptr
+            col_indices = mat.indices
+            
+            row_index = 0
+            next_row = row_indices[1]
+            row = id2row[0]  
+            for i in xrange(len(data)):
+                while i == next_row:
+                    row_index +=1
+                    next_row = row_indices[row_index + 1]
+                    row = id2row[row_index]  
+                col = id2column[col_indices[i]]
+                f.write("%s\t%s\t%f\n" %(row,col,data[i]))
+        else:
+            raise NotImplementedError("Not implemented\n")        
+
+def print_cooc_mat_dense_format(matrix_, id2row, file_prefix):
+    matrix_file = "%s.%s" %(file_prefix, "dm")
+    with open(matrix_file, 'w') as f: 
+        for i, row in enumerate(id2row):
+            v = DenseMatrix(matrix_[i]).mat.flat
+            line = "\t".join([row] + [repr(v[j]) for j in range(len(v))])
+            f.write("%s\n" % (line))
+

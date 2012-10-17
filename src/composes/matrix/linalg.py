@@ -14,8 +14,8 @@ from math import sqrt
 from composes.matrix.matrix import Matrix
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
-from composes.utils.matrix_utils2 import assert_same_shape
-from composes.utils.matrix_utils2 import padd_matrix
+from composes.utils.matrix_utils import assert_same_shape
+from composes.utils.matrix_utils import padd_matrix
 
 class Linalg(object):
     '''

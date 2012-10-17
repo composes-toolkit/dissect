@@ -6,7 +6,7 @@ Created on Oct 15, 2012
 import numpy as np
 from composition_model import CompositionModel
 from composes.utils.num_utils import is_numeric
-from composes.utils.matrix_utils import nonzero_invert
+from composes.utils.py_matrix_utils import nonzero_invert
 
 
 class Dilation(CompositionModel):
@@ -69,4 +69,4 @@ class Dilation(CompositionModel):
     
     def _export(self, filename):
         with open(filename, "w") as output_stream:
-            output_stream.write("lambda\t%f" %self._lambda)
+            output_stream.write("lambda\t%f" % self._lambda)
