@@ -64,3 +64,9 @@ class Dilation(CompositionModel):
             
         return result
     
+    def get_lambda(self):
+        return self._lambda
+    
+    def _export(self, filename):
+        with open(filename, "w") as output_stream:
+            output_stream.write("lambda\t%f" %self._lambda)

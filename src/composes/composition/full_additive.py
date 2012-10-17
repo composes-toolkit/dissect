@@ -12,6 +12,8 @@ from composes.utils.matrix_utils2 import to_compatible_matrix_types
 from composes.utils.regression_learner import RidgeRegressionLearner
 from composes.utils.regression_learner import RegressionLearner
 from composes.utils.matrix_utils2 import resolve_type_conflict
+from composes.matrix.dense_matrix import DenseMatrix
+from composes.exception.illegal_state_error import IllegalStateError
 
 class FullAdditive(CompositionModel):
     '''
@@ -44,6 +46,8 @@ class FullAdditive(CompositionModel):
             if "learner" in kwargs:
                 self._regression_learner = kwargs["learner"] 
             self._has_intercept = self._regression_learner.has_intercept()
+            self._mat_a_t = None
+            self._mat_b_t = None
         
         
     def _train(self, arg1_mat, arg2_mat, phrase_mat):
@@ -78,5 +82,18 @@ class FullAdditive(CompositionModel):
     def _build_id2column(self, arg1_space, arg2_space):
         return []
 
+    def _export(self, filename):
+        if self._mat_a_t is None or self._mat_b_t is None:
+            raise IllegalStateError("cannot export an untrained FullAdditive model.")
+            
+        with open(filename, "w") as output_stream:
+            output_stream.write("A\n")
+            output_stream.write(str(DenseMatrix(self._mat_a_t).mat.T))
+            output_stream.write("\nB\n")
+            mat_b = DenseMatrix(self._mat_b_t[:-1,]).mat.T
+            output_stream.write(str(mat_b))
+            output_stream.write("\nintercepts\n")
+            intercept = DenseMatrix(self._mat_b_t[-1:,]).mat.T
+            output_stream.write(str(intercept))
            
     
