@@ -8,7 +8,7 @@ Created on Jun 6, 2012
 from composes.exception.illegal_state_error import IllegalStateError
 from composes.utils.matrix_utils import resolve_type_conflict
 from warnings import warn
-# TODO: exception handling
+
 class Operation(object):
     '''
     classdocs
@@ -30,36 +30,36 @@ class Operation(object):
         raise IllegalStateError("Illegal application of %s. Attempting\
                                      double application." % (transformation))
         
-class WeightingOperation(Operation):
+class ScalingOperation(Operation):
     """
     """
-    def __init__(self, weighting):
-        self.__weighting = weighting
+    def __init__(self, scaling):
+        self.__scaling = scaling
         self.__column_stats = None
 
     def apply(self, matrix_):
       
         if not self.__column_stats is None:
-            self._raise_double_application_error(self.__weighting)
+            self._raise_double_application_error(self.__scaling)
         
-        result_matrix = self.__weighting.apply(matrix_)
+        result_matrix = self.__scaling.apply(matrix_)
         
-        if self.__weighting.uses_column_stats:
-            self.__column_stats = self.__weighting.get_column_stats(matrix_)
+        if self.__scaling.uses_column_stats:
+            self.__column_stats = self.__scaling.get_column_stats(matrix_)
         
         return result_matrix
     
     def project(self, matrix_):
-        if self.__column_stats is None and self.__weighting.uses_column_stats:
-            self._raise_projection_error(self.__weighting)
+        if self.__column_stats is None and self.__scaling.uses_column_stats:
+            self._raise_projection_error(self.__scaling)
         
-        if self.__weighting.uses_column_stats:
-            return self.__weighting.apply(matrix_, self.__column_stats)
+        if self.__scaling.uses_column_stats:
+            return self.__scaling.apply(matrix_, self.__column_stats)
         else:
-            return self.__weighting.apply(matrix_)
+            return self.__scaling.apply(matrix_)
     
     def __str__(self):
-        return str(self.__weighting)
+        return str(self.__scaling)
      
      
 class DimensionalityReductionOperation(Operation):

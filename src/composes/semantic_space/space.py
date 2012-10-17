@@ -22,9 +22,9 @@ from composes.matrix.sparse_matrix import SparseMatrix
 from composes.semantic_space.operation import FeatureSelectionOperation
 from composes.semantic_space.operation import DimensionalityReductionOperation
 from composes.similarity.similarity import Similarity
-from composes.weighting.weighting import Weighting
-from composes.dim_reduction.dimensionality_reduction import DimensionalityReduction
-from composes.feature_selection.feature_selection import FeatureSelection
+from composes.transformation.scaling.scaling import Scaling
+from composes.transformation.dim_reduction.dimensionality_reduction import DimensionalityReduction
+from composes.transformation.feature_selection.feature_selection import FeatureSelection
 from composes.exception.illegal_state_error import IllegalOperationError
 from composes.utils import log_utils as log
 from composes.utils.space_utils import read_sparse_space_data
@@ -111,7 +111,7 @@ class Space(object):
         
         start = time.time()
         #TODO , FeatureSelection, DimReduction ..
-        assert_is_instance(transformation, (Weighting, DimensionalityReduction, 
+        assert_is_instance(transformation, (Scaling, DimensionalityReduction, 
                                             FeatureSelection))
         op = transformation.create_operation()
         new_matrix =  op.apply(self.cooccurrence_matrix)
@@ -297,7 +297,8 @@ class Space(object):
    
     @classmethod
     def build(cls, **kwargs):
-        # TODO: check arguments
+
+        start = time.time()
         id2row = None
         id2column = None
         
@@ -340,9 +341,12 @@ class Space(object):
         if id2column and len(id2column) != mat.shape[1]:
             raise ValueError("Columns provided inconsistent with shape of input matrix!")
             
+        log.print_matrix_info(logger, mat, 1, "Built semantic space:")
+        log.print_time_info(logger, time.time(), start, 2)    
         return Space(mat, id2row, id2column, row2id, column2id)
     
     def export(self, file_prefix, **kwargs):
+        start = time.time()
         create_parent_directories(file_prefix)
         format_ = "dm"
         if "format" in kwargs:
@@ -357,6 +361,10 @@ class Space(object):
                                              self.id2row,
                                              self.id2column, file_prefix)
         self._export_row_column(file_prefix)
+        
+        log.print_matrix_info(logger, self.cooccurrence_matrix, 1, 
+                              "Printed semantic space:")
+        log.print_time_info(logger, time.time(), start, 2) 
         
     def _export_row_column(self, file_prefix):
         row_file = "%s.%s" %(file_prefix, "row")

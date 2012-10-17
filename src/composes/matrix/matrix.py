@@ -118,10 +118,6 @@ class Matrix(object):
     mat = property(get_mat, set_mat)
     shape = property(get_shape)
     
-    #TODO: implement scale_rows, scale_columns:
-    #sparse: mult with diagonal
-    #dense: use broadcasting
-    #use them in weighting/normalization (to unify it)
     
     
             

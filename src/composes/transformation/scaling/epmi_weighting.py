@@ -3,10 +3,10 @@ Created on Jun 3, 2012
 
 @author: thenghia.pham
 '''
-from weighting import Weighting
+from scaling import Scaling
 from composes.utils.py_matrix_utils import nonzero_invert
 
-class EpmiWeighting(Weighting):
+class EpmiWeighting(Scaling):
     '''
     Exponential Pointwise Mututal Information weighting
     '''

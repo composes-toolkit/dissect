@@ -7,7 +7,7 @@ import numpy as np
 import time
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
-from composes.weighting.plmi import PpmiWeighting
+from composes.transformation.scaling.plmi_weighting import PpmiWeighting
 from composes.utils.mem_utils import get_mem_usage
 
 """

@@ -5,10 +5,10 @@ Created on Sep 26, 2012
 '''
 import unittest
 import numpy as np
-from composes.weighting.ppmi import PpmiWeighting
-from composes.dim_reduction.svd import Svd
-from composes.dim_reduction.nmf import Nmf  
-from composes.semantic_space.operation import WeightingOperation
+from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
+from composes.transformation.dim_reduction.svd import Svd
+from composes.transformation.dim_reduction.nmf import Nmf  
+from composes.semantic_space.operation import ScalingOperation
 from composes.semantic_space.operation import DimensionalityReductionOperation
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
@@ -103,7 +103,7 @@ class Test(unittest.TestCase):
                       (self.m2, np.array([[0]]))]
         w = PpmiWeighting()
         for in_mat, expected_mat in test_cases:
-            op = WeightingOperation(w)
+            op = ScalingOperation(w)
             tmp_mat = in_mat.copy()
             out_mat = op.apply(DenseMatrix(in_mat)).mat
             np.testing.assert_array_almost_equal(expected_mat, out_mat, 7)
@@ -116,7 +116,7 @@ class Test(unittest.TestCase):
                       (self.m2, self.m4, np.array([[0]]))]
         w = PpmiWeighting()
         for (core_mat, per_mat, expected_mat) in test_cases:
-            op = WeightingOperation(w)
+            op = ScalingOperation(w)
             tmp_mat = per_mat.copy()
             
             self.assertRaises(IllegalStateError, op.project, 

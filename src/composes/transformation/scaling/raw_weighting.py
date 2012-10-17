@@ -4,9 +4,9 @@ Created on Jun 3, 2012
 @author: thenghia.pham
 '''
 
-from weighting import Weighting
+from scaling import Scaling
 
-class RawWeighting(Weighting):
+class RawWeighting(Scaling):
     '''
     Raw weighting scheme.
     

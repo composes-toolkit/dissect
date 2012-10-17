@@ -8,11 +8,11 @@ import numpy as np
 from composes.semantic_space.space import Space
 from composes.semantic_space.peripheral_space import PeripheralSpace
 from composes.matrix.dense_matrix import DenseMatrix
-from composes.weighting.epmi import EpmiWeighting
-from composes.weighting.ppmi import PpmiWeighting
-from composes.weighting.plog import PlogWeighting
-from composes.weighting.raw import RawWeighting
-from composes.dim_reduction.svd import Svd
+from composes.transformation.scaling.epmi_weighting import EpmiWeighting
+from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
+from composes.transformation.scaling.plog_weighting import PlogWeighting
+from composes.transformation.scaling.raw_weighting import RawWeighting
+from composes.transformation.dim_reduction.svd import Svd
 
 class PeripheralSpaceTest(unittest.TestCase):
 

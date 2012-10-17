@@ -5,9 +5,9 @@ Created on Oct 4, 2012
 '''
 from numpy import double
 from warnings import warn
-from weighting import Weighting
+from scaling import Scaling
 
-class Normalization(Weighting):
+class Normalization(Scaling):
     '''
     classdocs
     '''

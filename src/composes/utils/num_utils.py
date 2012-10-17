@@ -8,7 +8,6 @@ from numbers import Number
 from numbers import Integral
 import numpy as np
 
-# TODO: replace with np.isscalar(x)
 def is_numeric(operand):
     return isinstance(operand, (Number, np.number))
 

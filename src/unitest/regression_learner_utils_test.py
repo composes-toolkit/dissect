@@ -5,7 +5,6 @@ Created on Oct 9, 2012
 '''
 import unittest
 import numpy as np
-from composes.utils.regression_learner import RegressionLearner
 from composes.utils.regression_learner import RidgeRegressionLearner
 from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.matrix.dense_matrix import DenseMatrix
@@ -45,7 +44,7 @@ class Test(unittest.TestCase):
             learner2 = LstsqRegressionLearner(intercept=False)
             solution2 = learner2.train(m_a, m_b)
             
-            np.testing.assert_array_almost_equal(solution.mat, solution2.mat, 7)
+            np.testing.assert_array_almost_equal(solution.mat, solution2.mat, 3)
             
 
     def test_crossvalidation(self):

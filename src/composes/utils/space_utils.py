@@ -76,8 +76,7 @@ def assert_is_instance(object_, class_):
         raise TypeError("expected %s, received %s" % (class_, type(object_)))
 
 def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
-    #TODO: duplicate (row,col) pairs are not detected, 
-    #the csr_matrix construction sums them up
+
     with open(matrix_file) as f:
         no_lines = sum(1 for line in f if line.strip() != "")
     
@@ -116,7 +115,7 @@ def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
 
     m = SparseMatrix(csr_matrix( (data,(row,col)), shape = (len(row2id), len(column2id))))
     if m.mat.nnz != i:
-        warn("Found duplicate row,column pairs. Duplicate entries are summed up.")
+        warn("Found 0-counts or duplicate row,column pairs. (Duplicate entries are summed up.)")
     return m
 
 """

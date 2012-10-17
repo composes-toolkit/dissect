@@ -4,10 +4,10 @@ Created on Sep 20, 2012
 @author: georgianadinu
 '''
 
-from weighting import Weighting
-from ppmi import PpmiWeighting
+from scaling import Scaling
+from ppmi_weighting import PpmiWeighting
 
-class PlmiWeighting(Weighting):
+class PlmiWeighting(Scaling):
     '''
     classdocs
     '''

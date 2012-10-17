@@ -39,11 +39,7 @@ class LstsqRegressionLearner(RegressionLearner):
 class RidgeRegressionLearner(RegressionLearner):
     
     def __init__(self, **kwargs):
-        # TODO: do not do cross validation if param=? is given
-        # e.g the default of crossvalidation should be determined based on
-        # the availability of param and param_range
-        # beside user should not give both 
-        
+
         self._intercept = True
         if "intercept" in kwargs:
             self._intercept = kwargs["intercept"]

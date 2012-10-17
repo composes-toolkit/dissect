@@ -8,12 +8,12 @@ import numpy as np
 import numpy.testing
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
-from composes.weighting.epmi import EpmiWeighting
-from composes.weighting.plog import PlogWeighting
-from composes.weighting.ppmi import PpmiWeighting
-from composes.weighting.plmi import PlmiWeighting
-from composes.weighting.row_normalization import RowNormalization
-from composes.weighting.normalization import Normalization
+from composes.transformation.scaling.epmi_weighting import EpmiWeighting
+from composes.transformation.scaling.plog_weighting import PlogWeighting
+from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
+from composes.transformation.scaling.plmi_weighting import PlmiWeighting
+from composes.transformation.scaling.row_normalization import RowNormalization
+from composes.transformation.scaling.normalization import Normalization
 
 class Test(unittest.TestCase):
 

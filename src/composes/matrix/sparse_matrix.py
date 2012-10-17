@@ -87,7 +87,7 @@ class SparseMatrix(Matrix):
             return SparseMatrix(result)
     
     def reshape(self, new_shape):
-        # TODO: change this is necessary to make a copy
+
         if not isinstance(new_shape, tuple) or len(new_shape) != 2:
             raise ValueError("shape must be integer pair")
         
@@ -99,12 +99,13 @@ class SparseMatrix(Matrix):
         if no_rows * no_cols != new_no_rows * new_no_cols:
             raise ValueError("total size of new matrix must be unchanged.")
         
+        #TODO: change here if we want a copy!!
         mat = self.mat.tocoo(copy=False)
         liniar_pos = mat.row * no_cols + mat.col
         mat.row = liniar_pos // new_no_cols
         mat.col = liniar_pos - (mat.row * new_no_cols)
         
-        #TODO: change here if we want a copy!!
+        #NOTE: change here if we want a copy!!
         self.mat = csr_matrix((mat.data, (mat.row, mat.col)), shape=new_shape)
         
     @staticmethod

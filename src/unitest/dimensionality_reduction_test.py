@@ -5,8 +5,8 @@ Created on Sep 28, 2012
 '''
 import unittest
 import numpy as np
-from composes.dim_reduction.svd import Svd
-from composes.dim_reduction.nmf import Nmf
+from composes.transformation.dim_reduction.svd import Svd
+from composes.transformation.dim_reduction.nmf import Nmf
 from composes.matrix.linalg import Linalg
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix

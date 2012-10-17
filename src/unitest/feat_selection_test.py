@@ -5,12 +5,12 @@ Created on Oct 5, 2012
 '''
 import unittest
 import numpy as np
-from composes.feature_selection.top_feature_selection import TopFeatureSelection
+from composes.transformation.feature_selection.top_feature_selection import TopFeatureSelection
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
 from composes.semantic_space.space import Space
 from composes.semantic_space.peripheral_space import PeripheralSpace
-from composes.weighting.plog import PlogWeighting
+from composes.transformation.scaling.plog_weighting import PlogWeighting
 
 
 class Test(unittest.TestCase):

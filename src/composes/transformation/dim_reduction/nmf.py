@@ -30,7 +30,8 @@ class Nmf(DimensionalityReduction):
         return w, Linalg.pinv(h)
         
     def random_init(self, matrix_):
-          
+        
+        # TODO: implement the fancier but still fast init (from nimfa: v_col)  
         rndcol = np.random.random_integers(0, matrix_.shape[1] - 1, 
                                            self._reduced_dimension)
         

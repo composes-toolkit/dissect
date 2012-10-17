@@ -4,10 +4,10 @@ Created on Oct 4, 2012
 @author: georgianadinu
 '''
 
-from weighting import Weighting
+from scaling import Scaling
 from composes.utils.py_matrix_utils import nonzero_invert
 
-class RowNormalization(Weighting):
+class RowNormalization(Scaling):
     '''
     classdocs
     '''

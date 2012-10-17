@@ -5,10 +5,10 @@ Created on Sep 26, 2012
 '''
 import numpy as np
 import unittest
-from composes.semantic_space.operation import WeightingOperation
-from composes.weighting.epmi import EpmiWeighting
-from composes.dim_reduction.svd import Svd
-from composes.dim_reduction.nmf import Nmf
+from composes.semantic_space.operation import ScalingOperation
+from composes.transformation.scaling.epmi_weighting import EpmiWeighting
+from composes.transformation.dim_reduction.svd import Svd
+from composes.transformation.dim_reduction.nmf import Nmf
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
 from composes.semantic_space.space import Space
@@ -22,13 +22,13 @@ class Test(unittest.TestCase):
                        ["feat1", "feat2"],
                        {"man":1, "car":0},
                        {"feat1":0, "feat2":1},
-                       [WeightingOperation(EpmiWeighting())]),
+                       [ScalingOperation(EpmiWeighting())]),
                       (DenseMatrix(np.array([[1,2],[3,4]])),
                        ["car", "man"],
                        [],
                        {"man":1, "car":0},
                        {},
-                       [WeightingOperation(EpmiWeighting())])]
+                       [ScalingOperation(EpmiWeighting())])]
         
         self.m1 = np.array([[1,2,3]])
         self.row1 = ["a"]

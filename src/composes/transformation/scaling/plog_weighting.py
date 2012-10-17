@@ -3,15 +3,13 @@ Created on Jun 3, 2012
 
 @author: thenghia.pham
 '''
-from weighting import Weighting
+from scaling import Scaling
     
-class PlogWeighting(Weighting):
+class PlogWeighting(Scaling):
     '''
     Positive Log Weighting
     '''
     _name = "plog"
-    # TODO: implement Weighting
-    #       remove constructor 
 
     def apply(self, matrix_):
         '''

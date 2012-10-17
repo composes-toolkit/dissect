@@ -11,11 +11,11 @@ class MyClass(object):
 
     _uses_column_stats = True
 
-    def __init__(selfparams):
+    def __init__(self):
         '''
         Constructor
         '''
-        
+        pass
         
     def get_column_stats(self, matrix_):
-        return ...        
+        pass        

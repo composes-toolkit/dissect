@@ -4,9 +4,9 @@ Created on Sep 20, 2012
 @author: georgianadinu
 '''
 
-from composes.semantic_space.operation import WeightingOperation
+from composes.semantic_space.operation import ScalingOperation
 
-class Weighting(object):
+class Scaling(object):
     '''
     classdocs
     '''
@@ -20,7 +20,7 @@ class Weighting(object):
         return self._uses_column_stats
     
     def create_operation(self):
-        return WeightingOperation(self)
+        return ScalingOperation(self)
     
     def __str__(self):
         return self._name
