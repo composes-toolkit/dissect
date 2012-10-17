@@ -9,15 +9,21 @@ import os
 from warnings import warn
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
+from composes.utils.space_utils import assert_is_instance
 
 def save(object_, file_name):
     create_parent_directories(file_name)
     with open(file_name,'w') as f:
         pickle.dump(object_, f)
 
-def load(file_name):
+def load(file_name, data_type=None):
     with open(file_name) as f:
-        return pickle.load(f)
+        result = pickle.load(f)
+        
+    if not data_type is None:
+        assert_is_instance(result, data_type)
+     
+    return result    
 
 def create_directories(directory):
     if (not os.path.exists(directory)):

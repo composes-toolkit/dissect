@@ -5,7 +5,6 @@ Created on Oct 4, 2012
 '''
 
 import numpy as np
-import scipy as sp
 import scipy.linalg as splinalg
 from sparsesvd import sparsesvd
 from warnings import warn
@@ -234,6 +233,9 @@ class Linalg(object):
         timelimit, maxiter: limit of time and iterations
         """
 
+        # TODO: we removed a check of the proj gradient here
+        # which was one of the stopping conditions (both here and in the
+        # subproblem)
         if not isinstance(v, Matrix):
             raise TypeError("expected Matrix type, received %s" % type(v))
         w = w_init

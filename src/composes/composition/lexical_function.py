@@ -60,6 +60,7 @@ class LexicalFunction(CompositionModel):
         
         start = time.time()
  
+        # TODO: VERY IMPORTANT lower limit on number of instances per function here!
         self._has_intercept = self._regression_learner.has_intercept()
         if not isinstance(arg_space, Space):
             raise ValueError("expected one input spaces!")  

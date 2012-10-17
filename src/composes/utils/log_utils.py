@@ -5,8 +5,14 @@ Created on Oct 15, 2012
 '''
 
 from numpy import double
+import logging
 
+def config_logging(file_name, level = logging.INFO, format_ =""):
+    if not file_name is None:
+        logging.basicConfig(filename=file_name, level=level, format=format_)
+        logging.debug("start logging")
 
+            
 def get_ident(delim, ident_level):
     return delim * ident_level
 

@@ -12,6 +12,8 @@ from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import add_items_to_dict
 from composes.semantic_space.operation import FeatureSelectionOperation
 from composes.semantic_space.operation import DimensionalityReductionOperation
+from composes.utils.space_utils import assert_is_instance
+from composes.matrix.matrix import Matrix
 
 class PeripheralSpace(Space):
     '''
@@ -23,6 +25,10 @@ class PeripheralSpace(Space):
         '''
         Constructor
         '''
+        assert_is_instance(matrix_, Matrix)
+        assert_is_instance(core_space, Space)
+        # TODO: assert it is not a peripheral space here!
+        
         if row2id is None:
             row2id = list2dict(id2row)
         else:

@@ -5,8 +5,6 @@ Created on Oct 1, 2012
 '''
 
 import numpy as np
-from time import time
-from math import sqrt
 from dimensionality_reduction import DimensionalityReduction
 from composes.matrix.linalg import Linalg
 
