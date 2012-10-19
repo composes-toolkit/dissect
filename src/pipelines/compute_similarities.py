@@ -83,6 +83,7 @@ def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
         space2 = io_utils.load(space_files[1], Space)
     
     for sim_measure in sim_measures:
+        print "Computing similarities: %s" % sim_measure 
         if not sim_measure in sim_dict:
             warn("Similarity measure:%s not defined" % sim_measure)
             continue

@@ -58,7 +58,7 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
 
     core_space = io_utils.load(core_space_file, Space)
     in_file_descr = "PER_SS." + in_file_prefix.split("/")[-1]
-    core_descr = core_space_file.split("/")[-1].split(".")[0:-1]
+    core_descr = ".".join(core_space_file.split("/")[-1].split(".")[0:-1])
      
     if not in_format in ("sm, dm"):
         raise ValueError("Invalid input format:%s" % in_format) 
@@ -73,10 +73,12 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
     if not os.path.exists(column_file):
         column_file = None
 
+    print "Building matrix..."
     space = PeripheralSpace.build(core_space, data=data_file, rows=row_file, 
                                   cols=column_file, format=in_format)
     
-    out_file_prefix = "%s/%s.%s.peripheral" % (out_dir, in_file_descr, core_descr)
+    print "Printing..."
+    out_file_prefix = "%s/%s.%s" % (out_dir, in_file_descr, core_descr)
     io_utils.save(space, out_file_prefix + ".pickle")
     if not out_format is None:
         space.export(out_file_prefix, format=out_format)  

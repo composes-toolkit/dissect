@@ -77,6 +77,7 @@ def assert_option_not_none(option, message):
 def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, regression, 
                 crossvalid, intercept, param_range, export_params):
     
+    print "Reading in data..."
     in_descr = in_file.split("/")[-1] 
     
     model_dict = {"weighted_add": WeightedAdditive,
@@ -111,11 +112,13 @@ def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, reg
             
     train_data = io_utils.read_tuple_list(in_file)
     
+    print "Training %s model" % model
     if arg_space2 is None or model == "lexical_func":
         model_obj.train(train_data, arg_space, phrase_space)
     else:
         model_obj.train(train_data, (arg_space, arg_space2), phrase_space)
-        
+    
+    print "Printing..."    
     out_file = ".".join(["TRAINED_COMP_MODEL", model, in_descr])    
     io_utils.save(model_obj, "%s.pickle" % out_file)
     

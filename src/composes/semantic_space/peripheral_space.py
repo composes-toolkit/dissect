@@ -57,9 +57,12 @@ class PeripheralSpace(Space):
                 self._id2column, self._column2id = [], {}
             
             if isinstance(operation, FeatureSelectionOperation):
-                self._id2column = list(array(operation.original_columns)[operation.selected_columns])
-                self._column2id = list2dict(self._id2column)
-            
+                if operation.original_columns: 
+                    self._id2column = list(array(operation.original_columns)[operation.selected_columns])
+                    self._column2id = list2dict(self._id2column)
+                else:
+                    self._id2column, self._column2id = [],{}
+
             matrix_ = operation.project(matrix_)
         return matrix_
         

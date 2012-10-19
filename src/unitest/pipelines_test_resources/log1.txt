@@ -5576,3 +5576,447 @@ Applied transformation:
     Perc. non-zero entries:100
     
     Timing:0.000419855117798 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x3
+    
+    Timing:0.0029239654541 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x3
+    
+    Timing:0.000998973846436 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x3
+    
+    Timing:0.00047492980957 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x3
+    
+    Timing:0.000537157058716 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x3
+    
+    Timing:0.000828981399536 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x4
+    
+    Timing:0.00177192687988 seconds
+  
+Applied transformation:
+    Transformation type:RawWeighting
+    Original semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x4
+    Resulted semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x4
+    
+    Timing:0.000799894332886 seconds
+  
+Applied transformation:
+    Transformation type:TopFeatureSelection
+    Reduced dimension:3
+    Original semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x4
+    Resulted semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x3
+    
+    Timing:0.00104117393494 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:2
+    Original semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x3
+    Resulted semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x2
+    
+    Timing:0.00151515007019 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x2
+    
+    Timing:0.00088095664978 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:1
+    Original semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x3
+    Resulted semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x1
+    
+    Timing:0.00135207176208 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x1
+    
+    Timing:0.00088906288147 seconds
+  
+Applied transformation:
+    Transformation type:TopFeatureSelection
+    Reduced dimension:3
+    Original semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x4
+    Resulted semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x3
+    
+    Timing:0.00109696388245 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:2
+    Original semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x3
+    Resulted semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x2
+    
+    Timing:0.00134611129761 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x2
+    
+    Timing:0.000915050506592 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:1
+    Original semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x3
+    Resulted semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x1
+    
+    Timing:0.00149011611938 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x1
+    
+    Timing:0.00116395950317 seconds
+  
+Applied transformation:
+    Transformation type:TopFeatureSelection
+    Reduced dimension:4
+    Original semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x4
+    Resulted semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x4
+    
+    Timing:0.00127792358398 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:2
+    Original semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x4
+    Resulted semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x2
+    
+    Timing:0.00150108337402 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x2
+    
+    Timing:0.00100994110107 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:1
+    Original semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x4
+    Resulted semantic space:
+      Matrix type:DenseMatrix
+      Matrix shape:3x1
+    
+    Timing:0.00146007537842 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x1
+    
+    Timing:0.000916957855225 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x2
+    
+    Timing:0.000546932220459 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x1
+    
+    Timing:0.000617027282715 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x2
+    
+    Timing:0.00056004524231 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x1
+    
+    Timing:0.000550031661987 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x2
+    
+    Timing:0.000566005706787 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x1
+    
+    Timing:0.000530004501343 seconds
+  Built semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:3x4
+    Perc. non-zero entries:100
+    
+    Timing:0.00174808502197 seconds
+  
+Applied transformation:
+    Transformation type:RawWeighting
+    Original semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x4
+      Perc. non-zero entries:100
+    Resulted semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x4
+      Perc. non-zero entries:100
+    
+    Timing:0.000922203063965 seconds
+  
+Applied transformation:
+    Transformation type:TopFeatureSelection
+    Reduced dimension:3
+    Original semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x4
+      Perc. non-zero entries:100
+    Resulted semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x3
+      Perc. non-zero entries:100
+    
+    Timing:0.00359106063843 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:2
+    Original semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x3
+      Perc. non-zero entries:100
+    Resulted semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x2
+      Perc. non-zero entries:100
+    
+    Timing:0.00486397743225 seconds
+  Printed semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:3x2
+    Perc. non-zero entries:100
+    
+    Timing:0.00265312194824 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:1
+    Original semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x3
+      Perc. non-zero entries:100
+    Resulted semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x1
+      Perc. non-zero entries:100
+    
+    Timing:0.00457882881165 seconds
+  Printed semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:3x1
+    Perc. non-zero entries:100
+    
+    Timing:0.00239396095276 seconds
+  
+Applied transformation:
+    Transformation type:TopFeatureSelection
+    Reduced dimension:3
+    Original semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x4
+      Perc. non-zero entries:100
+    Resulted semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x3
+      Perc. non-zero entries:100
+    
+    Timing:0.00386190414429 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:2
+    Original semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x3
+      Perc. non-zero entries:100
+    Resulted semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x2
+      Perc. non-zero entries:100
+    
+    Timing:0.00460195541382 seconds
+  Printed semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:3x2
+    Perc. non-zero entries:100
+    
+    Timing:0.00237512588501 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:1
+    Original semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x3
+      Perc. non-zero entries:100
+    Resulted semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x1
+      Perc. non-zero entries:100
+    
+    Timing:0.00475692749023 seconds
+  Printed semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:3x1
+    Perc. non-zero entries:100
+    
+    Timing:0.00236797332764 seconds
+  
+Applied transformation:
+    Transformation type:TopFeatureSelection
+    Reduced dimension:4
+    Original semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x4
+      Perc. non-zero entries:100
+    Resulted semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x4
+      Perc. non-zero entries:100
+    
+    Timing:0.00308609008789 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:2
+    Original semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x4
+      Perc. non-zero entries:100
+    Resulted semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x2
+      Perc. non-zero entries:100
+    
+    Timing:0.00504183769226 seconds
+  Printed semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:3x2
+    Perc. non-zero entries:100
+    
+    Timing:0.00242495536804 seconds
+  
+Applied transformation:
+    Transformation type:Svd
+    Reduced dimension:1
+    Original semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x4
+      Perc. non-zero entries:100
+    Resulted semantic space:
+      Matrix type:SparseMatrix
+      Matrix shape:3x1
+      Perc. non-zero entries:100
+    
+    Timing:0.00501990318298 seconds
+  Printed semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:3x1
+    Perc. non-zero entries:100
+    
+    Timing:0.00242805480957 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x2
+    
+    Timing:0.000547885894775 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x1
+    
+    Timing:0.000526905059814 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x2
+    
+    Timing:0.000505924224854 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x1
+    
+    Timing:0.00049901008606 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x2
+    
+    Timing:0.000526905059814 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:3x1
+    
+    Timing:0.000521183013916 seconds
+  Built semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.00550007820129 seconds
+  Printed semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.00131392478943 seconds
+  Built semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.0014488697052 seconds
+  Built semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.00144791603088 seconds

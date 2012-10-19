@@ -40,22 +40,22 @@ class Test(unittest.TestCase):
     def test_raises(self):
         
         self.assertRaises(SystemExit, bcs.main,["build_core_space.py", "-l",
-                                                "~/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/log1.txt",
+                                                self.dir_ + "log1.txt",
                                                 "-h"])
 
     def test_simple_sparse(self):
             
         bcs.main(["build_core_space.py", 
-                  "-l", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/log1.txt",
-                  "-i", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/mat1", 
-                  "-o", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/",
+                  "-l", self.dir_ + "log1.txt",
+                  "-i", self.dir_ + "mat1", 
+                  "-o", self.dir_,
                   "--input_format", "sm",
                   "--output_format", "sm"
                   ])
         
-        s1 = Space.build(data="/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/mat1.sm", format = "sm")
-        s2 = Space.build(data="/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/CORE_SS.mat1.sm", format="sm")
-        s3 = io_utils.load("/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/CORE_SS.mat1.pickle", Space)
+        s1 = Space.build(data=self.dir_ + "mat1.sm", format = "sm")
+        s2 = Space.build(data=self.dir_ + "CORE_SS.mat1.sm", format="sm")
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat1.pickle", Space)
         
         self._test_equal_spaces_sparse(s1, s2)
         self._test_equal_spaces_sparse(s1, s3)
@@ -63,9 +63,9 @@ class Test(unittest.TestCase):
     def test_simple_dense(self):
             
         bcs.main(["build_core_space.py", 
-                  "-l", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/log1.txt",
-                  "-i", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/mat2", 
-                  "-o", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/",
+                  "-l", self.dir_ + "log1.txt",
+                  "-i", self.dir_ + "mat2", 
+                  "-o", self.dir_,
                   "--input_format", "dm",
                   "--output_format", "dm"
                   ])
@@ -78,9 +78,9 @@ class Test(unittest.TestCase):
         self._test_equal_spaces_dense(s1, s3)        
  
         bcs.main(["build_core_space.py", 
-                  "-l", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/log1.txt",
-                  "-i", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/CORE_SS.mat2", 
-                  "-o", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/",
+                  "-l", self.dir_ + "log1.txt",
+                  "-i", self.dir_ + "CORE_SS.mat2", 
+                  "-o", self.dir_,
                   "--input_format", "pickle",
                   "--output_format", "dm"
                   ])
@@ -104,12 +104,12 @@ class Test(unittest.TestCase):
         
 
         bcs.main(["build_core_space.py", 
-                  "-l", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/log1.txt",
-                  "-i", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/mat3",
+                  "-l", self.dir_ + "log1.txt",
+                  "-i", self.dir_ + "mat3",
                   "-w", "raw",
                   "-s", "top_sum_3,top_length_3,top_sum_4",
                   "-r", "svd_2,svd_1",
-                  "-o", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/",
+                  "-o", self.dir_,
                   "--input_format", "dm",
                   "--output_format", "dm"
                   ])        
@@ -134,12 +134,12 @@ class Test(unittest.TestCase):
         
         
         bcs.main(["build_core_space.py", 
-          "-l", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/log1.txt",
-          "-i", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/mat3",
+          "-l", self.dir_ + "log1.txt",
+          "-i", self.dir_ + "mat3",
           "--weighting", "raw",
           "--selection", "top_sum_3,top_length_3,top_sum_4",
           "--reduction", "svd_2,svd_1",
-          "-o", "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/",
+          "-o", self.dir_,
           "--input_format", "sm",
           "--output_format", "dm"
           ])        

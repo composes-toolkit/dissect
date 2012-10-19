@@ -78,6 +78,7 @@ def apply_weighting(space, w):
                       "plmi":PlmiWeighting()}
 
     if not w is None:
+        print "Applying weighting: %s" % w
         if not w in weightings_dict:
             warn("Weigthing scheme: %s not defined" % w)
             return space
@@ -95,6 +96,7 @@ def apply_selection(w_space, s):
     selection_crit_list = ["sum", "length"]
         
     if not s is None:
+        print "Applying feature selection: %s" % s
         sel_els = s.split("_")
         if not len(sel_els) == 3:
             warn("Feature selection: %s not defined" % s)
@@ -122,6 +124,7 @@ def apply_reduction(s_space, r):
                        "nmf": Nmf}
         
     if not r is None:
+        print "Applying dimensionality reduction: %s" % r
         red_els = r.split("_")
         if not len(red_els) == 2:
             warn("Dimensionality reduction: %s not defined" % r)
@@ -156,7 +159,8 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
     
         if not os.path.exists(column_file):
             column_file = None
-    
+ 
+        print "Building matrix..."   
         space = Space.build(data=data_file, rows=row_file, cols=column_file, 
                             format=in_format)
  
@@ -167,6 +171,7 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
             for r in reductions:
                 r_space = apply_reduction(s_space, r)
                 
+                print "Printing..."
                 ops = [op for op in [in_file_descr, w, s, r] if op]     
                 r_space_descr = ".".join(ops)
                 out_file = out_dir + "/" + r_space_descr

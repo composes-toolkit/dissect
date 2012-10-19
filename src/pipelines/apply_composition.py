@@ -83,11 +83,11 @@ def create_model(model, alpha, beta, lambda_):
 def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
                 alpha, beta, lambda_, out_format):
 
+    print "Reading in data..."
     in_descr = in_file.split("/")[-1] 
     
     if not model is None: 
         model_obj = create_model(model, alpha, beta, lambda_)
-        
     else:
         model_obj = io_utils.load(trained_model, CompositionModel)
         
@@ -100,11 +100,13 @@ def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
     
     data = io_utils.read_tuple_list(in_file)
     
+    print "Applying composition model:%s" % type(model_obj)
     if arg_space2 is None or type(model_obj) in (LexicalFunction):
         composed_space = model_obj.compose(data, arg_space)
     else:
         composed_space = model_obj.compose(data, (arg_space, arg_space2))
     
+    print "Printing..."
     out_file = ".".join(["COMPOSED_SPACE", model_descr, in_descr])    
     io_utils.save(composed_space, "%s.pickle" % out_file)
     

@@ -85,6 +85,7 @@ def compute_neighbours(in_file, no_neighbours, out_dir, sim_measure, space_files
     
     data = io_utils.read_list(in_file)
 
+    print "Computing neighbours: %s" % sim_measure 
     with open(out_file,"w") as out_stream:
         for word in data:
             out_stream.write("%s\n" % word)
