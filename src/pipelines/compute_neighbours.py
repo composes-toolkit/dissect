@@ -64,7 +64,7 @@ def assert_option_not_none(option, message):
         
 
 def compute_neighbours(in_file, no_neighbours, out_dir, sim_measure, space_files):
-    
+    no_neighbours = int(no_neighbours)
     sim_dict = {"cos": CosSimilarity(),
                 "lin": LinSimilarity(),
                 "dot_prod": DotProdSimilarity(),
