@@ -41,6 +41,31 @@ class Test(unittest.TestCase):
         self.assertRaises(SystemExit, bps.main,["build_peripheral_space.py","-h"])
         self.assertRaises(SystemExit, bps.main,["build_peripheral_space.py","-l","-h"])
 
+    def test_simple_sparse_batch(self):
+            
+        bps.main(["build_peripheral_space.py", 
+                  "-l", self.dir_ + "log1.txt",
+                  "-i", self.dir_ + "mat1", 
+                  "-o", self.dir_,
+                  "--core_in_dir", self.dir_,
+                  "--core_filter", "CORE_SS.mat1.pickle",
+                  "--input_format", "sm",
+                  "--output_format", "sm"
+                  ])
+        
+        s1 = Space.build(data=self.dir_ + "mat1.sm",
+                         cols=self.dir_ + "mat1.cols", 
+                         format = "sm")
+        s2 = Space.build(data=self.dir_ + "PER_SS.mat1.CORE_SS.mat1.sm",
+                         cols=self.dir_ + "PER_SS.mat1.CORE_SS.mat1.cols",
+                         format="sm")
+        s3 = Space.build(data=self.dir_ + "PER_SS.mat1.PER_SS.mat1.CORE_SS.mat1.sm",
+                         cols=self.dir_ + "PER_SS.mat1.PER_SS.mat1.CORE_SS.mat1.cols",
+                         format="sm")
+                
+        self._test_equal_spaces_sparse(s1, s2)
+        self._test_equal_spaces_sparse(s1, s3)
+        
     def test_simple_sparse(self):
             
         bps.main(["build_peripheral_space.py", 

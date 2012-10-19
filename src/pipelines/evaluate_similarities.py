@@ -39,7 +39,7 @@ def usage(errno=0):
                 -i value is ignored. Optional.
     --filter: <string>: when --in_dir, it acts as a filter on the files to be tested:
                 only files containing this substring are tested. Optional, 
-                default all files in in_dir are testd.
+                default all files in in_dir are tested.
     -m --correlation_measures <list(string)>: comma-separated correlation measures
     -c --columns <(int,int)>: pair of columns, indicating which columns contain 
             the words to be compared

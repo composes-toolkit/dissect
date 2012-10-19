@@ -34,6 +34,11 @@ def usage(errno=0):
     -i --input <file>: prefix of input file.
     -o --output <dir>: output directory. Space is output in pickle format.
     -c --core <file>: core space file (pickle dump of a space, .pickle expected)
+    --core_in_dir: <dir>: input directory, all files that pass the --filter are tested.
+                -i value is ignored. Optional.
+    --core_filter: <string>: when --in_dir, it acts as a filter on the files to be tested:
+                only files containing this substring are tested. Optional, 
+                default all files in in_dir are tested.
     -l --log <file>: log file. Optional, default ./build_core_space.log
     --input_format: <string>: one of sm(sparse matrix), dm(dense matrix), pickle. 
     --output_format: <string> Additional output format: one of sm(sparse matrix), 
@@ -85,11 +90,27 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
     if not out_format is None:
         space.export(out_file_prefix, format=out_format)  
 
+def build_space_batch(in_file_prefix, in_format, out_dir, out_format, core_in_dir, core_filter):
+
+    if not os.path.exists(core_in_dir):
+        raise ValueError("Input directory not found: %s" % core_in_dir)
+    
+    if not core_in_dir.endswith("/"):
+        core_in_dir = core_in_dir + "/"
+        
+    for file_ in os.listdir(core_in_dir):
+        if file_.find(core_filter) != -1 and file_.endswith(".pickle"):
+            print file_
+            core_space_file = core_in_dir + file_ 
+            build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
+    
+    
 def main(sys_argv):
     try:
         opts, argv = getopt.getopt(sys_argv[1:], "hi:o:c:l:", 
                                    ["help", "input=", "output=", "core=", 
-                                    "log=", "input_format=", "output_format="])
+                                    "log=", "input_format=", "output_format=",
+                                    "core_in_dir=", "core_filter="])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -101,6 +122,8 @@ def main(sys_argv):
     log_file = None
     in_format = None
     out_format = None
+    core_in_dir = None
+    core_filter = ""
     
     if (len(argv) == 1):
         config_file = argv[0]
@@ -109,6 +132,8 @@ def main(sys_argv):
         out_dir = config.get("output") if config.has_option("output") else None
         in_file_prefix = config.get("input") if config.has_option("input") else None
         core_space_file = config.get("core") if config.has_option("core") else None
+        core_in_dir = config.get("core_in_dir") if config.has_option("core_in_dir") else None
+        core_filter = config.get("core_filter") if config.has_option("core_filter") else ""
         log_file = config.get("log") if config.has_option("log") else None
         in_format = config.get("input_format") if config.has_option("input_format") else None
         out_format = config.get("output_format") if config.has_option("output_format") else None
@@ -126,6 +151,10 @@ def main(sys_argv):
             in_format = val 
         elif opt == "--output_format":
             out_format = val 
+        elif opt == "--core_in_dir":
+            core_in_dir = val    
+        elif opt == "--core_filter":
+            core_filter = val    
         elif opt in ("-h", "--help"):
             usage()
             sys.exit(0)
@@ -137,9 +166,12 @@ def main(sys_argv):
     assert_option_not_none(in_file_prefix, "Input file prefix required")
     assert_option_not_none(out_dir, "Output directory required")    
     assert_option_not_none(in_format, "Input file format required")
-    assert_option_not_none(core_space_file, "Core space file required")
     
-    build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
+    if not core_in_dir is None:
+        build_space_batch(in_file_prefix, in_format, out_dir, out_format, core_in_dir, core_filter)
+    else:
+        assert_option_not_none(core_space_file, "Input file required")
+        build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
    
 if __name__ == '__main__':
     main(sys.argv)    

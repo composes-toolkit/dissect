@@ -111,7 +111,6 @@ def apply_selection(w_space, s):
         
         sel_cls = selections_dict[s_type]
         feat_sel = sel_cls(int(s_red_dim),criterion=s_criterion)
-        print s_red_dim, s_criterion
         s_space = w_space.apply(feat_sel)
         
     else:

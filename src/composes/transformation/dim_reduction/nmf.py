@@ -41,5 +41,10 @@ class Nmf(DimensionalityReduction):
         w = matrix_[:, rndcol]
         h = matrix_[rndrow, :]
         
-        return w, h            
+        return w, h
+    
+    def v_col_init(self, matrix_):
+        pass
+    
+                
     
