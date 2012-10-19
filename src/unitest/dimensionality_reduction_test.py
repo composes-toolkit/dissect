@@ -11,7 +11,7 @@ from composes.matrix.linalg import Linalg
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
 
-class Test(unittest.TestCase):
+class DimReductionTest(unittest.TestCase):
 
 
     def setUp(self):
@@ -28,7 +28,8 @@ class Test(unittest.TestCase):
         for in_mat in test_cases:
             red = Nmf(2)
             d_mat = DenseMatrix(in_mat)
-            wd_init, hd_init = red.random_init(d_mat)
+            #wd_init, hd_init = red.random_init(d_mat)
+            wd_init, hd_init = red.v_col_init(d_mat)
             
             s_mat = SparseMatrix(in_mat)
             ws_init = SparseMatrix(wd_init)
