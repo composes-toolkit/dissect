@@ -121,7 +121,6 @@ class Test(unittest.TestCase):
         s3.to_dense()
         self._test_equal_spaces_dense(s1, s3)
         
-                 
         
     def test_simple_dense(self):
             
@@ -153,6 +152,22 @@ class Test(unittest.TestCase):
         
         self._test_equal_spaces_dense(s1, s3)  
  
+    def test_simple_nmf(self):
+        
+        bcs.main(["build_core_space.py", 
+          "-l", self.dir_ + "log_nmf.txt",
+          "-i", self.dir_ + "mat3",
+          "-w", "raw",
+          "-r", "nmf_2",
+          "-o", self.dir_,
+          "--input_format", "dm",
+          "--output_format", "dm"
+          ])
+          
+        s1 = Space.build(data = self.dir_ + "CORE_SS.mat3.raw.nmf_2.dm", format="dm")  
+        self.assertEqual(s1.cooccurrence_matrix.mat.shape, (3,2))
+        
+        
     def test_simple_ops(self):
         
         #x = matrix([[ -2.19426495e+00,   3.16751379e+00,  -3.89945798e-01],

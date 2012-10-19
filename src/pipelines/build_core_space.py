@@ -158,10 +158,11 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
         if not os.path.exists(row_file):
             row_file = None
         if not os.path.exists(column_file):
-            column_file = None
             if in_format == "sm":
                 raise ValueError("Column file: %s needs to be provided!" 
                                  % column_file)
+            column_file = None
+            
         print "Building matrix..."   
         space = Space.build(data=data_file, rows=row_file, cols=column_file, 
                             format=in_format)

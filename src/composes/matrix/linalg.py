@@ -5,6 +5,7 @@ Created on Oct 4, 2012
 '''
 
 import numpy as np
+import logging
 import scipy.linalg as splinalg
 from sparsesvd import sparsesvd
 from warnings import warn
@@ -15,6 +16,9 @@ from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
 from composes.utils.matrix_utils import assert_same_shape
 from composes.utils.matrix_utils import padd_matrix
+import composes.utils.log_utils as log
+
+logger = logging.getLogger(__name__)
 
 class Linalg(object):
     '''
@@ -32,21 +36,29 @@ class Linalg(object):
 
     @staticmethod
     def svd(matrix_, reduced_dimension):
+        log.print_info(logger, 4, "In SVD..reducing to dim %d" % reduced_dimension)
+        log.print_matrix_info(logger, matrix_, 5, "Input matrix:")
+
         #TODO: IMPORTANT!! do the sign normalization COLUMN-wise!!!not 
         #for the full matrix at once!!
         if reduced_dimension == 0:
             raise ValueError("Cannot reduce to dimensionality 0.")
         
         if isinstance(matrix_, SparseMatrix):
-            return Linalg._sparse_svd(matrix_, reduced_dimension)
+            result =  Linalg._sparse_svd(matrix_, reduced_dimension)
         elif isinstance(matrix_, DenseMatrix):
-            return Linalg._dense_svd(matrix_, reduced_dimension)
+            result =  Linalg._dense_svd(matrix_, reduced_dimension)
         else:
             raise TypeError("expected Matrix type, received %s" % type(matrix_))
-    
+        
+        log.print_matrix_info(logger, result[0], 5, "Resulted matrix U:")
+        return result
+        
     @staticmethod
     def ridge_regression(matrix_a , matrix_b, lambda_, intercept=False):
-    
+        #log.print_info(logger, "In Ridge regression..", 4)
+        #log.print_matrix_info(logger, matrix_a, 5, "Input matrix A:")
+        #log.print_matrix_info(logger, matrix_b, 5, "Input matrix B:")   
         '''
         This method use the general formulae:
             X = (A^T * A + P^T * P)^-1 * A^T * Y 
@@ -225,6 +237,9 @@ class Linalg(object):
 
     @staticmethod
     def nmf(v, w_init, h_init):
+        log.print_info(logger, 4, "In NMF..reducing to dim %d" % w_init.shape[1])
+        log.print_matrix_info(logger, w_init, 5, "W init matrix:")
+        log.print_matrix_info(logger, h_init, 5, "H init matrix:")
         """
         (w,h) = nmf(v,w_init,h_init,tol,timelimit,maxiter)
         w,h: output solution
@@ -255,6 +270,7 @@ class Linalg(object):
         
         #loop_time = init_time
         for iteration in xrange(1, Linalg._NMF_MAX_ITER):
+            log.print_info(logger, 5, "Iteration: %d(%d)" % (iteration, Linalg._NMF_MAX_ITER))
             #print "iteration: ", iteration
             #print "loop time:", time() - loop_time
             #logger.info("iteration: " + str(iteration))
@@ -287,6 +303,8 @@ class Linalg(object):
             if iterH == 1:
                 tolH = Linalg._NMF_TOL_DECREASE_FACTOR * tolH
         
+        log.print_matrix_info(logger, w, 5, "Return W matrix:")
+        log.print_matrix_info(logger, h, 5, "Return H matrix:")
         return w, h
     
     @staticmethod
