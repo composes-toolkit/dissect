@@ -1,0 +1,42 @@
+  Built semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.00982189178467 seconds
+  Built semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.00163698196411 seconds
+  Printed semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.000543117523193 seconds
+  Built semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.00143098831177 seconds
+  Built semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.000669956207275 seconds
+  Printed semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.00105595588684 seconds
+  Built semantic space:
+    Matrix type:SparseMatrix
+    Matrix shape:1x1
+    Perc. non-zero entries:100
+    
+    Timing:0.000432014465332 seconds

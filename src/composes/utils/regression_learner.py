@@ -47,12 +47,14 @@ class RidgeRegressionLearner(RegressionLearner):
         self._crossvalidation = True
         
         self._folds = 10
-        if "folds" in kwargs: 
-            self._folds = kwargs["folds"] 
+        if "folds" in kwargs:
+            if not kwargs["folds"] is None: 
+                self._folds = kwargs["folds"] 
             
         self._param_range = np.linspace(0.0, 0.5, 10)
         if "param_range" in kwargs:
-            self._param_range = kwargs["param_range"]
+            if not kwargs["param_range"] is None:
+                self._param_range = kwargs["param_range"]
         
         self._param = None
         if "param" in kwargs:

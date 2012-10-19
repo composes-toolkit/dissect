@@ -66,6 +66,29 @@ def extract_indexing_structs(filename, field_list):
             raise ValueError("Found no valid data in file: %s!" % filename)
     return (id2str_list, str2id_list)
 
+
+def read_tuple_list(data_file, no_fields):
+    result = []
+    with open(data_file) as f:
+        for line in f:
+            line = line.strip()
+            if (line != ""):
+                elements = line.split()
+                if len(elements) != no_fields:
+                    raise ValueError("Expected %d fields in %s" % (no_fields, 
+                                                                   data_file))
+                result.append(tuple(elements))
+                    
+    return result 
+
+def read_list(file_name):
+    result = []
+    with open(file_name) as f:
+        for line in f:
+            if line.strip() != "":
+                result.append(line.strip())
+    return result
+                
 def print_list(list_, file_name):
     with open(file_name,'w') as f:
         for item in list_:

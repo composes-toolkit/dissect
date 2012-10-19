@@ -25,7 +25,7 @@ logger = logging.getLogger("test vector space construction pipeline")
 
 
 
-def usage(errno):
+def usage(errno=0):
     print >>sys.stderr,\
     """Usage:
     python build_peripheral_space.py [options] [config_file]
@@ -57,13 +57,12 @@ def assert_option_not_none(option, message):
 def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file):
 
     core_space = io_utils.load(core_space_file, Space)
-    in_file_descr = in_file_prefix.split("/")[-1]
+    in_file_descr = "PER_SS." + in_file_prefix.split("/")[-1]
     core_descr = core_space_file.split("/")[-1].split(".")[0:-1]
      
-    if (in_format == "sm"):
-        data_file = '%s.sm' % (in_file_prefix)
-    elif(in_format == "dm"):
-        data_file = '%s.dm' % (in_file_prefix)
+    if not in_format in ("sm, dm"):
+        raise ValueError("Invalid input format:%s" % in_format) 
+    data_file = '%s.%s' % (in_file_prefix, in_format)
     
     row_file = '%s.rows' % (in_file_prefix)
     column_file = '%s.cols' % (in_file_prefix)
@@ -82,29 +81,34 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
     if not out_format is None:
         space.export(out_file_prefix, format=out_format)  
 
-def main():
+def main(sys_argv):
     try:
-        opts, argv = getopt.getopt(sys.argv[1:], "hi:o:c:l:", 
+        opts, argv = getopt.getopt(sys_argv[1:], "hi:o:c:l:", 
                                    ["help", "input=", "output=", "core=", 
                                     "log=", "input_format=", "output_format="])
-        if (len(argv) == 1):
-            config_file = argv[0]
-            config = ConfigParser()
-            config.read(config_file)
-            out_dir = config.get("output") if config.has_option("output") else None
-            in_file_prefix = config.get("input") if config.has_option("input") else None
-            core_space_file = config.get("core") if config.has_option("core") else None
-            log_file = config.get("log") if config.has_option("log") else None
-            in_format = config.get("input_format") if config.has_option("input_format") else None
-            out_format = config.get("output_format") if config.has_option("output_format") else None
-        else:
-            usage(1)
-                        
     except getopt.GetoptError, err:
         print str(err)
         usage()
         sys.exit(1)
 
+    out_dir = None
+    in_file_prefix = None
+    core_space_file = None
+    log_file = None
+    in_format = None
+    out_format = None
+    
+    if (len(argv) == 1):
+        config_file = argv[0]
+        config = ConfigParser()
+        config.read(config_file)
+        out_dir = config.get("output") if config.has_option("output") else None
+        in_file_prefix = config.get("input") if config.has_option("input") else None
+        core_space_file = config.get("core") if config.has_option("core") else None
+        log_file = config.get("log") if config.has_option("log") else None
+        in_format = config.get("input_format") if config.has_option("input_format") else None
+        out_format = config.get("output_format") if config.has_option("output_format") else None
+            
     for opt, val in opts:
         if opt in ("-i", "--input"):
             in_file_prefix = val 
@@ -134,4 +138,4 @@ def main():
     build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
    
 if __name__ == '__main__':
-    main()
+    main(sys.argv)    

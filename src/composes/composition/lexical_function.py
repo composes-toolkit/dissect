@@ -10,6 +10,7 @@ from composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from composes.utils.space_utils import get_partitions
 from composes.utils.regression_learner import RidgeRegressionLearner
+from composes.utils.regression_learner import RegressionLearner
 from composes.utils.matrix_utils import resolve_type_conflict
 from composes.utils.matrix_utils import get_type_of_largest
 from composes.utils.matrix_utils import padd_matrix
@@ -170,9 +171,13 @@ class LexicalFunction(CompositionModel):
     def _assert_space_match(cls, arg1_space, arg2_space, phrase_space=None):
         pass
  
+    def set_regression_learner(self, regression_learner):
+        assert_is_instance(regression_learner, RegressionLearner)
+        self._regression_learner = regression_learner
+        
     def get_regression_learner(self):
         return self._regression_learner
-    regression_learner = property(get_regression_learner)   
+    regression_learner = property(get_regression_learner, set_regression_learner)  
        
     def get_function_space(self):
         return self._function_space

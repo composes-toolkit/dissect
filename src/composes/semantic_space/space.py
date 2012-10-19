@@ -121,14 +121,19 @@ class Space(object):
 
         id2row, row2id = list(self.id2row), self.row2id.copy() 
         
+        
         if isinstance(op, DimensionalityReductionOperation):
             self.assert_1dim_element()
             id2column, column2id = [], {}
         elif isinstance(op, FeatureSelectionOperation):
             self.assert_1dim_element()
             op.original_columns = self.id2column
-            id2column = list(array(op.original_columns)[op.selected_columns])
-            column2id = list2dict(id2column)
+            
+            if op.original_columns: 
+                id2column = list(array(op.original_columns)[op.selected_columns])
+                column2id = list2dict(id2column)
+            else:
+                id2column, column2id = [],{}
         else:
             id2column, column2id = list(self.id2column), self.column2id.copy()
 
@@ -314,9 +319,10 @@ class Space(object):
         else:
             raise ValueError("Format of input files needs to be specified")
         
-        if "rows" in kwargs:
+        if "rows" in kwargs and not kwargs["rows"] is None:
             [id2row], [row2id] = extract_indexing_structs(kwargs["rows"], [0])
-        if "cols" in kwargs:
+            
+        if "cols" in kwargs and not kwargs["cols"] is None:
             [id2column], [column2id] = extract_indexing_structs(kwargs["cols"], [0])
         
         if format_ == "sm":
@@ -333,7 +339,6 @@ class Space(object):
             if id2row is None:
                 [id2row],[row2id] = extract_indexing_structs(data_file, [0])
             if id2column is None:
-
                 id2column, column2id = [], {}
              
             mat = read_dense_space_data(data_file, row2id)

@@ -33,7 +33,7 @@ logger = logging.getLogger("test vector space construction pipeline")
 
 
 
-def usage(errno):
+def usage(errno=0):
     print >>sys.stderr,\
     """Usage:
     python build_core_space.py [options] [config_file]
@@ -42,10 +42,13 @@ def usage(errno):
     -i --input <file>: prefix of input files.
     -o --output <dir>: output directory. Space is output in pickle format.
     -w --weighting <list(string)>: comma-separated weighting schemes. Optional.
-    -s --selection <list(string_int)>: comma-separated feature selection methods 
-            (e.g. top_sum_1000/top_length_1000). Optional.
-    -r --reduction <list(string_int)>: comma-separated dimension reduction types 
-            (e.g. svd_300, nmf_100). Optional.
+    -s --selection <list(string_string_int)>: comma-separated feature selection methods.
+            A feature selection method is: method_criterion_reduced-dim. Method is
+            one of "top", criterion one of "sum/length". Examples: top_sum_1000,
+            top_length_1000. Optional.
+    -r --reduction <list(string_int)>: comma-separated dimension reduction types. 
+             A reduction is: method_reduced-dim. Method is one of "svd/nmf".
+             Examples: svd_300, nmf_100. Optional.
     -l --log <file>: log file. Optional.
     --input_format: <string>: one of sm(sparse matrix), dm(dense matrix), pickle. 
     --output_format: <string> Additional output format: one of sm(sparse matrix), 
@@ -55,7 +58,7 @@ def usage(errno):
     Arguments:
     config_file: <file>, used as default values for configuration options above.
             If you don't specify these options in [options] the value from the 
-            config_file will be used.
+            config_file will be used. Optional.
     
     Example:
     """
@@ -77,7 +80,7 @@ def apply_weighting(space, w):
     if not w is None:
         if not w in weightings_dict:
             warn("Weigthing scheme: %s not defined" % w)
-            continue
+            return space
         
         w_space = space.apply(weightings_dict[w])
     else:
@@ -95,19 +98,20 @@ def apply_selection(w_space, s):
         sel_els = s.split("_")
         if not len(sel_els) == 3:
             warn("Feature selection: %s not defined" % s)
-            continue
+            return w_space
         [s_type, s_criterion, s_red_dim] = sel_els
         if not s_type in selections_dict:
             warn("Feature selection: %s not defined" % s)
-            continue
+            return w_space
         if not s_criterion in selection_crit_list:
             warn("Feature selection: %s not defined" % s)
-            continue
+            return w_space
         
         sel_cls = selections_dict[s_type]
         feat_sel = sel_cls(int(s_red_dim),criterion=s_criterion)
-        
+        print s_red_dim, s_criterion
         s_space = w_space.apply(feat_sel)
+        
     else:
         s_space = w_space    
        
@@ -121,11 +125,11 @@ def apply_reduction(s_space, r):
         red_els = r.split("_")
         if not len(red_els) == 2:
             warn("Dimensionality reduction: %s not defined" % r)
-            continue
+            return s_space
         [r_type, r_dim_red] = red_els
         if not r_type in reductions_dict:
             warn("Dimensionality reduction: %s not defined" % r)
-            continue
+            return s_space
         
         red_cls = reductions_dict[r_type]
         red = red_cls(int(r_dim_red))
@@ -138,24 +142,24 @@ def apply_reduction(s_space, r):
 def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings, 
                  selections, reductions):
 
-    in_file_descr = in_file_prefix.split("/")[-1]
+    in_file_descr = "CORE_SS." + in_file_prefix.split("/")[-1]
+    data_file = '%s.%s' % (in_file_prefix, in_format)
     
-    if (in_format == "sm"):
-        data_file = '%s.sm' % (in_file_prefix)
-    elif(in_format == "dm"):
-        data_file = '%s.dm' % (in_file_prefix)
+    if in_format == "pickle":
+        space = io_utils.load(data_file, Space)
+    else:    
+        row_file = '%s.rows' % (in_file_prefix)
+        column_file = '%s.cols' % (in_file_prefix)
     
-    row_file = '%s.rows' % (in_file_prefix)
-    column_file = '%s.cols' % (in_file_prefix)
-
-    if not os.path.exists(row_file):
-        row_file = None
-
-    if not os.path.exists(column_file):
-        column_file = None
-
-    space = Space.build(data=data_file, rows=row_file, cols=column_file, 
-                        format=in_format)
+        if not os.path.exists(row_file):
+            row_file = None
+    
+        if not os.path.exists(column_file):
+            column_file = None
+    
+        space = Space.build(data=data_file, rows=row_file, cols=column_file, 
+                            format=in_format)
+ 
     for w in weightings:
         w_space = apply_weighting(space, w)
         for s in selections:
@@ -171,32 +175,40 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
                     r_space.export(out_file, format=out_format)    
 
 
-def main():
+def main(sys_argv):
+
     try:
-        opts, argv = getopt.getopt(sys.argv[1:], "hi:o:w:s:r:l:", 
+        opts, argv = getopt.getopt(sys_argv[1:], "hi:o:w:s:r:l:", 
                                    ["help", "input=", "output=", "weighting=",
                                     "selection=", "reduction=", "log=",
                                     "input_format=", "output_format="])
-        if (len(argv) == 1):
-            config_file = argv[0]
-            config = ConfigParser()
-            config.read(config_file)
-            out_dir = config.get("output") if config.has_option("output") else None
-            in_file_prefix = config.get("input") if config.has_option("input") else None
-            weightings = config.get("weighting").split(",") if config.has_option("weighting") else [None]
-            selections = config.get("selection").split(",") if config.has_option("selection") else [None]
-            reductions = config.get("reduction").split(",") if config.has_option("reduction") else [None]
-            log_file = config.get("log") if config.has_option("log") else None
-            in_format = config.get("input_format") if config.has_option("input_format") else None
-            out_format = config.get("output_format") if config.has_option("output_format") else None
-        else:
-            usage(1)
-                        
     except getopt.GetoptError, err:
         print str(err)
         usage()
         sys.exit(1)
-
+    
+    out_dir = None
+    in_file_prefix = None
+    weightings = [None]         
+    selections = [None]
+    reductions = [None]
+    log_file = None
+    in_format = None
+    out_format = None
+         
+    if (len(argv) == 1):
+        config_file = argv[0]
+        config = ConfigParser()
+        config.read(config_file)
+        out_dir = config.get("output") if config.has_option("output") else None
+        in_file_prefix = config.get("input") if config.has_option("input") else None
+        weightings = config.get("weighting").split(",") if config.has_option("weighting") else [None]
+        selections = config.get("selection").split(",") if config.has_option("selection") else [None]
+        reductions = config.get("reduction").split(",") if config.has_option("reduction") else [None]
+        log_file = config.get("log") if config.has_option("log") else None
+        in_format = config.get("input_format") if config.has_option("input_format") else None
+        out_format = config.get("output_format") if config.has_option("output_format") else None
+                    
     for opt, val in opts:
         if opt in ("-i", "--input"):
             in_file_prefix = val 
@@ -209,18 +221,19 @@ def main():
         elif opt in ("-r", "--reduction"):
             reductions = val.split(",") 
         elif opt in ("-l", "--log"):
-            log_file = val 
+            log_file = val
+            print log_file 
         elif opt in ("--input_format"):
             in_format = val 
         elif opt in ("--output_format"):
             out_format = val 
         elif opt in ("-h", "--help"):
-            usage()
-            sys.exit(0)
+            usage(0)
         else:
             usage(1)
             
-    log_utils.config_logging(log_file)
+    if not log_file is None:            
+        log_utils.config_logging(log_file)
 
     assert_option_not_none(in_file_prefix, "Input file prefix required")
     assert_option_not_none(out_dir, "Output directory required")    
@@ -231,4 +244,5 @@ def main():
     
    
 if __name__ == '__main__':
-    main()
+    main(sys.argv)    
+

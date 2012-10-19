@@ -84,11 +84,11 @@ class PeripheralSpace(Space):
                                  self.id2column, self.row2id, self.column2id)        
     
     @classmethod            
-    def build(self, core_space, **kwargs):
-        sp = super(self, Space).build(**kwargs)
+    def build(cls, core_space, **kwargs):
+        sp = Space.build(**kwargs)
         mat = sp._cooccurrence_matrix
-        id2row = sp._cooccurrence_matrix.id2row
-        row2id = sp._cooccurrence_matrix.row2id
+        id2row = sp.id2row
+        row2id = sp.row2id
         return PeripheralSpace(core_space, mat, id2row, row2id)
         
         
