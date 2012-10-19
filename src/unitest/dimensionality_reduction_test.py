@@ -89,26 +89,28 @@ class Test(unittest.TestCase):
                                [0.3255,-0.0621,0.9434]]).transpose())]
         
         for x, us_expected, v_expected in test_cases:
-            
+            us_expected = np.abs(us_expected)
+            v_expected = np.abs(v_expected)
+
             svd_red = Svd(2)
             us, transmat = svd_red.apply(x)
-            np.testing.assert_array_almost_equal(us.mat.todense(), us_expected, 2)
-            np.testing.assert_array_almost_equal(transmat.mat.todense(), v_expected, 2)
+            np.testing.assert_array_almost_equal(np.abs(us.mat.todense()), us_expected, 2)
+            np.testing.assert_array_almost_equal(np.abs(transmat.mat.todense()), v_expected, 2)
 
             svd_red = Svd(3)
             us, transmat = svd_red.apply(x)
-            np.testing.assert_array_almost_equal(us.mat.todense(), us_expected, 2)
-            np.testing.assert_array_almost_equal(transmat.mat.todense(), v_expected, 2)
+            np.testing.assert_array_almost_equal(np.abs(us.mat.todense()), us_expected, 2)
+            np.testing.assert_array_almost_equal(np.abs(transmat.mat.todense()), v_expected, 2)
        
             svd_red = Svd(6)
             us, transmat = svd_red.apply(x)
-            np.testing.assert_array_almost_equal(us.mat.todense(), us_expected, 2)
-            np.testing.assert_array_almost_equal(transmat.mat.todense(), v_expected, 2)
+            np.testing.assert_array_almost_equal(np.abs(us.mat.todense()), us_expected, 2)
+            np.testing.assert_array_almost_equal(np.abs(transmat.mat.todense()), v_expected, 2)
             
             svd_red = Svd(1)
             us, transmat = svd_red.apply(x)
-            np.testing.assert_array_almost_equal(us.mat.todense(), us_expected[:,0:1], 2)
-            np.testing.assert_array_almost_equal(transmat.mat.todense(), v_expected[:,0:1], 2)
+            np.testing.assert_array_almost_equal(np.abs(us.mat.todense()), us_expected[:,0:1], 2)
+            np.testing.assert_array_almost_equal(np.abs(transmat.mat.todense()), v_expected[:,0:1], 2)
             
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.test_svd']

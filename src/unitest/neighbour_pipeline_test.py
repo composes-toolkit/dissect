@@ -6,8 +6,26 @@ Created on Oct 19, 2012
 import unittest
 import pipelines.compute_neighbours as find_neighbours 
 
-def read_neighbour_list(file_name):
-    pass
+def read_neighbours_list(file_name):
+    result = []
+    word = None
+    neighbours = []
+    with open(file_name) as f:
+        for line in f:
+            line = line.strip()
+            if (line != ""):
+                elements = line.split()
+                if (len(elements) == 1):
+                    if word != None:
+                        result.append((word,neighbours))
+                        neighbours = []
+                    else:
+                        word = elements[0]
+                else:
+                    neighbours.append((elements[0],elements[1]))
+        if word != None:
+            result.append((word,neighbours))
+    return result 
 
 
 class NeighboursPipelineTest(unittest.TestCase):
@@ -18,7 +36,7 @@ class NeighboursPipelineTest(unittest.TestCase):
         self.log_dir = "/home/thenghia.pham/git/toolkit/log/"
 
     def test_find_neighbours(self):
-        find_neighbours.main(["compute_neighbours.py", 
+        '''find_neighbours.main(["compute_neighbours.py", 
                            "-l", self.log_dir + "neighbours_log.txt",
                            "-i", self.dir_ + "neighbours_input.txt",
                            "-m", "dot_prod",
@@ -43,13 +61,15 @@ class NeighboursPipelineTest(unittest.TestCase):
                                "-m", "euclidean",
                                "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle" %(self.dir_,self.dir_),
                                "%sconfig/neighbours_config.cfg" %self.dir_
-                              ])
+                              ])'''
         find_neighbours.main(["compute_neighbours.py",
                                "-m", "euclidean",
                                "-n", "2",
                                "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle" %(self.dir_,self.dir_),
                                "%sconfig/neighbours_config.cfg" %self.dir_
                               ])
+        neighbours_list = read_neighbours_list(self.dir_ + "NEIGHBOURS.neighbours_input.txt.euclidean")
+        print len(neighbours_list)
         
 
     def tearDown(self):
