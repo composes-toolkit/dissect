@@ -110,7 +110,7 @@ def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, reg
             model_obj = model_cls(learner=regression_obj)
             
             
-    train_data = io_utils.read_tuple_list(in_file)
+    train_data = io_utils.read_tuple_list(in_file, 3)
     
     print "Training %s model" % model
     if arg_space2 is None or model == "lexical_func":
@@ -119,7 +119,7 @@ def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, reg
         model_obj.train(train_data, (arg_space, arg_space2), phrase_space)
     
     print "Printing..."    
-    out_file = ".".join(["TRAINED_COMP_MODEL", model, in_descr])    
+    out_file = ".".join([out_dir + "TRAINED_COMP_MODEL", model, in_descr])    
     io_utils.save(model_obj, "%s.pickle" % out_file)
     
     if export_params:

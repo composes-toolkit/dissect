@@ -6020,3 +6020,347 @@ Applied transformation:
     Perc. non-zero entries:100
     
     Timing:0.00144791603088 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.000499963760376 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.000283002853394 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00191521644592 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.000537157058716 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00329804420471 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00118899345398 seconds
+  
+Trained composition model:
+  Composition model type:
+    LexicalFunction
+
+    Using regression:LstsqRegressionLearner
+      Using intercept:True
+      
+      Trained: 1 lexical functions
+      
+      With total data points:2
+      Semantic space of arguments:
+        Matrix type:DenseMatrix
+        Matrix shape:2x2
+      
+      Shape of lexical functions learned:(2, 3)
+      Semantic space of lexical functions:
+        Matrix type:DenseMatrix
+        Matrix shape:1x6
+    
+    Timing:0.00337100028992 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x6
+    
+    Timing:0.000524997711182 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00336503982544 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.000497102737427 seconds
+  
+Trained composition model:
+  Composition model type:
+    LexicalFunction
+
+    Using regression:LstsqRegressionLearner
+      Using intercept:True
+      
+      Trained: 1 lexical functions
+      
+      With total data points:2
+      Semantic space of arguments:
+        Matrix type:DenseMatrix
+        Matrix shape:2x2
+      
+      Shape of lexical functions learned:(2, 3)
+      Semantic space of lexical functions:
+        Matrix type:DenseMatrix
+        Matrix shape:1x6
+    
+    Timing:0.00347399711609 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x6
+    
+    Timing:0.000560998916626 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00263595581055 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.000526905059814 seconds
+  
+Trained composition model:
+  Composition model type:
+    LexicalFunction
+
+    Using regression:LstsqRegressionLearner
+      Using intercept:True
+      
+      Trained: 1 lexical functions
+      
+      With total data points:2
+      Semantic space of arguments:
+        Matrix type:DenseMatrix
+        Matrix shape:2x2
+      
+      Shape of lexical functions learned:(2, 3)
+      Semantic space of lexical functions:
+        Matrix type:DenseMatrix
+        Matrix shape:1x6
+    
+    Timing:0.00412011146545 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x6
+    
+    Timing:0.000602006912231 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00277996063232 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00104403495789 seconds
+  
+Trained composition model:
+  Composition model type:
+    LexicalFunction
+
+    Using regression:LstsqRegressionLearner
+      Using intercept:True
+      
+      Trained: 1 lexical functions
+      
+      With total data points:2
+      Semantic space of arguments:
+        Matrix type:DenseMatrix
+        Matrix shape:2x2
+      
+      Shape of lexical functions learned:(2, 3)
+      Semantic space of lexical functions:
+        Matrix type:DenseMatrix
+        Matrix shape:1x6
+    
+    Timing:0.00339484214783 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x6
+    
+    Timing:0.000614881515503 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00317215919495 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00059700012207 seconds
+  
+Trained composition model:
+  Composition model type:
+    LexicalFunction
+
+    Using regression:LstsqRegressionLearner
+      Using intercept:True
+      
+      Trained: 1 lexical functions
+      
+      With total data points:2
+      Semantic space of arguments:
+        Matrix type:DenseMatrix
+        Matrix shape:2x2
+      
+      Shape of lexical functions learned:(2, 3)
+      Semantic space of lexical functions:
+        Matrix type:DenseMatrix
+        Matrix shape:1x6
+    
+    Timing:0.00507998466492 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x6
+    
+    Timing:0.000578880310059 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00330519676208 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.000548124313354 seconds
+  
+Trained composition model:
+  Composition model type:
+    LexicalFunction
+
+    Using regression:LstsqRegressionLearner
+      Using intercept:True
+      
+      Trained: 1 lexical functions
+      
+      With total data points:2
+      Semantic space of arguments:
+        Matrix type:DenseMatrix
+        Matrix shape:2x2
+      
+      Shape of lexical functions learned:(2, 3)
+      Semantic space of lexical functions:
+        Matrix type:DenseMatrix
+        Matrix shape:1x6
+    
+    Timing:0.00478911399841 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x6
+    
+    Timing:0.000632047653198 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00116491317749 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00211000442505 seconds
+  
+Trained composition model:
+  Composition model type:
+    LexicalFunction
+
+    Using regression:LstsqRegressionLearner
+      Using intercept:True
+      
+      Trained: 1 lexical functions
+      
+      With total data points:2
+      Semantic space of arguments:
+        Matrix type:DenseMatrix
+        Matrix shape:2x2
+      
+      Shape of lexical functions learned:(2, 3)
+      Semantic space of lexical functions:
+        Matrix type:DenseMatrix
+        Matrix shape:1x6
+    
+    Timing:0.00353908538818 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x6
+    
+    Timing:0.000609874725342 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00103902816772 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00059986114502 seconds
+  
+Trained composition model:
+  Composition model type:
+    LexicalFunction
+
+    Using regression:LstsqRegressionLearner
+      Using intercept:True
+      
+      Trained: 1 lexical functions
+      
+      With total data points:2
+      Semantic space of arguments:
+        Matrix type:DenseMatrix
+        Matrix shape:2x2
+      
+      Shape of lexical functions learned:(2, 3)
+      Semantic space of lexical functions:
+        Matrix type:DenseMatrix
+        Matrix shape:1x6
+    
+    Timing:0.00351190567017 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x6
+    
+    Timing:0.000565052032471 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.00360488891602 seconds
+  Built semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:2x2
+    
+    Timing:0.000530004501343 seconds
+  
+Trained composition model:
+  Composition model type:
+    LexicalFunction
+
+    Using regression:LstsqRegressionLearner
+      Using intercept:True
+      
+      Trained: 1 lexical functions
+      
+      With total data points:2
+      Semantic space of arguments:
+        Matrix type:DenseMatrix
+        Matrix shape:2x2
+      
+      Shape of lexical functions learned:(2, 3)
+      Semantic space of lexical functions:
+        Matrix type:DenseMatrix
+        Matrix shape:1x6
+    
+    Timing:0.00351786613464 seconds
+  Printed semantic space:
+    Matrix type:DenseMatrix
+    Matrix shape:1x6
+    
+    Timing:0.000714063644409 seconds
