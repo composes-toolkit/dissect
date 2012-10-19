@@ -234,10 +234,10 @@ class Space(object):
                      space1.column2id.copy(), operations=[])
         
     def to_dense(self):
-        self.cooccurrence_matrix = DenseMatrix(self.cooccurrence_matrix)
+        self._cooccurrence_matrix = DenseMatrix(self.cooccurrence_matrix)
         
     def to_sparse(self):
-        self.cooccurrence_matrix = SparseMatrix(self.cooccurrence_matrix)
+        self._cooccurrence_matrix = SparseMatrix(self.cooccurrence_matrix)
                 
     def get_row(self, word):
         if not word in self.row2id:
@@ -324,24 +324,20 @@ class Space(object):
             
         if "cols" in kwargs and not kwargs["cols"] is None:
             [id2column], [column2id] = extract_indexing_structs(kwargs["cols"], [0])
-        
+        elif format_ == "sm":
+            raise ValueError("Need to specify column file when input format is sm!")
+            
         if format_ == "sm":
-            if id2row is None and id2column is None:
-                ([id2row, id2column],
-                 [row2id, column2id]) = extract_indexing_structs(data_file, [0, 1])
             if id2row is None:
                 [id2row], [row2id] = extract_indexing_structs(data_file, [0])
-            if id2column is None:
-                [id2column], [column2id] = extract_indexing_structs(data_file, [1])
-                
             mat = read_sparse_space_data(data_file, row2id, column2id)
+
         else:
             if id2row is None:
                 [id2row],[row2id] = extract_indexing_structs(data_file, [0])
+            mat = read_dense_space_data(data_file, row2id)
             if id2column is None:
                 id2column, column2id = [], {}
-             
-            mat = read_dense_space_data(data_file, row2id)
                 
         if id2column and len(id2column) != mat.shape[1]:
             raise ValueError("Columns provided inconsistent with shape of input matrix!")
@@ -372,8 +368,8 @@ class Space(object):
         log.print_time_info(logger, time.time(), start, 2) 
         
     def _export_row_column(self, file_prefix):
-        row_file = "%s.%s" %(file_prefix, "row")
-        column_file = "%s.%s" %(file_prefix, "col")
+        row_file = "%s.%s" %(file_prefix, "rows")
+        column_file = "%s.%s" %(file_prefix, "cols")
         
         if self.column2id:
             print_list(self.id2column, column_file)
@@ -381,3 +377,56 @@ class Space(object):
         print_list(self.id2row, row_file)
 
 
+
+"""
+def build(cls, **kwargs):
+FANCY BUILD
+        start = time.time()
+        id2row = None
+        id2column = None
+        
+        if "data" in kwargs:
+            data_file = kwargs["data"]
+        else:
+            raise ValueError("Space data file needs to be specified")
+            
+        if "format" in kwargs:
+            format_ = kwargs["format"]
+            if not format_ in ["dm","sm"]:
+                raise ValueError("Unrecognized format: %s" % format_)
+        else:
+            raise ValueError("Format of input files needs to be specified")
+        
+        if "rows" in kwargs and not kwargs["rows"] is None:
+            [id2row], [row2id] = extract_indexing_structs(kwargs["rows"], [0])
+            
+        if "cols" in kwargs and not kwargs["cols"] is None:
+            [id2column], [column2id] = extract_indexing_structs(kwargs["cols"], [0])
+        
+        if format_ == "sm":
+            if id2row is None and id2column is None:
+                ([id2row, id2column],
+                 [row2id, column2id]) = extract_indexing_structs(data_file, [0, 1])
+            if id2row is None:
+                [id2row], [row2id] = extract_indexing_structs(data_file, [0])
+            if id2column is None:
+                [id2column], [column2id] = extract_indexing_structs(data_file, [1])
+                
+            mat = read_sparse_space_data(data_file, row2id, column2id)
+        else:
+            if id2row is None:
+                [id2row],[row2id] = extract_indexing_structs(data_file, [0])
+            if id2column is None:
+                id2column, column2id = [], {}
+             
+            mat = read_dense_space_data(data_file, row2id)
+                
+        if id2column and len(id2column) != mat.shape[1]:
+            raise ValueError("Columns provided inconsistent with shape of input matrix!")
+            
+        log.print_matrix_info(logger, mat, 1, "Built semantic space:")
+        log.print_time_info(logger, time.time(), start, 2)    
+        return Space(mat, id2row, id2column, row2id, column2id)
+FANCY BUILD
+"""
+    

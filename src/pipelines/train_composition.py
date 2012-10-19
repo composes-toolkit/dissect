@@ -190,17 +190,17 @@ def main(sys_argv):
             phrase_space = val
         elif opt in ("-r", "--regression"):
             regression = val
-        elif opt in ("--crossvalidation"):
+        elif opt == "--crossvalidation":
             crossvalidation = eval(val)
-        elif opt in ("--intercept"):
+        elif opt == "--intercept":
             intercept = eval(val)
-        elif opt in ("--param"):
+        elif opt == "--param":
             print opt, val
             param = float(val)
-        elif opt in ("--param_range"):
+        elif opt == "--param_range":
             param_range = val.split(",")
             param_range = [float(param) for param in param_range]
-        elif opt in ("--export_params"):
+        elif opt == "--export_params":
             export_params = eval(val)
         elif opt in ("-l", "--log"):
             log_file = val 

@@ -66,7 +66,7 @@ def evaluate_sim(in_file, columns, corr_measures):
         for line in in_stream:
             if not line.strip() == "":
                 elems = line.strip().split()
-                gold.append(elems[columns[0]])
+                gold.append(elems[columns[0]])()
                 prediction.append(elems[columns[1]])
     
     for corr_measure in corr_measures:

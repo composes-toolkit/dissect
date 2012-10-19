@@ -19,7 +19,7 @@ from composes.utils import log_utils
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
 
-def usage(errno):
+def usage(errno=0):
     print >>sys.stderr,\
     """Usage:
     python train_composition.py [options] [config_file]
@@ -73,10 +73,10 @@ def create_model(model, alpha, beta, lambda_):
     
     if model == "weighted_add":
         model_obj = WeightedAdditive(alpha, beta)    
-                
     elif model == "dilation":
         model_obj = Dilation(lambda_)    
-    
+    else:
+        model_obj = Multiplicative()
     return model_obj
 
     
@@ -101,17 +101,16 @@ def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
     data = io_utils.read_tuple_list(in_file, 3)
     
     print "Applying composition model:%s" % type(model_obj)
-    if arg_space2 is None or type(model_obj) in (LexicalFunction):
+    if arg_space2 is None or type(model_obj) is LexicalFunction:
         composed_space = model_obj.compose(data, arg_space)
     else:
         composed_space = model_obj.compose(data, (arg_space, arg_space2))
     
     print "Printing..."
-    out_file = ".".join(["COMPOSED_SPACE", model_descr, in_descr])    
+    out_file = ".".join([out_dir + "COMPOSED_SS", model_descr, in_descr])    
     io_utils.save(composed_space, "%s.pickle" % out_file)
     
     if not out_format is None:
-        out_file = "%s.%s" % (out_file, format)
         composed_space.export(out_file, format=out_format)
          
     
@@ -120,7 +119,7 @@ def main(sys_argv):
         opts, argv = getopt.getopt(sys_argv[1:], "hi:o:m:a:t:l:", 
                                    ["help", "input=", "output=", "model=",
                                     "alpha=", "beta=", "lambda=", "arg_space=", 
-                                    "trained_model=", "out_format=", "log="])
+                                    "trained_model=", "output_format=", "log="])
         
     except getopt.GetoptError, err:
         print str(err)
@@ -153,7 +152,7 @@ def main(sys_argv):
         log_file = config.get("log") if config.has_option("log") else None
         out_format = config.get("output_format") if config.has_option("output_format") else None
 
-            
+    print opts            
     for opt, val in opts:
         if opt in ("-i", "--input"):
             in_file = val 
@@ -165,13 +164,13 @@ def main(sys_argv):
             arg_space = val.split(",")
         elif opt in ("-t", "--trained_model"):
             trained_model = val
-        elif opt in ("--alpha"):
-            alpha = val 
-        elif opt in ("--beta"):
-            beta = val 
-        elif opt in ("--lambda"):
-            lambda_ = val 
-        elif opt in ("--out_format"):
+        elif opt == "--alpha":
+            alpha = float(val) 
+        elif opt == "--beta":
+            beta = float(val) 
+        elif opt == "--lambda":
+            lambda_ = float(val) 
+        elif opt == "--output_format":
             out_format = val 
         elif opt in ("-l", "--log"):
             log_file = val 
@@ -194,4 +193,5 @@ def main(sys_argv):
     
     
 if __name__ == '__main__':
+    print sys.argv
     main(sys.argv)    

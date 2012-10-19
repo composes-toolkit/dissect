@@ -148,18 +148,21 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
     in_file_descr = "CORE_SS." + in_file_prefix.split("/")[-1]
     data_file = '%s.%s' % (in_file_prefix, in_format)
     
+    if not in_format in ("sm", "dm", "pickle"):
+        raise ValueError("Invalid input format:%s" % in_format) 
+    
     if in_format == "pickle":
         space = io_utils.load(data_file, Space)
     else:    
         row_file = '%s.rows' % (in_file_prefix)
         column_file = '%s.cols' % (in_file_prefix)
-    
         if not os.path.exists(row_file):
             row_file = None
-    
         if not os.path.exists(column_file):
             column_file = None
- 
+            if in_format == "sm":
+                raise ValueError("Column file: %s needs to be provided!" 
+                                 % column_file)
         print "Building matrix..."   
         space = Space.build(data=data_file, rows=row_file, cols=column_file, 
                             format=in_format)
@@ -228,9 +231,9 @@ def main(sys_argv):
         elif opt in ("-l", "--log"):
             log_file = val
             print log_file 
-        elif opt in ("--input_format"):
+        elif opt == "--input_format":
             in_format = val 
-        elif opt in ("--output_format"):
+        elif opt == "--output_format":
             out_format = val 
         elif opt in ("-h", "--help"):
             usage(0)

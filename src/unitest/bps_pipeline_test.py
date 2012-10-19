@@ -52,8 +52,12 @@ class Test(unittest.TestCase):
                   "--output_format", "sm"
                   ])
         
-        s1 = Space.build(data=self.dir_ + "mat1.sm", format = "sm")
-        s2 = Space.build(data=self.dir_ + "PER_SS.mat1.CORE_SS.mat1.sm", format="sm")
+        s1 = Space.build(data=self.dir_ + "mat1.sm",
+                         cols=self.dir_ + "mat1.cols", 
+                         format = "sm")
+        s2 = Space.build(data=self.dir_ + "PER_SS.mat1.CORE_SS.mat1.sm",
+                         cols=self.dir_ + "PER_SS.mat1.CORE_SS.mat1.col",
+                         format="sm")
         
         self._test_equal_spaces_sparse(s1, s2)
     

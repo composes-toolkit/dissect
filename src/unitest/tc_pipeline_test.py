@@ -127,19 +127,18 @@ class Test(unittest.TestCase):
                   ]) 
         
         trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pickle")
-        new_space = trained.function_space
-        np.testing.assert_array_almost_equal(new_space.cooccurrence_matrix.mat, 
+        new_space2 = trained.function_space
+        np.testing.assert_array_almost_equal(new_space2.cooccurrence_matrix.mat, 
                                              np.mat([1,0,0,1]), 10)
-        self.assertTupleEqual(new_space.element_shape, (2,2))
-        self.assertListEqual(new_space.id2row, ["big"])
-        self.assertListEqual(new_space.id2column, [])
+        self.assertTupleEqual(new_space2.element_shape, (2,2))
+        self.assertListEqual(new_space2.id2row, ["big"])
+        self.assertListEqual(new_space2.id2column, [])
         
         a_space = Space.build(data=self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.params.dm", 
                               format="dm")
         
-        self._test_equal_spaces_dense(a_space, new_space)        
-
-
+        self._test_equal_spaces_dense(a_space, new_space2)        
+         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
