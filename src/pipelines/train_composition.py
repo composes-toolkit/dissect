@@ -28,6 +28,7 @@ from composes.utils.regression_learner import RidgeRegressionLearner
 from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.utils import io_utils
 from composes.utils import log_utils
+import numpy as np
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
@@ -48,6 +49,7 @@ def usage(errno=0):
     -r --regression <string>: one of lstsq/ridge. Optional, default lstsq.
     --crossvalidation <bool>: for -r=ridge, one of True/False. Optional, default True. 
     --intercept <bool>: one of True/False, default True.
+    --param <scalar>: for -r=ridge, lambda value 
     --param_range <list(scalar)>: comma separated list of lambda values to be 
                                 searched through when ridge regression uses 
                                 crossvalidation. Optional, default linspace(0,0.5,10)
@@ -73,9 +75,14 @@ def assert_option_not_none(option, message):
     if option is None:
         print message
         usage(1)
+        
+def assert_bool(option, message):
+    if option not in (True, False):
+        print message
+        usage(1)        
 
 def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, regression, 
-                crossvalid, intercept, param_range, export_params):
+                crossvalid, intercept, param, param_range, export_params):
     
     print "Reading in data..."
     in_descr = in_file.split("/")[-1] 
@@ -106,6 +113,7 @@ def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, reg
         if regression in learner_dict:
             regression_obj = learner_dict[regression](crossvalidation=crossvalid,
                                                        intercept=intercept,
+                                                       param=param,
                                                        param_range=param_range)
             model_obj = model_cls(learner=regression_obj)
             
@@ -132,7 +140,7 @@ def main(sys_argv):
                                    ["help", "input=", "output=", "model=",
                                     "regression=", "intercept=", "arg_space=",
                                     "phrase_space=", "export_params=", "log=",
-                                    "crossvalidation="])
+                                    "crossvalidation=", "param="])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -149,7 +157,8 @@ def main(sys_argv):
     arg_space = None
     phrase_space = None
     export_params= False
-    log_file = None 
+    log_file = None
+    param = None 
           
     if (len(argv) == 1):
         config_file = argv[0]
@@ -162,6 +171,7 @@ def main(sys_argv):
         crossvalidation = config.get("crossvalidation") if config.has_option("crossvalidation") else False
         intercept = config.get("intercept") if config.has_option("intercept") else True
         param_range = config.get("param_range") if config.has_option("param_range") else None
+        param = config.get("param") if config.has_option("param") else None
         arg_space = config.get("arg_space") if config.has_option("arg_space") else None
         phrase_space = config.get("phrase_space") if config.has_option("phrase_space") else None
         export_params = config.get("export_params") if config.has_option("export_params") else False
@@ -181,13 +191,17 @@ def main(sys_argv):
         elif opt in ("-r", "--regression"):
             regression = val
         elif opt in ("--crossvalidation"):
-            crossvalidation = val
+            crossvalidation = eval(val)
         elif opt in ("--intercept"):
-            intercept = val
+            intercept = eval(val)
+        elif opt in ("--param"):
+            print opt, val
+            param = float(val)
         elif opt in ("--param_range"):
             param_range = val.split(",")
+            param_range = [float(param) for param in param_range]
         elif opt in ("--export_params"):
-            export_params = val
+            export_params = eval(val)
         elif opt in ("-l", "--log"):
             log_file = val 
         elif opt in ("-h", "--help"):
@@ -203,9 +217,15 @@ def main(sys_argv):
     assert_option_not_none(model, "Model to be trained required")
     assert_option_not_none(arg_space, "Argument space(s) file(s) required")
     assert_option_not_none(phrase_space, "Phrase space file required")
+    assert_bool(intercept, "intercept must be True/False")
+    assert_bool(crossvalidation, "crossvalidation must be True/False")
+    assert_bool(export_params, "export_params must be True/False")
+    
+    if not crossvalidation and regression == "ridge":
+        assert_option_not_none(param, "Cannot run (no-crossvalidation) RidgeRegression with no lambda value!")
         
     train_model(in_file, out_dir, model, arg_space, phrase_space, regression, 
-                crossvalidation, intercept, param_range, export_params)
+                crossvalidation, intercept, param, param_range, export_params)
     
     
 if __name__ == '__main__':

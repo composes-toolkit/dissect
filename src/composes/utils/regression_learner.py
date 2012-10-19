@@ -58,8 +58,9 @@ class RidgeRegressionLearner(RegressionLearner):
         
         self._param = None
         if "param" in kwargs:
-            self._crossvalidation = False
-            self._param = kwargs["param"]
+            if not kwargs["param"] is None:
+                self._crossvalidation = False
+                self._param = kwargs["param"]
 
         if "crossvalidation" in kwargs:
             self._crossvalidation = kwargs["crossvalidation"]
