@@ -13,7 +13,7 @@ def score(gold, prediction, method):
         raise ValueError("The two arrays must have the same length!")
     
     gold = np.array(gold)
-    pearson = np.array(pearson)
+    prediction = np.array(prediction)
     
     if method == "pearson":
         return pearson(gold, prediction)[0]

@@ -256,7 +256,9 @@ class Test(unittest.TestCase):
         for data_file, rows, cols, smat, dmat in test_cases:
             data_file1 = self.dir_ + data_file + ".sparse"
 
-            sp = Space.build(data=data_file1, format="sm")
+            sp = Space.build(data=data_file1,
+                             cols= self.dir_ + data_file + ".cols",
+                             format="sm")
             self.assertListEqual(rows, sp.id2row)
             self.assertListEqual(cols, sp.id2column)
             
@@ -292,7 +294,10 @@ class Test(unittest.TestCase):
             
             data_file1 = self.dir_ + data_file + ".sparse"
 
-            sp = Space.build(data=data_file1, rows= row_file, format="sm")
+            sp = Space.build(data=data_file1, 
+                             rows= row_file, 
+                             cols= self.dir_ + data_file + ".cols",  
+                             format="sm")
             self.assertListEqual(rows, sp.id2row)
             self.assertListEqual(cols, sp.id2column)
             
@@ -399,22 +404,22 @@ class Test(unittest.TestCase):
             self.reset_export_files(out_file)
             sp_d.export(out_file, format="dm")
             new_sp = Space.build(data=out_file + ".dm",
-                                 rows=out_file + ".row",
-                                 cols=out_file + ".col", format="dm")
+                                 rows=out_file + ".rows",
+                                 cols=out_file + ".cols", format="dm")
             self._test_equal_spaces_dense(sp_d, new_sp)
             
             self.reset_export_files(out_file)
             sp_s.export(out_file, format="sm")
             new_sp = Space.build(data=out_file + ".sm",
-                                 rows=out_file + ".row",
-                                 cols=out_file + ".col", format="sm")
+                                 rows=out_file + ".rows",
+                                 cols=out_file + ".cols", format="sm")
             self._test_equal_spaces_sparse(sp_s, new_sp)
 
             self.reset_export_files(out_file)       
             sp_s.export(out_file, format="dm")
             new_sp = Space.build(data=out_file + ".dm",
-                                 rows=out_file + ".row",
-                                 cols=out_file + ".col", format="dm")
+                                 rows=out_file + ".rows",
+                                 cols=out_file + ".cols", format="dm")
                                               
             self._test_equal_spaces_dense(sp_d, new_sp)
             
@@ -426,14 +431,14 @@ class Test(unittest.TestCase):
             self.reset_export_files(out_file)
             sp_d.export(out_file, format="dm")
             new_sp = Space.build(data=out_file + ".dm",
-                                 rows=out_file + ".row",
+                                 rows=out_file + ".rows",
                                  format="dm")
             self._test_equal_spaces_dense(sp_d, new_sp)
             
             self.reset_export_files(out_file)       
             sp_s.export(out_file, format="dm")
             new_sp = Space.build(data=out_file + ".dm",
-                                 rows=out_file + ".row",
+                                 rows=out_file + ".rows",
                                  format="dm")
             
             self._test_equal_spaces_dense(sp_d, new_sp)

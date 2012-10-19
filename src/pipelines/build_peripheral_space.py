@@ -60,22 +60,24 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
     in_file_descr = "PER_SS." + in_file_prefix.split("/")[-1]
     core_descr = ".".join(core_space_file.split("/")[-1].split(".")[0:-1])
      
-    if not in_format in ("sm, dm"):
+    if not in_format in ("sm", "dm", "pickle"):
         raise ValueError("Invalid input format:%s" % in_format) 
-    data_file = '%s.%s' % (in_file_prefix, in_format)
     
-    row_file = '%s.rows' % (in_file_prefix)
-    column_file = '%s.cols' % (in_file_prefix)
-
-    if not os.path.exists(row_file):
-        row_file = None
-
-    if not os.path.exists(column_file):
-        column_file = None
-
-    print "Building matrix..."
-    space = PeripheralSpace.build(core_space, data=data_file, rows=row_file, 
-                                  cols=column_file, format=in_format)
+    data_file = '%s.%s' % (in_file_prefix, in_format)
+    if in_format == "pickle":
+        space = io_utils.load(data_file, Space)
+    else:
+        row_file = '%s.rows' % (in_file_prefix)
+        column_file = '%s.cols' % (in_file_prefix)
+        if not os.path.exists(row_file):
+            row_file = None
+        if not os.path.exists(column_file):
+            column_file = None
+            if in_format == "sm":
+                raise ValueError("Column file: %s needs to be provided!" % column_file)
+        print "Building matrix..."
+        space = PeripheralSpace.build(core_space, data=data_file, rows=row_file, 
+                                      cols=column_file, format=in_format)
     
     print "Printing..."
     out_file_prefix = "%s/%s.%s" % (out_dir, in_file_descr, core_descr)
@@ -120,9 +122,9 @@ def main(sys_argv):
             core_space_file = val 
         elif opt in ("-l", "--log"):
             log_file = val 
-        elif opt in ("--input_format"):
+        elif opt == "--input_format":
             in_format = val 
-        elif opt in ("--output_format"):
+        elif opt == "--output_format":
             out_format = val 
         elif opt in ("-h", "--help"):
             usage()

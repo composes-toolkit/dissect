@@ -26,7 +26,7 @@ def load(file_name, data_type=None):
     return result    
 
 def create_directories(directory):
-    if (not os.path.exists(directory)):
+    if not os.path.exists(directory):
         os.makedirs(directory)
     
 def create_parent_directories(file_name):

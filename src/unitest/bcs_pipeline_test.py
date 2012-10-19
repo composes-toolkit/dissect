@@ -53,12 +53,75 @@ class Test(unittest.TestCase):
                   "--output_format", "sm"
                   ])
         
-        s1 = Space.build(data=self.dir_ + "mat1.sm", format = "sm")
-        s2 = Space.build(data=self.dir_ + "CORE_SS.mat1.sm", format="sm")
+        s1 = Space.build(data=self.dir_ + "mat1.sm",
+                         cols= self.dir_ + "mat1.cols",
+                         format = "sm")
+        s2 = Space.build(data=self.dir_ + "CORE_SS.mat1.sm",
+                         cols=self.dir_ + "CORE_SS.mat1.cols",
+                         format="sm")
         s3 = io_utils.load(self.dir_ + "CORE_SS.mat1.pickle", Space)
         
         self._test_equal_spaces_sparse(s1, s2)
         self._test_equal_spaces_sparse(s1, s3)
+        
+
+    def test_as_conversion_tool(self):
+        
+        bcs.main(["build_core_space.py", 
+                  "-i", self.dir_ + "mat3", 
+                  "-o", self.dir_,
+                  "--input_format", "sm",
+                  "--output_format", "sm"
+                  ])        
+        
+        s1 = Space.build(data=self.dir_ + "mat3.sm",
+                         cols= self.dir_ + "mat3.cols",
+                         format = "sm")
+        s2 = Space.build(data=self.dir_ + "CORE_SS.mat3.sm",
+                         rows=self.dir_ + "CORE_SS.mat3.rows",
+                         cols=self.dir_ + "CORE_SS.mat3.cols", 
+                         format="sm")
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat3.pickle", Space)
+        
+        self._test_equal_spaces_sparse(s1, s2)
+        self._test_equal_spaces_sparse(s1, s3)
+        
+        bcs.main(["build_core_space.py", 
+                  "-i", self.dir_ + "mat3", 
+                  "-o", self.dir_,
+                  "--input_format", "sm",
+                  "--output_format", "dm"
+                  ])
+        
+        s1 = Space.build(data=self.dir_ + "mat3.dm",
+                         cols=self.dir_ + "CORE_SS.mat3.cols",
+                         format = "dm")
+        s2 = Space.build(data=self.dir_ + "CORE_SS.mat3.dm",
+                         rows=self.dir_ + "CORE_SS.mat3.rows",
+                         cols=self.dir_ + "CORE_SS.mat3.cols",
+                         format = "dm")                 
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat3.pickle", Space)
+
+        self._test_equal_spaces_dense(s1, s2)
+        s3.to_dense()
+        self._test_equal_spaces_dense(s1, s3)
+        
+        bcs.main(["build_core_space.py", 
+                  "-i", self.dir_ + "mat3", 
+                  "-o", self.dir_,
+                  "--input_format", "dm",
+                  "--output_format", "dm"
+                  ])        
+       
+        s1 = Space.build(data=self.dir_ + "CORE_SS.mat3.dm",
+                         cols=self.dir_ + "CORE_SS.mat3.cols",
+                         format = "dm")                 
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat3.pickle", Space)
+        
+        s3.to_dense()
+        self._test_equal_spaces_dense(s1, s3)
+        
+                 
         
     def test_simple_dense(self):
             
