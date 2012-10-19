@@ -44,6 +44,12 @@ class NeighboursPipelineTest(unittest.TestCase):
                                "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle" %(self.dir_,self.dir_),
                                "%sconfig/neighbours_config.cfg" %self.dir_
                               ])
+        find_neighbours.main(["compute_neighbours.py",
+                               "-m", "euclidean",
+                               "-n", "2",
+                               "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle" %(self.dir_,self.dir_),
+                               "%sconfig/neighbours_config.cfg" %self.dir_
+                              ])
         
 
     def tearDown(self):
