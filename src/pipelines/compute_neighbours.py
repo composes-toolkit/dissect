@@ -103,6 +103,7 @@ def main(sys_argv):
         usage()
         sys.exit(1)
 
+    section = "compute_neighbours"
 
     out_dir = None
     in_file = None
@@ -110,17 +111,18 @@ def main(sys_argv):
     spaces = None
     log_file = None
     no_neighbours = 20
+    
 
     if (len(argv) == 1):
         config_file = argv[0]
         config = ConfigParser()
         config.read(config_file)
-        out_dir = config.get("output") if config.has_option("output") else None
-        in_file = config.get("input") if config.has_option("input") else None
-        sim_measures = config.get("sim_measure") if config.has_option("sim_measure") else None
-        spaces = config.get("space").split(",") if config.has_option("space") else None
-        no_neighbours = config.get("no_neighbours").split(",") if config.has_option("no_neighbours") else no_neighbours
-        log_file = config.get("log") if config.has_option("log") else None
+        out_dir = config.get(section, "output") if config.has_option(section, "output") else None
+        in_file = config.get(section, "input") if config.has_option(section, "input") else None
+        sim_measure = config.get(section, "sim_measure") if config.has_option(section, "sim_measure") else None
+        spaces = config.get(section, "space").split(",") if config.has_option(section, "space") else None
+        no_neighbours = config.get(section, "no_neighbours").split(",") if config.has_option(section, "no_neighbours") else no_neighbours
+        log_file = config.get(section, "log") if config.has_option(section, "log") else None
     
     for opt, val in opts:
         if opt in ("-i", "--input"):
@@ -128,7 +130,7 @@ def main(sys_argv):
         elif opt in ("-o", "--output"):
             out_dir = val 
         elif opt in ("-m", "--sim_measure"):
-            sim_measures = val
+            sim_measure = val
         elif opt in ("-s", "--space"):
             spaces = val.split(",") 
         elif opt in ("-n", "--no_neighbours"):
@@ -148,7 +150,7 @@ def main(sys_argv):
     assert_option_not_none(sim_measure, "Similarity measure required")
     assert_option_not_none(spaces, "Semantic space file required")
         
-    compute_neighbours(in_file, no_neighbours, out_dir, sim_measures, spaces)
+    compute_neighbours(in_file, no_neighbours, out_dir, sim_measure, spaces)
     
     
    

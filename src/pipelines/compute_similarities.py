@@ -74,6 +74,8 @@ def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
     
     if not len(columns) == 2:
         raise ValueError("Column description unrecognized!") 
+    columns[0] = int(columns[0])
+    columns[1] = int(columns[1])
     
     in_descr = "SIMS." + in_file.split("/")[-1] 
     
@@ -119,17 +121,18 @@ def main(sys_argv):
     spaces = None
     columns = None
     log_file = None
+    section = "compute_similarities"
 
     if (len(argv) == 1):
         config_file = argv[0]
         config = ConfigParser()
         config.read(config_file)
-        out_dir = config.get("output") if config.has_option("output") else None
-        in_file = config.get("input") if config.has_option("input") else None
-        sim_measures = config.get("sim_measures").split(",") if config.has_option("sim_measures") else None
-        spaces = config.get("space").split(",") if config.has_option("space") else None
-        columns = config.get("columns").split(",") if config.has_option("columns") else None
-        log_file = config.get("log") if config.has_option("log") else None
+        out_dir = config.get(section, "output") if config.has_option(section, "output") else None
+        in_file = config.get(section, "input") if config.has_option(section, "input") else None
+        sim_measures = config.get(section, "sim_measures").split(",") if config.has_option(section, "sim_measures") else None
+        spaces = config.get(section, "space").split(",") if config.has_option(section, "space") else None
+        columns = config.get(section, "columns").split(",") if config.has_option(section, "columns") else None
+        log_file = config.get(section, "log") if config.has_option(section, "log") else None
     
     for opt, val in opts:
         if opt in ("-i", "--input"):

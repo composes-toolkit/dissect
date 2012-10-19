@@ -56,7 +56,7 @@ def auc(gold, prediction):
         else:
             false_positive -= 1
             xi = false_positive / negative
-            auc += (xi_old-xi) * yi
+            auc += (xi_old - xi) * yi
             xi_old = xi
             
     return auc
