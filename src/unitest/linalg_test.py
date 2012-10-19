@@ -56,14 +56,14 @@ class Test(unittest.TestCase):
         for x, u_expected, s_expected, v_expected in test_cases:
             for dim in [2,3,6]:
                 u, s, v = Linalg.svd(SparseMatrix(x),dim)
-                np.testing.assert_array_almost_equal(u.mat.todense(), u_expected, 2)
-                np.testing.assert_array_almost_equal(s, s_expected, 2)
-                np.testing.assert_array_almost_equal(v.mat.todense(), v_expected, 2)
+                np.testing.assert_array_almost_equal(np.abs(u.mat.todense()), np.abs(u_expected), 2)
+                np.testing.assert_array_almost_equal(np.abs(s), np.abs(s_expected), 2)
+                np.testing.assert_array_almost_equal(np.abs(v.mat.todense()), np.abs(v_expected), 2)
 
             u, s, v = Linalg.svd(SparseMatrix(x),1)
-            np.testing.assert_array_almost_equal(u.mat.todense(), u_expected[:,0:1], 2)
-            np.testing.assert_array_almost_equal(s, s_expected[0:1], 2)
-            np.testing.assert_array_almost_equal(v.mat.todense(), v_expected[:,0:1], 2)
+            np.testing.assert_array_almost_equal(np.abs(u.mat.todense()), np.abs(u_expected[:,0:1]), 2)
+            np.testing.assert_array_almost_equal(np.abs(s), np.abs(s_expected[0:1]), 2)
+            np.testing.assert_array_almost_equal(np.abs(v.mat.todense()), np.abs(v_expected[:,0:1]), 2)
     
     def test_svd_raises(self):
         test_cases = [np.mat([[1,2,3],[2,4,6],[4,675,43]])]
