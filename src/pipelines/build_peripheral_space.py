@@ -56,7 +56,8 @@ def usage(errno=0):
     sys.exit(errno)
 
 
-def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file):
+def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file,
+                is_gz):
 
     core_space = io_utils.load(core_space_file, Space)
     in_file_descr = "PER_SS." + in_file_prefix.split("/")[-1]
@@ -66,6 +67,9 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
         raise ValueError("Invalid input format:%s" % in_format) 
     
     data_file = '%s.%s' % (in_file_prefix, in_format)
+    if in_format == "sm" and is_gz:
+        data_file = '%s.gz' % data_file
+        
     if in_format == "pickle":
         space = io_utils.load(data_file, Space)
     else:
@@ -87,7 +91,8 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
     if not out_format is None:
         space.export(out_file_prefix, format=out_format)  
 
-def build_space_batch(in_file_prefix, in_format, out_dir, out_format, core_in_dir, core_filter):
+def build_space_batch(in_file_prefix, in_format, out_dir, out_format, 
+                      core_in_dir, core_filter, is_gz):
 
     if not os.path.exists(core_in_dir):
         raise ValueError("Input directory not found: %s" % core_in_dir)
@@ -99,7 +104,8 @@ def build_space_batch(in_file_prefix, in_format, out_dir, out_format, core_in_di
         if file_.find(core_filter) != -1 and file_.endswith(".pickle"):
             print file_
             core_space_file = core_in_dir + file_ 
-            build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
+            build_space(in_file_prefix, in_format, out_dir, out_format, 
+                        core_space_file, is_gz)
     
     
 def main(sys_argv):
@@ -107,7 +113,7 @@ def main(sys_argv):
         opts, argv = getopt.getopt(sys_argv[1:], "hi:o:c:l:", 
                                    ["help", "input=", "output=", "core=", 
                                     "log=", "input_format=", "output_format=",
-                                    "core_in_dir=", "core_filter="])
+                                    "core_in_dir=", "core_filter=", "gz="])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -121,6 +127,7 @@ def main(sys_argv):
     out_format = None
     core_in_dir = None
     core_filter = ""
+    gz = False
     
     section = "build_peripheral_space"
     
@@ -135,13 +142,16 @@ def main(sys_argv):
         core_filter = utils.config_get(section, config, "core_filter", None) 
         log_file = utils.config_get(section, config, "log", None) 
         in_format = utils.config_get(section, config, "input_format", None) 
-        out_format = utils.config_get(section, config, "output_format", None) 
+        out_format = utils.config_get(section, config, "output_format", None)
+        gz = utils.config_get(section, config, "gz", gz) 
             
     for opt, val in opts:
         if opt in ("-i", "--input"):
             in_file_prefix = val 
         elif opt in ("-o", "--output"):
-            out_dir = val 
+            out_dir = val
+        elif opt == "--gz":
+            gz = eval(val)  
         elif opt in ("-c", "--core"):
             core_space_file = val 
         elif opt in ("-l", "--log"):
@@ -162,15 +172,16 @@ def main(sys_argv):
             
     log_utils.config_logging(log_file)
 
+    utils.assert_bool(gz, "--gz value must be True/False", usage)
     utils.assert_option_not_none(in_file_prefix, "Input file prefix required", usage)
     utils.assert_option_not_none(out_dir, "Output directory required", usage)    
     utils.assert_option_not_none(in_format, "Input file format required", usage)
     
     if not core_in_dir is None:
-        build_space_batch(in_file_prefix, in_format, out_dir, out_format, core_in_dir, core_filter)
+        build_space_batch(in_file_prefix, in_format, out_dir, out_format, core_in_dir, core_filter, gz)
     else:
         utils.assert_option_not_none(core_space_file, "Input file required", usage)
-        build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
+        build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file, gz)
    
 if __name__ == '__main__':
     main(sys.argv)    
