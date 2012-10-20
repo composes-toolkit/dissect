@@ -78,8 +78,13 @@ def assert_is_instance(object_, class_):
 
 def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
 
-    with open(matrix_file) as f:
-        no_lines = sum(1 for line in f if line.strip() != "")
+    if matrix_file.endswith(".gz"):
+        f = gzip.open(matrix_file, "rb")
+    else:
+        f = open(matrix_file, "rb")    
+        
+    no_lines = sum(1 for line in f if line.strip() != "")
+    f.close()
     
     row = np.zeros(no_lines, dtype = np.int32)
     col = np.zeros(no_lines, dtype = np.int32)
