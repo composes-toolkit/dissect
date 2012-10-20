@@ -52,6 +52,8 @@ def usage(errno=0):
              Examples: svd_300, nmf_100. Optional.
     -l --log <file>: log file. Optional.
     --input_format: <string>: one of sm(sparse matrix), dm(dense matrix), pickle. 
+    --gz <bool>: if --input_format=sm, True if the input matrix file is zipped. 
+            Option, default False.
     --output_format: <string> Additional output format: one of sm(sparse matrix), 
             dm(dense matrix). Optional.
     -h --help : help
@@ -74,7 +76,7 @@ def apply_weighting(space, w):
                       "epmi":EpmiWeighting(), 
                       "plmi":PlmiWeighting()}
 
-    if not w is None:
+    if not w in (None, "none"):
         print "Applying weighting: %s" % w
         if not w in weightings_dict:
             warn("Weigthing scheme: %s not defined" % w)
@@ -92,7 +94,7 @@ def apply_selection(w_space, s):
     selections_dict = {"top": TopFeatureSelection}
     selection_crit_list = ["sum", "length"]
         
-    if not s is None:
+    if not s in (None, "none"):
         print "Applying feature selection: %s" % s
         sel_els = s.split("_")
         if not len(sel_els) == 3:
@@ -119,7 +121,7 @@ def apply_reduction(s_space, r):
     reductions_dict = {"svd": Svd,
                        "nmf": Nmf}
         
-    if not r is None:
+    if not r in (None, "none"):
         print "Applying dimensionality reduction: %s" % r
         red_els = r.split("_")
         if not len(red_els) == 2:
@@ -137,9 +139,20 @@ def apply_reduction(s_space, r):
         r_space = s_space
       
     return r_space            
+
+
+def print_space(space, out_dir, op_list, out_format):
                 
+    ops = [op for op in op_list if (op and not op == "none")]     
+    space_descr = ".".join(ops)
+    out_file = out_dir + "/" + space_descr
+    io_utils.save(space, out_file + ".pickle")
+    if not out_format is None:
+        space.export(out_file, format=out_format)
+    
+                    
 def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings, 
-                 selections, reductions):
+                 selections, reductions, is_gz):
 
     in_file_descr = "CORE_SS." + in_file_prefix.split("/")[-1]
     data_file = '%s.%s' % (in_file_prefix, in_format)
@@ -149,7 +162,9 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
     
     if in_format == "pickle":
         space = io_utils.load(data_file, Space)
-    else:    
+    else:
+        if is_gz:
+            data_file = '%s.gz' % data_file    
         row_file = '%s.rows' % (in_file_prefix)
         column_file = '%s.cols' % (in_file_prefix)
         if not os.path.exists(row_file):
@@ -166,26 +181,24 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
  
     for w in weightings:
         w_space = apply_weighting(space, w)
+                
         for s in selections:
             s_space = apply_selection(w_space, s)
+
             for r in reductions:
                 r_space = apply_reduction(s_space, r)
                 
                 print "Printing..."
-                ops = [op for op in [in_file_descr, w, s, r] if op]     
-                r_space_descr = ".".join(ops)
-                out_file = out_dir + "/" + r_space_descr
-                io_utils.save(r_space, out_file + ".pickle")
-                if not out_format is None:
-                    r_space.export(out_file, format=out_format)    
+                print_space(r_space, out_dir, [in_file_descr, w, s, r], 
+                                 out_format)
 
-
+    
 def main(sys_argv):
 
     try:
         opts, argv = getopt.getopt(sys_argv[1:], "hi:o:w:s:r:l:", 
                                    ["help", "input=", "output=", "weighting=",
-                                    "selection=", "reduction=", "log=",
+                                    "selection=", "reduction=", "log=", "gz=",
                                     "input_format=", "output_format="])
     except getopt.GetoptError, err:
         print str(err)
@@ -200,7 +213,7 @@ def main(sys_argv):
     log_file = None
     in_format = None
     out_format = None
-       
+    gz = False   
     section = "build_core_space"
          
     if (len(argv) == 1):
@@ -215,12 +228,15 @@ def main(sys_argv):
         log_file = utils.config_get(section, config, "log", None) 
         in_format = utils.config_get(section, config, "input_format", None) 
         out_format = utils.config_get(section, config, "output_format", None) 
+        gz = utils.config_get(section, config, "gz", gz)
                     
     for opt, val in opts:
         if opt in ("-i", "--input"):
             in_file_prefix = val 
         elif opt in ("-o", "--output"):
-            out_dir = val 
+            out_dir = val
+        elif opt == "--gz":
+            gz = eval(val) 
         elif opt in ("-w", "--weighting"):
             weightings = val.split(",") 
         elif opt in ("-s", "--selection"):
@@ -242,12 +258,13 @@ def main(sys_argv):
     if not log_file is None:            
         log_utils.config_logging(log_file)
 
+    utils.assert_bool(gz, "--gz value must be True/False", usage)
     utils.assert_option_not_none(in_file_prefix, "Input file prefix required", usage)
     utils.assert_option_not_none(out_dir, "Output directory required", usage)    
     utils.assert_option_not_none(in_format, "Input format required", usage)
         
     build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings, 
-                 selections, reductions)
+                 selections, reductions, gz)
     
    
 if __name__ == '__main__':
