@@ -7,6 +7,7 @@ Created on Sep 17, 2012
 import numpy as np
 from warnings import warn
 from scipy.sparse import issparse
+from composes.utils.num_utils import is_numeric
 from composes.matrix.matrix import Matrix
 
 class DenseMatrix(Matrix):
@@ -50,7 +51,15 @@ class DenseMatrix(Matrix):
             # TODO: raise suitable message
             raise TypeError("expected matrix-like type, received %s"
                             % type(data))
-        
+ 
+ 
+    def __getitem__(self, index):
+        result = self.mat[index]
+        if is_numeric(result):
+            return result
+        else:
+            return type(self)(result.copy())
+               
     def multiply(self, matrix_):
         '''
         Component-wise multiplication
@@ -61,6 +70,9 @@ class DenseMatrix(Matrix):
                              % (str(self.mat.shape), str(matrix_.mat.shape) ))
         return DenseMatrix(np.multiply(self.mat, matrix_.mat))
     
+                
+    def transpose(self):
+        return type(self)(self.mat.transpose().copy())
     
     def reshape(self, new_shape):
         # TODO: change this is necessary to make a copy

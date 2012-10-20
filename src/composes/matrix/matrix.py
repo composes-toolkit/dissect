@@ -57,12 +57,6 @@ class Matrix(object):
             return self.__mul__(factor)
         raise TypeError("expected numeric type, received %s" % (type(factor)))
 
-    def __getitem__(self, index):
-        result = self.mat[index]
-        if is_numeric(result):
-            return result
-        else:
-            return type(self)(result)
         
     #TODO move all these asserts somewhere else
     def _assert_same_type(self, operand):
@@ -79,9 +73,7 @@ class Matrix(object):
     def _assert_array(self, operand):        
         if not is_array(operand):
             raise TypeError("expected array, received %s" % (type(operand)))
-            
-    def transpose(self):
-        return type(self)(self.mat.transpose())
+
                     
     def sum(self, axis=None):
         #return type is dense matrix of shape (1, dimy) or (dimx,1)

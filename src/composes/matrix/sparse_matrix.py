@@ -112,7 +112,10 @@ class SparseMatrix(Matrix):
     def identity(size):
         # TODO: should do system-wise
         return SparseMatrix(identity(size, dtype = np.double, format = "csr"))
-    
+   
+    def transpose(self):
+        return type(self)(self.mat.transpose())
+     
     def multiply(self, matrix_):
         '''
         Component-wise multiplication
