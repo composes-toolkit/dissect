@@ -19,6 +19,7 @@ from composes.semantic_space.peripheral_space import PeripheralSpace
 from composes.semantic_space.space import Space
 from composes.utils import io_utils
 from composes.utils import log_utils
+import pipeline_utils as utils 
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
@@ -54,10 +55,6 @@ def usage(errno=0):
     """
     sys.exit(errno)
 
-def assert_option_not_none(option, message):
-    if option is None:
-        print message
-        usage(1)
 
 def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file):
 
@@ -125,18 +122,20 @@ def main(sys_argv):
     core_in_dir = None
     core_filter = ""
     
+    section = "build_peripheral_space"
+    
     if (len(argv) == 1):
         config_file = argv[0]
         config = ConfigParser()
         config.read(config_file)
-        out_dir = config.get("output") if config.has_option("output") else None
-        in_file_prefix = config.get("input") if config.has_option("input") else None
-        core_space_file = config.get("core") if config.has_option("core") else None
-        core_in_dir = config.get("core_in_dir") if config.has_option("core_in_dir") else None
-        core_filter = config.get("core_filter") if config.has_option("core_filter") else ""
-        log_file = config.get("log") if config.has_option("log") else None
-        in_format = config.get("input_format") if config.has_option("input_format") else None
-        out_format = config.get("output_format") if config.has_option("output_format") else None
+        out_dir = utils.config_get(section, config, "output", None) 
+        in_file_prefix = utils.config_get(section, config, "input", None)
+        core_space_file = utils.config_get(section, config, "core", None) 
+        core_in_dir = utils.config_get(section, config, "core_in_dir", None) 
+        core_filter = utils.config_get(section, config, "core_filter", None) 
+        log_file = utils.config_get(section, config, "log", None) 
+        in_format = utils.config_get(section, config, "input_format", None) 
+        out_format = utils.config_get(section, config, "output_format", None) 
             
     for opt, val in opts:
         if opt in ("-i", "--input"):
@@ -163,14 +162,14 @@ def main(sys_argv):
             
     log_utils.config_logging(log_file)
 
-    assert_option_not_none(in_file_prefix, "Input file prefix required")
-    assert_option_not_none(out_dir, "Output directory required")    
-    assert_option_not_none(in_format, "Input file format required")
+    utils.assert_option_not_none(in_file_prefix, "Input file prefix required", usage)
+    utils.assert_option_not_none(out_dir, "Output directory required", usage)    
+    utils.assert_option_not_none(in_format, "Input file format required", usage)
     
     if not core_in_dir is None:
         build_space_batch(in_file_prefix, in_format, out_dir, out_format, core_in_dir, core_filter)
     else:
-        assert_option_not_none(core_space_file, "Input file required")
+        utils.assert_option_not_none(core_space_file, "Input file required", usage)
         build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file)
    
 if __name__ == '__main__':
