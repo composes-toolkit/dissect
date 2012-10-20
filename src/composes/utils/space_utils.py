@@ -5,6 +5,7 @@ Created on Sep 26, 2012
 '''
 
 import numpy as np
+import gzip as gzip
 from warnings import warn
 from scipy.sparse import csr_matrix
 from composes.matrix.sparse_matrix import SparseMatrix
@@ -90,24 +91,29 @@ def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
         
     data = np.zeros(no_lines, dtype=element_type)
     
-    with open(matrix_file, "rb") as f:
-        i = 0
-        for line in f:
-            if line.strip() != "":
-                line_elements = line.strip().split()
-                if len(line_elements) >= 3:
-                    [word1, word2, count] = line_elements[0:3]
-                    if word1 in row2id and word2 in column2id:
-                        row[i] = row2id[word1]
-                        col[i] = column2id[word2]
-                        data[i] = element_type(count)
-                        i += 1
-                if len(line_elements) > 3:
-                    warn("Invalid input line:%s. Expected 3 fields, ignoring additional ones!" % line.strip())        
-                if len(line_elements) < 3:
-                    raise ValueError("Invalid row: %s, expected at least %d fields" 
-                                     % (line.strip(), 3))
-          
+    if matrix_file.endswith(".gz"):
+        f = gzip.open(matrix_file, "rb")
+    else:
+        f = open(matrix_file, "rb")    
+        
+    i = 0
+    for line in f:
+        if line.strip() != "":
+            line_elements = line.strip().split()
+            if len(line_elements) >= 3:
+                [word1, word2, count] = line_elements[0:3]
+                if word1 in row2id and word2 in column2id:
+                    row[i] = row2id[word1]
+                    col[i] = column2id[word2]
+                    data[i] = element_type(count)
+                    i += 1
+            if len(line_elements) > 3:
+                warn("Invalid input line:%s. Expected 3 fields, ignoring additional ones!" % line.strip())        
+            if len(line_elements) < 3:
+                raise ValueError("Invalid row: %s, expected at least %d fields" 
+                                 % (line.strip(), 3))
+    
+    f.close()      
     # eliminate the extra zeros created when word1 or word2 is not row2id or col2id!!    
     data = data[0:i]
     row = row[0:i]
