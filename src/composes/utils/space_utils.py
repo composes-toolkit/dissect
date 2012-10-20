@@ -186,21 +186,27 @@ def read_dense_space_data(matrix_file, row2id, **kwargs):
         element_type = np.double
         
     m = np.mat(np.zeros(shape=(no_rows, no_cols), dtype = element_type))
+   
+    if matrix_file.endswith(".gz"):
+        f = gzip.open(matrix_file, "rb")
+    else:
+        f = open(matrix_file, "rb")  
+         
+    for line in f:
+        if not line.strip() == "":
+            elements = line.strip().split()
+            if len(elements) != no_cols + 1:
+                raise ValueError("Invalid row: %s, expected %d fields" 
+                                 % (line.strip(), no_cols + 1))
+            word = elements[0]
+            if word in row2id:
+                i = row2id[word]
+                if word in row_string_set != 0:
+                    warn("Found duplicate row: %s. Ignoring it." % word)
+                else:
+                    m[i,:] = elements[1:]
+                    row_string_set.add(word)
     
-    with open(matrix_file, "rb") as f:
-        for line in f:
-            if not line.strip() == "":
-                elements = line.strip().split()
-                if len(elements) != no_cols + 1:
-                    raise ValueError("Invalid row: %s, expected %d fields" 
-                                     % (line.strip(), no_cols + 1))
-                word = elements[0]
-                if word in row2id:
-                    i = row2id[word]
-                    if word in row_string_set != 0:
-                        warn("Found duplicate row: %s. Ignoring it." % word)
-                    else:
-                        m[i,:] = elements[1:]
-                        row_string_set.add(word)
+    f.close()
                         
     return DenseMatrix(m)
