@@ -6,6 +6,7 @@ Created on Oct 16, 2012
 
 import pickle
 import os
+import gzip as gzip
 from warnings import warn
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
@@ -47,19 +48,23 @@ def extract_indexing_structs(filename, field_list):
     index_list = [0 for i in xrange(no_fields)]
     max_field = max(field_list)
     
-    with open(filename, "rb") as input_stream:
-        for line in input_stream:
-            if line.strip() != "":
-                elements = line.strip().split()
-                if len(elements) <= max_field:
-                    warn("Invalid input line:%s. Skipping it" % line.strip())
-                else:
-                    for field_idx, field in enumerate(field_list):
-                        current_str = elements[field]
-                        if not current_str in str2id_list[field_idx]:
-                            str2id_list[field_idx][current_str] = index_list[field_idx]
-                            id2str_list[field_idx].append(current_str)
-                            index_list[field_idx] += 1
+    if filename.endswith(".gz"):
+        input_stream = gzip.open(filename, "rb")
+    else:
+        input_stream = open(filename, "rb") 
+        
+    for line in input_stream:
+        if line.strip() != "":
+            elements = line.strip().split()
+            if len(elements) <= max_field:
+                warn("Invalid input line:%s. Skipping it" % line.strip())
+            else:
+                for field_idx, field in enumerate(field_list):
+                    current_str = elements[field]
+                    if not current_str in str2id_list[field_idx]:
+                        str2id_list[field_idx][current_str] = index_list[field_idx]
+                        id2str_list[field_idx].append(current_str)
+                        index_list[field_idx] += 1
  
     for id2str in id2str_list:
         if not id2str:
@@ -97,6 +102,7 @@ def print_list(list_, file_name):
             
 def print_cooc_mat_sparse_format(matrix_, id2row, id2column, file_prefix):
     matrix_file = "%s.%s" %(file_prefix, "sm")
+    
     with open(matrix_file, 'w') as f: 
         if isinstance(matrix_, SparseMatrix):
             if not id2column:
@@ -122,6 +128,7 @@ def print_cooc_mat_sparse_format(matrix_, id2row, id2column, file_prefix):
 
 def print_cooc_mat_dense_format(matrix_, id2row, file_prefix):
     matrix_file = "%s.%s" %(file_prefix, "dm")
+    
     with open(matrix_file, 'w') as f: 
         for i, row in enumerate(id2row):
             v = DenseMatrix(matrix_[i]).mat.flat
