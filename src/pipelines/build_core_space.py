@@ -222,8 +222,17 @@ def main(sys_argv):
         out_dir = utils.config_get(section, config, "output", None)
         in_file_prefix = utils.config_get(section, config, "input", None)
         weightings = utils.config_get(section, config, "weighting", [None])
+        if len(weightings) > 1:
+            weightings = weightings.split(",") 
+            
         selections = utils.config_get(section, config, "selection", [None]) 
-        reductions = utils.config_get(section, config, "reduction", [None]) 
+        if len(selections) > 1:
+            selections = selections.split(",") 
+        
+        reductions = utils.config_get(section, config, "reduction", [None])
+        if len(reductions) > 1:
+            reductions = reductions.split(",") 
+             
         log_file = utils.config_get(section, config, "log", None) 
         in_format = utils.config_get(section, config, "input_format", None) 
         out_format = utils.config_get(section, config, "output_format", None) 
