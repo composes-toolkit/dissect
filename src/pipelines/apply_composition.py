@@ -15,6 +15,7 @@ from composes.composition.lexical_function import LexicalFunction
 from composes.composition.multiplicative import Multiplicative
 from composes.utils import io_utils
 from composes.utils import log_utils
+import pipeline_utils as utils
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
@@ -51,16 +52,6 @@ def usage(errno=0):
     Example:
     """
     sys.exit(errno)
-
-def assert_option_not_none(option, message):
-    if option is None:
-        print message
-        usage(1)
-
-def assert_xor_options(option1, option2, message):
-    if not ((option1 is None) ^ (option2 is None)):
-        print message
-        usage(1) 
 
 def create_model(model, alpha, beta, lambda_): 
 
@@ -136,22 +127,24 @@ def main(sys_argv):
     lambda_ = None
     log_file = None
     out_format = None 
-          
+
+    section = "apply_composition"          
+    
     if (len(argv) == 1):
         config_file = argv[0]
         config = ConfigParser()
         config.read(config_file)
-        out_dir = config.get("output") if config.has_option("output") else None
-        in_file = config.get("input") if config.has_option("input") else None
-        model = config.get("model") if config.has_option("model") else None
-        trained_model = config.get("trained_model") if config.has_option("trained_model") else None
-        arg_space = config.get("arg_space") if config.has_option("arg_space") else None
-        alpha = config.get("alpha") if config.has_option("alpha") else None
-        beta = config.get("beta") if config.has_option("beta") else None
-        lambda_ = config.get("lambda_") if config.has_option("lambda_") else None
-        log_file = config.get("log") if config.has_option("log") else None
-        out_format = config.get("output_format") if config.has_option("output_format") else None
-
+        out_dir = utils.config_get(section, config, "output", None)
+        in_file = utils.config_get(section, config, "input", None)
+        model = utils.config_get(section, config, "model", None)
+        trained_model = utils.config_get(section, config, "trained_model", None)
+        arg_space = utils.config_get(section, config, "arg_space", None)
+        alpha = utils.config_get(section, config, "alpha", None)
+        beta = utils.config_get(section, config, "beta", None)
+        lambda_ = utils.config_get(section, config, "lambda", None)
+        log_file = utils.config_get(section, config, "log", None)
+        out_format = utils.config_get(section, config, "output_format", None)
+       
     print opts            
     for opt, val in opts:
         if opt in ("-i", "--input"):
@@ -182,10 +175,10 @@ def main(sys_argv):
             
     log_utils.config_logging(log_file)
 
-    assert_option_not_none(in_file, "Input file required")
-    assert_option_not_none(out_dir, "Output directory required")    
-    assert_xor_options(model, trained_model, "(Only) one of model type (-m) or file of model object (-t) are required!")
-    assert_option_not_none(arg_space, "Argument space(s) file(s) required")
+    utils.assert_option_not_none(in_file, "Input file required", usage)
+    utils.assert_option_not_none(out_dir, "Output directory required", usage)    
+    utils.assert_xor_options(model, trained_model, "(Only) one of model type (-m) or file of model object (-t) are required!", usage)
+    utils.assert_option_not_none(arg_space, "Argument space(s) file(s) required", usage)
 
         
     apply_model(in_file, out_dir, model, trained_model, arg_space,

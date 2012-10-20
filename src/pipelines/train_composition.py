@@ -29,6 +29,7 @@ from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.utils import io_utils
 from composes.utils import log_utils
 import numpy as np
+import pipeline_utils as utils 
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
@@ -70,16 +71,6 @@ def usage(errno=0):
     Example:
     """
     sys.exit(errno)
-
-def assert_option_not_none(option, message):
-    if option is None:
-        print message
-        usage(1)
-        
-def assert_bool(option, message):
-    if option not in (True, False):
-        print message
-        usage(1)        
 
 def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, regression, 
                 crossvalid, intercept, param, param_range, export_params):
@@ -159,24 +150,28 @@ def main(sys_argv):
     export_params= False
     log_file = None
     param = None 
+    
+    section = "train_composition"
           
     if (len(argv) == 1):
         config_file = argv[0]
         config = ConfigParser()
         config.read(config_file)
-        out_dir = config.get("output") if config.has_option("output") else None
-        in_file = config.get("input") if config.has_option("input") else None
-        model = config.get("model") if config.has_option("model") else None
-        regression = config.get("regression") if config.has_option("regression") else None
-        crossvalidation = config.get("crossvalidation") if config.has_option("crossvalidation") else False
-        intercept = config.get("intercept") if config.has_option("intercept") else True
-        param_range = config.get("param_range") if config.has_option("param_range") else None
-        param = config.get("param") if config.has_option("param") else None
-        arg_space = config.get("arg_space") if config.has_option("arg_space") else None
-        phrase_space = config.get("phrase_space") if config.has_option("phrase_space") else None
-        export_params = config.get("export_params") if config.has_option("export_params") else False
-        log_file = config.get("log") if config.has_option("log") else None
-            
+        out_dir = utils.config_get(section, config, "output", None) 
+        in_file = utils.config_get(section, config, "input", None)
+        model = utils.config_get(section, config, "model", None)
+        regression = utils.config_get(section, config, "regression", None) 
+        crossvalidation = utils.config_get(section, config, "crossvalidation", crossvalidation) 
+        intercept = utils.config_get(section, config, "intercept", intercept) 
+        param_range = utils.config_get(section, config, "param_range", None) 
+        param = utils.config_get(section, config, "param", None)
+        arg_space = utils.config_get(section, config, "arg_space", None)
+        if not arg_space is None:
+            arg_space = arg_space.split(",") 
+        phrase_space = utils.config_get(section, config, "phrase_space", None) 
+        export_params = utils.config_get(section, config, "export_params", export_params) 
+        log_file = utils.config_get(section, config, "log", None)
+        
     for opt, val in opts:
         if opt in ("-i", "--input"):
             in_file = val 
@@ -212,17 +207,17 @@ def main(sys_argv):
             
     log_utils.config_logging(log_file)
 
-    assert_option_not_none(in_file, "Input file required")
-    assert_option_not_none(out_dir, "Output directory required")    
-    assert_option_not_none(model, "Model to be trained required")
-    assert_option_not_none(arg_space, "Argument space(s) file(s) required")
-    assert_option_not_none(phrase_space, "Phrase space file required")
-    assert_bool(intercept, "intercept must be True/False")
-    assert_bool(crossvalidation, "crossvalidation must be True/False")
-    assert_bool(export_params, "export_params must be True/False")
+    utils.assert_option_not_none(in_file, "Input file required", usage)
+    utils.assert_option_not_none(out_dir, "Output directory required", usage)    
+    utils.assert_option_not_none(model, "Model to be trained required", usage)
+    utils.assert_option_not_none(arg_space, "Argument space(s) file(s) required", usage)
+    utils.assert_option_not_none(phrase_space, "Phrase space file required", usage)
+    utils.assert_bool(intercept, "intercept must be True/False", usage)
+    utils.assert_bool(crossvalidation, "crossvalidation must be True/False", usage)
+    utils.assert_bool(export_params, "export_params must be True/False", usage)
     
     if not crossvalidation and regression == "ridge":
-        assert_option_not_none(param, "Cannot run (no-crossvalidation) RidgeRegression with no lambda value!")
+        utils.assert_option_not_none(param, "Cannot run (no-crossvalidation) RidgeRegression with no lambda value!", usage)
         
     train_model(in_file, out_dir, model, arg_space, phrase_space, regression, 
                 crossvalidation, intercept, param, param_range, export_params)

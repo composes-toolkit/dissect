@@ -22,6 +22,7 @@ import os
 from ConfigParser import ConfigParser
 from composes.utils import scoring_utils
 from composes.utils import log_utils
+import pipeline_utils as utils
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
@@ -54,12 +55,6 @@ def usage(errno=0):
     Example:
     """
     sys.exit(errno)
-
-def assert_option_not_none(option, message):
-    if option is None:
-        print message
-        usage(1)
-        
 
 def evaluate_sim(in_file, columns, corr_measures):
     
@@ -113,17 +108,23 @@ def main(sys_argv):
     columns = None
     log_file = None
 
+    section = "evaluate_similarities"
+    
     if (len(argv) == 1):
         config_file = argv[0]
         config = ConfigParser()
         config.read(config_file)
-        in_file = config.get("input") if config.has_option("input") else None
-        in_dir = config.get("in_dir") if config.has_option("in_dir") else None
-        filter_ = config.get("filter") if config.has_option("filter") else ""
-        corr_measures = config.get("correlation_measures").split(",") if config.has_option("correlation_measures") else None
-        columns = config.get("columns").split(",") if config.has_option("columns") else None
-        log_file = config.get("log") if config.has_option("log") else None
-    
+        in_file = utils.config_get(section, config, "input", None) 
+        in_dir = utils.config_get(section, config, "in_dir", None) 
+        filter_ = utils.config_get(section, config, "filter", filter_) 
+        corr_measures = utils.config_get(section, config, "correlation_measures", None) 
+        if not corr_measures is None:
+            corr_measures = corr_measures.split(",")
+        columns = utils.config_get(section, config, "columns", None) 
+        if not columns is None:
+            columns = columns.split(",")
+        log_file = utils.config_get(section, config, "log", None)  
+        
     for opt, val in opts:
         if opt in ("-i", "--input"):
             in_file = val 
@@ -148,13 +149,13 @@ def main(sys_argv):
             
     log_utils.config_logging(log_file)
     
-    assert_option_not_none(corr_measures, "Correlation measures required")
-    assert_option_not_none(columns, "Columns to be read from input file required")
+    utils.assert_option_not_none(corr_measures, "Correlation measures required", usage)
+    utils.assert_option_not_none(columns, "Columns to be read from input file required", usage)
     
     if not in_dir is None:
         evaluate_sim_batch(in_dir, columns, corr_measures, filter_)
     else:
-        assert_option_not_none(in_file, "Input file required")
+        utils.assert_option_not_none(in_file, "Input file required", usage)
         evaluate_sim(in_file, columns, corr_measures)
    
 if __name__ == '__main__':

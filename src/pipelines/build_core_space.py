@@ -27,6 +27,7 @@ from composes.transformation.dim_reduction.nmf import Nmf
 from composes.transformation.dim_reduction.svd import Svd
 from composes.utils import io_utils
 from composes.utils import log_utils
+import pipeline_utils as utils
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
@@ -64,11 +65,7 @@ def usage(errno=0):
     """
     sys.exit(errno)
 
-def assert_option_not_none(option, message):
-    if option is None:
-        print message
-        usage(1)
-        
+
 def apply_weighting(space, w):
     
     weightings_dict = {"raw":RawWeighting(),
@@ -203,19 +200,21 @@ def main(sys_argv):
     log_file = None
     in_format = None
     out_format = None
+       
+    section = "build_core_space"
          
     if (len(argv) == 1):
         config_file = argv[0]
         config = ConfigParser()
         config.read(config_file)
-        out_dir = config.get("output") if config.has_option("output") else None
-        in_file_prefix = config.get("input") if config.has_option("input") else None
-        weightings = config.get("weighting").split(",") if config.has_option("weighting") else [None]
-        selections = config.get("selection").split(",") if config.has_option("selection") else [None]
-        reductions = config.get("reduction").split(",") if config.has_option("reduction") else [None]
-        log_file = config.get("log") if config.has_option("log") else None
-        in_format = config.get("input_format") if config.has_option("input_format") else None
-        out_format = config.get("output_format") if config.has_option("output_format") else None
+        out_dir = utils.config_get(section, config, "output", None)
+        in_file_prefix = utils.config_get(section, config, "input", None)
+        weightings = utils.config_get(section, config, "weighting", [None])
+        selections = utils.config_get(section, config, "selection", [None]) 
+        reductions = utils.config_get(section, config, "reduction", [None]) 
+        log_file = utils.config_get(section, config, "log", None) 
+        in_format = utils.config_get(section, config, "input_format", None) 
+        out_format = utils.config_get(section, config, "output_format", None) 
                     
     for opt, val in opts:
         if opt in ("-i", "--input"):
@@ -243,9 +242,9 @@ def main(sys_argv):
     if not log_file is None:            
         log_utils.config_logging(log_file)
 
-    assert_option_not_none(in_file_prefix, "Input file prefix required")
-    assert_option_not_none(out_dir, "Output directory required")    
-    assert_option_not_none(in_format, "Input format required")
+    utils.assert_option_not_none(in_file_prefix, "Input file prefix required", usage)
+    utils.assert_option_not_none(out_dir, "Output directory required", usage)    
+    utils.assert_option_not_none(in_format, "Input format required", usage)
         
     build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings, 
                  selections, reductions)

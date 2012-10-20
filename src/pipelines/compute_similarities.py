@@ -27,6 +27,7 @@ from composes.similarity.dot_prod import DotProdSimilarity
 from composes.similarity.euclidean import EuclideanSimilarity
 from composes.utils import io_utils
 from composes.utils import log_utils
+import pipeline_utils as utils
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
@@ -59,11 +60,6 @@ def usage(errno=0):
     """
     sys.exit(errno)
 
-def assert_option_not_none(option, message):
-    if option is None:
-        print message
-        usage(1)
-        
 
 def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
     
@@ -127,13 +123,19 @@ def main(sys_argv):
         config_file = argv[0]
         config = ConfigParser()
         config.read(config_file)
-        out_dir = config.get(section, "output") if config.has_option(section, "output") else None
-        in_file = config.get(section, "input") if config.has_option(section, "input") else None
-        sim_measures = config.get(section, "sim_measures").split(",") if config.has_option(section, "sim_measures") else None
-        spaces = config.get(section, "space").split(",") if config.has_option(section, "space") else None
-        columns = config.get(section, "columns").split(",") if config.has_option(section, "columns") else None
-        log_file = config.get(section, "log") if config.has_option(section, "log") else None
-    
+        out_dir = utils.config_get(section, config, "output", None) 
+        in_file = utils.config_get(section, config, "input", None)
+        sim_measures = utils.config_get(section, config, "sim_measures", None)
+        if not sim_measures is None: 
+            sim_measures = sim_measures.split(",")
+        spaces = utils.config_get(section, config, "space", None) 
+        if not spaces is None: 
+            spaces = spaces.split(",")
+        columns = utils.config_get(section, config, "columns", None) 
+        if not columns is None: 
+            columns = columns.split(",")
+        log_file = utils.config_get(section, config, "log", None)
+        
     for opt, val in opts:
         if opt in ("-i", "--input"):
             in_file = val 
@@ -155,11 +157,11 @@ def main(sys_argv):
             
     log_utils.config_logging(log_file)
 
-    assert_option_not_none(in_file, "Input file required")
-    assert_option_not_none(out_dir, "Output directory required")    
-    assert_option_not_none(sim_measures, "Similarity measures required")
-    assert_option_not_none(spaces, "Semantic space file required")
-    assert_option_not_none(columns, "Columns to be read from input file required")
+    utils.assert_option_not_none(in_file, "Input file required", usage)
+    utils.assert_option_not_none(out_dir, "Output directory required", usage)    
+    utils.assert_option_not_none(sim_measures, "Similarity measures required", usage)
+    utils.assert_option_not_none(spaces, "Semantic space file required", usage)
+    utils.assert_option_not_none(columns, "Columns to be read from input file required", usage)
         
     compute_sim(in_file, columns, out_dir, sim_measures, spaces)
     
