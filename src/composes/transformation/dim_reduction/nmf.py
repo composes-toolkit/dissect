@@ -7,6 +7,7 @@ Created on Oct 1, 2012
 import numpy as np
 from dimensionality_reduction import DimensionalityReduction
 from composes.matrix.linalg import Linalg
+from math import sqrt
 
 class Nmf(DimensionalityReduction):
     '''
@@ -66,5 +67,59 @@ class Nmf(DimensionalityReduction):
         h = type(matrix_)(h)
 
         return w, h
-                
     
+    def nndsvd_init(self, matrix):
+        pass
+    def nndsvd_init_tmp(self,matrix_, reduced_dimension, flag=0):
+        def matrix_abs(mat_):
+            mat_p = mat_.get_non_negative()
+            mat_n_abs = mat_p - mat_
+            return mat_p + mat_n_abs 
+        
+        matrix_.assert_positive()
+        w = [[]]*reduced_dimension
+        h = [[]]*reduced_dimension
+        u, s, vt = Linalg.svd(matrix_, reduced_dimension);
+        print "reduced dimension", u.get_shape()[1]
+        
+        w[0] = sqrt(s[0]) * matrix_abs(u[:,0])
+        h[0] = sqrt(s[0]) * matrix_abs(vt[0,:])
+        
+        for i in range(1,reduced_dimension):
+            uu = u[:,i]
+            vv = vt[i,:]
+            uup = uu.get_non_negative()
+            uun = uup - uu
+            vvp = vv.get_non_negative()
+            vvn = vvp - vv
+            
+            n_uup = uup.norm()
+            n_uun = uun.norm()
+            n_vvp = vvp.norm()
+            n_vvn = vvn.norm()
+            
+            termp = n_uup * n_vvp; termn = n_uun * n_vvn
+            if (termp >= termn):
+                w[i] = sqrt(s[i] * termp) * uup / n_uup 
+                h[i] = sqrt(s[i] * termp) * vvp / n_vvp
+            else:
+                w[i] = sqrt(s[i] * termn) * uun / n_uun 
+                h[i] = sqrt(s[i] * termn) * vvn / n_vvn
+        
+        w = matrix_.nary_hstack(w)
+        h = matrix_.nary_vstack(h)
+        
+        # TODO: implement function in matrices
+        w.removeNearZeros(0.0000000001)
+        h.removeNearZeros(0.0000000001)
+        
+        if( flag==1 ): #NNDSVDa: fill in the zero elements with the average        
+            # TODO: implement later
+            raise NotImplementedError()
+            #ind1 = W==0
+            #ind2 = H==0
+            #average = Matrices.mean(a) 
+            #W[ind1] = average
+            #H[ind2] = average;
+        
+        return w,h      
