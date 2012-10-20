@@ -65,7 +65,32 @@ class Test(unittest.TestCase):
         self._test_equal_spaces_sparse(s1, s2)
         self._test_equal_spaces_sparse(s1, s3)
         
-
+    def ttest_simple_sparse_zipped(self):
+            
+        bcs.main(["build_core_space.py", 
+                  "-l", self.dir_ + "log1.txt",
+                  "-i", self.dir_ + "mat1", 
+                  "-o", self.dir_,
+                  "--input_format", "sm",
+                  "--output_format", "sm",
+                  "--gz", "True"
+                  ])
+        
+        s1 = Space.build(data=self.dir_ + "mat1.sm.gz",
+                         cols= self.dir_ + "mat1.cols",
+                         format = "sm")
+        s2 = Space.build(data=self.dir_ + "CORE_SS.mat1.sm",
+                         cols=self.dir_ + "CORE_SS.mat1.cols",
+                         format="sm")
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat1.pickle", Space)
+        s4 = Space.build(data=self.dir_ + "mat1.sm",
+                         cols= self.dir_ + "mat1.cols",
+                         format = "sm")
+                
+        self._test_equal_spaces_sparse(s1, s2)
+        self._test_equal_spaces_sparse(s1, s3)
+        self._test_equal_spaces_sparse(s1, s4)
+        
     def test_as_conversion_tool(self):
         
         bcs.main(["build_core_space.py", 
@@ -152,7 +177,40 @@ class Test(unittest.TestCase):
         s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pickle", Space)
         
         self._test_equal_spaces_dense(s1, s3)  
+
+    def test_simple_dense_zipped(self):
+            
+        bcs.main(["build_core_space.py", 
+                  "-l", self.dir_ + "log1.txt",
+                  "-i", self.dir_ + "mat2", 
+                  "-o", self.dir_,
+                  "--input_format", "dm",
+                  "--output_format", "dm",
+                  "--gz", "True",
+                  ])
+        
+        s1 = Space.build(data = self.dir_ + "mat2.dm", format = "dm")
+        s2 = Space.build(data = self.dir_ + "CORE_SS.mat2.dm", format="dm")
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pickle", Space)
+        s4 = Space.build(data = self.dir_ + "mat2.dm.gz", format = "dm")
+        
+        self._test_equal_spaces_dense(s1, s2)
+        self._test_equal_spaces_dense(s1, s3)        
+        self._test_equal_spaces_dense(s1, s4)
  
+        bcs.main(["build_core_space.py", 
+                  "-l", self.dir_ + "log1.txt",
+                  "-i", self.dir_ + "CORE_SS.mat2", 
+                  "-o", self.dir_,
+                  "--input_format", "pickle",
+                  "--output_format", "dm",
+                  "--gz", "True",
+                  ])
+        
+        s1 = io_utils.load(self.dir_ + "CORE_SS.CORE_SS.mat2.pickle", Space)
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pickle", Space)
+        
+        self._test_equal_spaces_dense(s1, s3)   
     def test_simple_nmf(self):
         
         bcs.main(["build_core_space.py", 
