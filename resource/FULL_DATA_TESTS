@@ -4,7 +4,7 @@
 		INPUT CORE DATA:
 			/mnt/cimec-storage-sata/users/georgiana.dinu/MENexp/core_in/:
 				verbnoun.core.cols
-				verbnoun.core.mat.gz
+				verbnoun.core.sm.gz
 				verbnoun.core.rows
 		TEST DATA:
 			/mnt/cimec-storage-sata/users/georgiana.dinu/MENexp/test/:
@@ -17,7 +17,7 @@
 		INPUT CORE DATA:
 			/mnt/cimec-storage-sata/users/georgiana.dinu/DPexp/core_in/:
 				lemma.core.cols
-				lemma.core.mat.gz
+				lemma.core.sm.gz
 				lemma.core.rows	
 		TEST DATA:
 			/mnt/cimec-storage-sata/users/georgiana.dinu/DPexp/test/crowdflower/:
@@ -34,7 +34,7 @@
 			
 		INPUT PERIPHERAL DATA:
 			/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/:
-				per.raw.VO.mat.gz
+				per.raw.VO.sm.gz
 				per.raw.VO.rows
 				per.raw.VO.cols 
 			
@@ -47,6 +47,17 @@
 				gold: column 3
 				test: pearson,spearman
 
+	2.2 ML10 - SVO data
+		INPUT CORE DATA:
+			THE OUTPUT FROM 1.1
+			
+		INPUT PERIPHERAL DATA:
+			/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/:
+				per.raw.VO.sm.gz
+				per.raw.VO.rows
+				per.raw.VO.cols 
+				
+		TESTING: no testing, used for 3D composition
 
 3. TEST GET NEIGHBOURS
 		3.1 WITHIN THE SAME SPACE
@@ -104,12 +115,44 @@
 			BOTH TRAIN AND COMPOSE:
 				ARG_SPACE1 = ARG_SPACE2: ANY OUTPUT FROM 1.1
 
+==============
+TO DO 
+==============
+ALL COMPOSITION MODELS THAT TRAIN, DO A FIRST PASS ON THE TRAINING DATA
+AND CHECK which samples are found or not, remove those that are  not found 
+in arg space or phrase space and isseu an warning
+=================
 	
-			
 	3.2 3D GS11 - SVO data
+		3.1.1 LexicalFunction
+			3.1.1.1. TRAIN PHASE 1 (run this with --export_params)
+					ARG_SPACE:
+						ANY OUTPUT FROM 1.1
+					PHRASE_SPACE:
+						SPACE FROM 2.2 (peripheral SVO space)
+					
+					TRAIN DATA:
+						/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/:
+							GS11_SVO_train.txt (459946 total samples, ?vo functions?)
 	
-	
-	
+					OUTPUT THE LEARNED VO SPACE by using --export_params
+					
+			3.1.1.2. TRAIN PHASE 2
+					ARG_SPACE:
+						ANY OUTPUT FROM 1.1
+					PHRASE_SPACE:
+						SPACE RESULTED IN 3.1.1.1 (1. load the compositional mode, 
+													and get the space out of it,
+													or 
+												   2.run the previous step with 
+													--export_params, and use that
+													space)
+					
+					TRAIN DATA:
+					
+					OUTPUT THE LEARNED V SPACE
+					
+			3.1.1.3 COMPOSE SVO (i.e. build an SVO space)
 	
 	
 						
