@@ -150,20 +150,21 @@ class Space(object):
     def get_sim(self, word1, word2, similarity, space2=None):
         
         assert_is_instance(similarity, Similarity)
-        v1 = self.get_row(word1)
-        if space2 is None:
-            v2 = self.get_row(word2)
-        else:
-            v2 = space2.get_row(word2)
         
-        if v1 is None:
+        try:
+            v1 = self.get_row(word1)
+        except ValueError:
             warn("Row string %s not found, returning 0.0" % (word1))
             return 0.0
-
-        if v2 is None:
+        try:
+            if space2 is None:
+                v2 = self.get_row(word2)
+            else:
+                v2 = space2.get_row(word2)
+        except ValueError:
             warn("Row string %s not found, returning 0.0" % (word2))
             return 0.0
-        
+                
         [v1, v2] = resolve_type_conflict([v1, v2], DenseMatrix)
         return similarity.get_sim(v1, v2)
       
@@ -241,7 +242,7 @@ class Space(object):
                 
     def get_row(self, word):
         if not word in self.row2id:
-            return None
+            raise ValueError("Word not found in space rows: %s" % word)
         return self.cooccurrence_matrix[self.row2id[word],:]
     
     def get_rows(self, words):
