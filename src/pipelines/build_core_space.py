@@ -222,15 +222,15 @@ def main(sys_argv):
         out_dir = utils.config_get(section, config, "output", None)
         in_file_prefix = utils.config_get(section, config, "input", None)
         weightings = utils.config_get(section, config, "weighting", [None])
-        if len(weightings) > 1:
+        if not weightings == [None]:
             weightings = weightings.split(",") 
             
         selections = utils.config_get(section, config, "selection", [None]) 
-        if len(selections) > 1:
+        if not selections == [None]:
             selections = selections.split(",") 
         
         reductions = utils.config_get(section, config, "reduction", [None])
-        if len(reductions) > 1:
+        if not reductions == [None]:
             reductions = reductions.split(",") 
              
         log_file = utils.config_get(section, config, "log", None) 

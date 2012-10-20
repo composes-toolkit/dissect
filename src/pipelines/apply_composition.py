@@ -139,6 +139,8 @@ def main(sys_argv):
         model = utils.config_get(section, config, "model", None)
         trained_model = utils.config_get(section, config, "trained_model", None)
         arg_space = utils.config_get(section, config, "arg_space", None)
+        if not arg_space is None:
+            arg_space = arg_space.split(",")
         alpha = utils.config_get(section, config, "alpha", None)
         beta = utils.config_get(section, config, "beta", None)
         lambda_ = utils.config_get(section, config, "lambda", None)
