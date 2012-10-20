@@ -59,7 +59,6 @@ def usage(errno=0):
        
 
 def compute_neighbours(in_file, no_neighbours, out_dir, sim_measure, space_files):
-    no_neighbours = int(no_neighbours)
     sim_dict = {"cos": CosSimilarity(),
                 "lin": LinSimilarity(),
                 "dot_prod": DotProdSimilarity(),
@@ -105,7 +104,7 @@ def main(sys_argv):
     sim_measure = None
     spaces = None
     log_file = None
-    no_neighbours = 20
+    no_neighbours = "20"
     
 
     if (len(argv) == 1):
@@ -142,6 +141,8 @@ def main(sys_argv):
             
     log_utils.config_logging(log_file)
 
+    no_neighbours = int(no_neighbours)
+    
     utils.assert_option_not_none(in_file, "Input file required", usage)
     utils.assert_option_not_none(out_dir, "Output directory required", usage)    
     utils.assert_option_not_none(sim_measure, "Similarity measure required", usage)

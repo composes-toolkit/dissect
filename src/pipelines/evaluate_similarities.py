@@ -60,6 +60,8 @@ def evaluate_sim(in_file, columns, corr_measures):
     
     if not len(columns) == 2:
         raise ValueError("Column description unrecognized!") 
+    columns[0] = int(columns[0])
+    columns[1] = int(columns[1])
     
     gold = []
     prediction = []
@@ -134,7 +136,6 @@ def main(sys_argv):
             columns = val.split(",")
             if len(columns) != 2:
                 raise ValueError("Columns (-c) field should contain two comma-separated integers (e.g. -c 3,4)")
-            columns = [int(columns[0]), int(columns[1])]
         elif opt == "--in_dir":
             in_dir = val
         elif opt == "--filter":

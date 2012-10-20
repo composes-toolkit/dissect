@@ -4,7 +4,7 @@ Created on Jun 6, 2012
 @author: thenghia.pham
 '''
 
-#from weighting_scheme import Weighting
+from composes.matrix.dense_matrix import DenseMatrix
 from composes.exception.illegal_state_error import IllegalStateError
 from composes.utils.matrix_utils import resolve_type_conflict
 from warnings import warn
@@ -75,7 +75,7 @@ class DimensionalityReductionOperation(Operation):
         
         res_mat, self.__transmat = self.__dim_reduction.apply(matrix_)
         
-        return res_mat         
+        return DenseMatrix(res_mat)         
      
     def project(self, matrix_):
         if self.__transmat is None:
@@ -95,7 +95,7 @@ class DimensionalityReductionOperation(Operation):
         if self.__dim_reduction.name == "nmf":
             result_mat.to_non_negative()
                 
-        return result_mat
+        return DenseMatrix(result_mat)
 
     def __str__(self):
         return str(self.__dim_reduction)        

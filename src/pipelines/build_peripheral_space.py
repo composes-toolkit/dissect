@@ -127,7 +127,7 @@ def main(sys_argv):
     out_format = None
     core_in_dir = None
     core_filter = ""
-    gz = False
+    gz = "False"
     
     section = "build_peripheral_space"
     
@@ -151,7 +151,7 @@ def main(sys_argv):
         elif opt in ("-o", "--output"):
             out_dir = val
         elif opt == "--gz":
-            gz = eval(val)  
+            gz = val  
         elif opt in ("-c", "--core"):
             core_space_file = val 
         elif opt in ("-l", "--log"):
@@ -172,10 +172,12 @@ def main(sys_argv):
             
     log_utils.config_logging(log_file)
 
-    utils.assert_bool(gz, "--gz value must be True/False", usage)
     utils.assert_option_not_none(in_file_prefix, "Input file prefix required", usage)
     utils.assert_option_not_none(out_dir, "Output directory required", usage)    
     utils.assert_option_not_none(in_format, "Input file format required", usage)
+    
+    gz = eval(gz)
+    utils.assert_bool(gz, "--gz value must be True/False", usage)
     
     if not core_in_dir is None:
         build_space_batch(in_file_prefix, in_format, out_dir, out_format, core_in_dir, core_filter, gz)

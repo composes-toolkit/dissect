@@ -142,12 +142,12 @@ def main(sys_argv):
     in_file = None
     model = None
     regression = None
-    crossvalidation = False
-    intercept = True
+    crossvalidation = "False"
+    intercept = "True"
     param_range = None
     arg_space = None
     phrase_space = None
-    export_params= False
+    export_params= "False"
     log_file = None
     param = None 
     
@@ -163,7 +163,9 @@ def main(sys_argv):
         regression = utils.config_get(section, config, "regression", None) 
         crossvalidation = utils.config_get(section, config, "crossvalidation", crossvalidation) 
         intercept = utils.config_get(section, config, "intercept", intercept) 
-        param_range = utils.config_get(section, config, "param_range", None) 
+        param_range = utils.config_get(section, config, "param_range", None)
+        if not param_range is None:
+            param_range = param_range.split(",")  
         param = utils.config_get(section, config, "param", None)
         arg_space = utils.config_get(section, config, "arg_space", None)
         if not arg_space is None:
@@ -186,17 +188,15 @@ def main(sys_argv):
         elif opt in ("-r", "--regression"):
             regression = val
         elif opt == "--crossvalidation":
-            crossvalidation = eval(val)
+            crossvalidation = val
         elif opt == "--intercept":
-            intercept = eval(val)
+            intercept = val
         elif opt == "--param":
-            print opt, val
-            param = float(val)
+            param = val
         elif opt == "--param_range":
             param_range = val.split(",")
-            param_range = [float(param) for param in param_range]
         elif opt == "--export_params":
-            export_params = eval(val)
+            export_params = val
         elif opt in ("-l", "--log"):
             log_file = val 
         elif opt in ("-h", "--help"):
@@ -212,9 +212,20 @@ def main(sys_argv):
     utils.assert_option_not_none(model, "Model to be trained required", usage)
     utils.assert_option_not_none(arg_space, "Argument space(s) file(s) required", usage)
     utils.assert_option_not_none(phrase_space, "Phrase space file required", usage)
+    
+    crossvalidation = eval(crossvalidation)
+    intercept = eval(intercept)
     utils.assert_bool(intercept, "intercept must be True/False", usage)
     utils.assert_bool(crossvalidation, "crossvalidation must be True/False", usage)
+    
+    export_params = eval(export_params)
     utils.assert_bool(export_params, "export_params must be True/False", usage)
+    if not param is None:
+        param = float(param)
+    if not param_range is None:
+        param_range = [float(param) for param in param_range]
+    
+    
     
     if not crossvalidation and regression == "ridge":
         utils.assert_option_not_none(param, "Cannot run (no-crossvalidation) RidgeRegression with no lambda value!", usage)
