@@ -158,11 +158,11 @@ def main(sys_argv):
         elif opt in ("-t", "--trained_model"):
             trained_model = val
         elif opt == "--alpha":
-            alpha = float(val) 
+            alpha = val 
         elif opt == "--beta":
-            beta = float(val) 
+            beta = val 
         elif opt == "--lambda":
-            lambda_ = float(val) 
+            lambda_ = val 
         elif opt == "--output_format":
             out_format = val 
         elif opt in ("-l", "--log"):
@@ -180,6 +180,12 @@ def main(sys_argv):
     utils.assert_xor_options(model, trained_model, "(Only) one of model type (-m) or file of model object (-t) are required!", usage)
     utils.assert_option_not_none(arg_space, "Argument space(s) file(s) required", usage)
 
+    if not alpha is None:
+        alpha = float(alpha)
+    if not beta is None:    
+        beta = float(beta)
+    if not lambda_ is None:
+        lambda_ = float(lambda_)     
         
     apply_model(in_file, out_dir, model, trained_model, arg_space,
                 alpha, beta, lambda_, out_format)

@@ -143,7 +143,7 @@ def apply_reduction(s_space, r):
 
 def print_space(space, out_dir, op_list, out_format):
                 
-    ops = [op for op in op_list if (op and not op == "none")]     
+    ops = [op for op in op_list if (op and (not op == "none"))]     
     space_descr = ".".join(ops)
     out_file = out_dir + "/" + space_descr
     io_utils.save(space, out_file + ".pickle")
@@ -189,8 +189,7 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
                 r_space = apply_reduction(s_space, r)
                 
                 print "Printing..."
-                print_space(r_space, out_dir, [in_file_descr, w, s, r], 
-                                 out_format)
+                print_space(r_space, out_dir, [in_file_descr, w, s, r], out_format)
 
     
 def main(sys_argv):
@@ -213,7 +212,7 @@ def main(sys_argv):
     log_file = None
     in_format = None
     out_format = None
-    gz = False   
+    gz = "False"   
     section = "build_core_space"
          
     if (len(argv) == 1):
@@ -236,7 +235,7 @@ def main(sys_argv):
         elif opt in ("-o", "--output"):
             out_dir = val
         elif opt == "--gz":
-            gz = eval(val) 
+            gz = val 
         elif opt in ("-w", "--weighting"):
             weightings = val.split(",") 
         elif opt in ("-s", "--selection"):
@@ -258,11 +257,14 @@ def main(sys_argv):
     if not log_file is None:            
         log_utils.config_logging(log_file)
 
-    utils.assert_bool(gz, "--gz value must be True/False", usage)
     utils.assert_option_not_none(in_file_prefix, "Input file prefix required", usage)
     utils.assert_option_not_none(out_dir, "Output directory required", usage)    
     utils.assert_option_not_none(in_format, "Input format required", usage)
-        
+ 
+    gz = eval(gz)
+    
+    utils.assert_bool(gz, "--gz value must be True/False", usage)
+    
     build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings, 
                  selections, reductions, gz)
     
