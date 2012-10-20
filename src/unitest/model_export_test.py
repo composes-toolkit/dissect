@@ -5,7 +5,7 @@ Created on Oct 16, 2012
 '''
 import unittest
 import numpy as np
-
+from unitest import data_dir
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.semantic_space.space import Space
 
@@ -18,7 +18,7 @@ from composes.exception.illegal_state_error import IllegalStateError
 class ModelExportingTest(unittest.TestCase):
 
     def setUp(self):
-        self.prefix = "output/model"
+        self.prefix = data_dir + "output/model"
     def test_weighted_additive(self):
         
         self.m12 = DenseMatrix(np.mat([[3,1],[9,2]]))
