@@ -5,6 +5,7 @@ Created on Sep 26, 2012
 '''
 import numpy as np
 import unittest
+from unitest import data_dir
 from composes.semantic_space.operation import ScalingOperation
 from composes.transformation.scaling.epmi_weighting import EpmiWeighting
 from composes.transformation.dim_reduction.svd import Svd
@@ -17,6 +18,7 @@ from composes.similarity.dot_prod import DotProdSimilarity
 class Test(unittest.TestCase):
 
     def setUp(self):
+        self.dir_ = data_dir + "/space_test_resources/"
         self.init_test_cases = [(DenseMatrix(np.array([[1,2],[3,4]])),
                        ["car", "man"],
                        ["feat1", "feat2"],
@@ -42,7 +44,7 @@ class Test(unittest.TestCase):
                                [  6.76369708e+02,  -4.91431927e-02]])
         self.space2 = Space(DenseMatrix(self.x), self.row2, self.ft1)
 
-        self.dir_ = "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/space_test_resources/"
+        
         
     def test_init1(self):
         for (m, id2row, id2col, row2id, col2id, ops) in self.init_test_cases:
