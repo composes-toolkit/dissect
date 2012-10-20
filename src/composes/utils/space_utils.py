@@ -112,6 +112,8 @@ def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
                     col[i] = column2id[word2]
                     data[i] = element_type(count)
                     i += 1
+                    if i % 50000 == 0:
+                        print "Progress...%d" % i
             if len(line_elements) > 3:
                 warn("Invalid input line:%s. Expected 3 fields, ignoring additional ones!" % line.strip())        
             if len(line_elements) < 3:
