@@ -174,8 +174,6 @@ class Space(object):
         start = time.time()
         assert_is_instance(similarity, Similarity)       
         vector = self.get_row(word)
-        if vector is None:
-            return []
         
         if neighbour_space is None:
             id2row = self.id2row
