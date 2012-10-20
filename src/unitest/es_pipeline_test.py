@@ -4,13 +4,14 @@ Created on Oct 19, 2012
 @author: georgianadinu
 '''
 import unittest
+from unitest import data_dir
 from pipelines import evaluate_similarities as es
 
 class Test(unittest.TestCase):
 
 
     def setUp(self):
-        self.dir_ = "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/"
+        self.dir_ = data_dir + "pipelines_test_resources/"
 
 
     def tearDown(self):

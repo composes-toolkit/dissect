@@ -5,6 +5,7 @@ Created on Oct 19, 2012
 '''
 import unittest
 import numpy as np
+from unitest import data_dir
 import pipelines.train_composition as tc
 import pipelines.apply_composition as ac 
 import pipelines.build_core_space as bcs
@@ -16,7 +17,7 @@ class Test(unittest.TestCase):
 
     def setUp(self):
         
-        self.dir_ = "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/"
+        self.dir_ = data_dir + "pipelines_test_resources/"
         
         #use as a conversion tool, creates the files we want
         bcs.main(["build_core_space.py", 

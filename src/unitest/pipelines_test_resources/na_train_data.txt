@@ -1,2 +1,0 @@
-car big big_car
-man big big_man

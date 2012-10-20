@@ -4,6 +4,8 @@ Created on Oct 19, 2012
 @author: thenghia.pham
 '''
 import unittest
+from unitest import data_dir
+from unitest import toolkit_dir
 import numpy as np
 import pipelines.compute_similarities as sim_pipeline
 
@@ -24,8 +26,8 @@ def read_number_list(file_name, column):
 class SimilarityPipelineTest(unittest.TestCase):
 
     def setUp(self):
-        self.dir_ = "/home/thenghia.pham/git/toolkit/resource/unittest/"
-        self.log_dir = "/home/thenghia.pham/git/toolkit/log/"
+        self.dir_ = data_dir
+        self.log_dir = toolkit_dir + "/log/"
         self.cos = np.array([1.0, 0.585984772383, 1.0, 0.585984772383])
         self.dot_prod = np.array([28.0, 1483.0, 14.0, 2966.0])
         self.euclidean = np.array([0.21089672206, 0.00148105508243, 1.0, 0.00148583482109])

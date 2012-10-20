@@ -5,6 +5,7 @@ Created on Oct 18, 2012
 '''
 import unittest
 import numpy as np
+from unitest import data_dir
 from pipelines import build_peripheral_space as bps
 from pipelines import build_core_space as bcs
 from composes.semantic_space.space import Space
@@ -13,7 +14,7 @@ class Test(unittest.TestCase):
 
 
     def setUp(self):
-        self.dir_ = "/home/georgianadinu/work/localtoolkit/toolkit/src/unitest/pipelines_test_resources/"
+        self.dir_ = data_dir + "pipelines_test_resources/"
 
     def tearDown(self):
         pass

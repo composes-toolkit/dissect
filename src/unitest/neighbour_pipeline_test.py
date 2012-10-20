@@ -4,6 +4,8 @@ Created on Oct 19, 2012
 @author: thenghia.pham
 '''
 import unittest
+from unitest import data_dir
+from unitest import toolkit_dir
 import pipelines.compute_neighbours as find_neighbours 
 
 def read_neighbours_list(file_name):
@@ -32,8 +34,8 @@ class NeighboursPipelineTest(unittest.TestCase):
 
 
     def setUp(self):
-        self.dir_ = "/home/thenghia.pham/git/toolkit/resource/unittest/"
-        self.log_dir = "/home/thenghia.pham/git/toolkit/log/"
+        self.dir_ = data_dir
+        self.log_dir = toolkit_dir + "/log/"
 
     def test_find_neighbours(self):
         '''find_neighbours.main(["compute_neighbours.py", 
