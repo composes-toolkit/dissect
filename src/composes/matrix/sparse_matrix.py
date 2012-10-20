@@ -129,6 +129,11 @@ class SparseMatrix(Matrix):
         np_mat_list = [matrix_.mat for matrix_ in mat_list]
         return SparseMatrix(vstack(np_mat_list))
     
+    @classmethod
+    def nary_hstack(cls, mat_list):
+        np_mat_list = [matrix_.mat for matrix_ in mat_list]
+        return SparseMatrix(hstack(np_mat_list))
+    
     def hstack(self, matrix_):
         self._assert_same_type(matrix_)
         return SparseMatrix(hstack([self.mat, matrix_.mat], format = "csr"))
@@ -147,6 +152,12 @@ class SparseMatrix(Matrix):
     def to_ones(self):
         self.mat.data = np.where(self.mat.data > 0, 1, 0)
         self.mat.eliminate_zeros()
+    
+    def remove_small_values(self, epsilon):
+        mat_ = self.mat.copy()
+        mat_.data = np.where(mat_.data > epsilon, mat_.data, 0)
+        mat_.eliminate_zeros()
+        return SparseMatrix(mat_)
                     
     def assert_positive(self):
         if not np.all(self.mat.data >= 0):
@@ -178,7 +189,7 @@ class SparseMatrix(Matrix):
         
         diag_matrix = array_to_csr_diagonal(array_)
         return SparseMatrix(self.mat * diag_matrix)
-        
+    
     def plog(self):
         '''
         Applies positive log to the matrix elements.

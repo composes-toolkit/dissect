@@ -24,9 +24,11 @@ class Nmf(DimensionalityReduction):
     def apply(self, matrix_):    
         
         matrix_.assert_positive()
+        #w_init, h_init = self.nndsvd_init(matrix_)
         w_init, h_init = self.v_col_init(matrix_)
         #w_init, h_init = self.random_init(matrix_)
-        w, h = Linalg.nmf(matrix_, w_init, h_init) 
+        w, h = Linalg.nmf(matrix_, w_init, h_init)
+        print w.shape, h.shape
         return w, Linalg.pinv(h)
         
     def random_init(self, matrix_):
@@ -68,24 +70,33 @@ class Nmf(DimensionalityReduction):
 
         return w, h
     
-    def nndsvd_init(self, matrix):
-        pass
-    def nndsvd_init_tmp(self,matrix_, reduced_dimension, flag=0):
+    def nndsvd_init(self,matrix_):
         def matrix_abs(mat_):
             mat_p = mat_.get_non_negative()
             mat_n_abs = mat_p - mat_
-            return mat_p + mat_n_abs 
+            return mat_p + mat_n_abs
         
-        matrix_.assert_positive()
-        w = [[]]*reduced_dimension
-        h = [[]]*reduced_dimension
-        u, s, vt = Linalg.svd(matrix_, reduced_dimension);
-        print "reduced dimension", u.get_shape()[1]
+        def padd_zeros(matrix_, axis, thickness):
+            matrix_type = type(matrix_)
+            if axis == 0:  
+                append_mat = matrix_type(np.zeros((thickness, matrix_.shape[1])))
+                return matrix_.vstack(append_mat)
+            elif axis == 1:
+                append_mat = matrix_type(np.zeros((matrix_.shape[0], thickness)))
+                return matrix_.hstack(append_mat)
+        
+        u, s, v = Linalg.svd(matrix_, self._reduced_dimension);
+        
+        rank = u.shape[1]
+        w = [[]]*rank
+        h = [[]]*rank
+        
+        vt = v.transpose()
         
         w[0] = sqrt(s[0]) * matrix_abs(u[:,0])
         h[0] = sqrt(s[0]) * matrix_abs(vt[0,:])
         
-        for i in range(1,reduced_dimension):
+        for i in range(1,rank):
             uu = u[:,i]
             vv = vt[i,:]
             uup = uu.get_non_negative()
@@ -109,17 +120,10 @@ class Nmf(DimensionalityReduction):
         w = matrix_.nary_hstack(w)
         h = matrix_.nary_vstack(h)
         
-        # TODO: implement function in matrices
-        w.removeNearZeros(0.0000000001)
-        h.removeNearZeros(0.0000000001)
+        w.remove_small_values(0.0000000001)
+        h.remove_small_values(0.0000000001)
         
-        if( flag==1 ): #NNDSVDa: fill in the zero elements with the average        
-            # TODO: implement later
-            raise NotImplementedError()
-            #ind1 = W==0
-            #ind2 = H==0
-            #average = Matrices.mean(a) 
-            #W[ind1] = average
-            #H[ind2] = average;
-        
+        if (rank < self._reduced_dimension):
+            w = padd_zeros(w, 1, self._reduced_dimension - rank)
+            h = padd_zeros(h, 0, self._reduced_dimension - rank)
         return w,h      

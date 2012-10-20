@@ -79,6 +79,11 @@ class DenseMatrix(Matrix):
         np_mat_list = [matrix_.mat for matrix_ in mat_list]
         return DenseMatrix(np.vstack(np_mat_list))
     
+    @classmethod
+    def nary_hstack(cls, mat_list):
+        np_mat_list = [matrix_.mat for matrix_ in mat_list]
+        return DenseMatrix(np.hstack(np_mat_list))
+    
     def hstack(self, matrix_):
         self._assert_same_type(matrix_)
         return DenseMatrix(np.hstack((self.mat, matrix_.mat)))
@@ -87,7 +92,6 @@ class DenseMatrix(Matrix):
         '''
         Scales rows by elements in array.
         '''
-        # TODO maybe return a copy here and not destroy the original??
         self._assert_array(array_)
        
         x_dim = self.mat.shape[0]
@@ -103,7 +107,6 @@ class DenseMatrix(Matrix):
         '''
         Scales columns by elements in array.
         '''
-        #TODO maybe return a copy here and not destroy the original??
         self._assert_array(array_)
                     
         y_dim = self.mat.shape[1]
@@ -133,7 +136,7 @@ class DenseMatrix(Matrix):
 
     def get_non_negative(self):
         mat_ = self.mat.copy()
-        #TODO time against : mat_.data[mat_.data < 0] = 0
+        # TODO: time against : mat_.data[mat_.data < 0] = 0
         mat_ = np.where(mat_ > 0, mat_, 0)
         return DenseMatrix(mat_)
  
@@ -142,6 +145,11 @@ class DenseMatrix(Matrix):
     
     def to_ones(self):
         self.mat = np.where(self.mat > 0, 1, 0)
+        
+    def remove_small_values(self, epsilon):
+        mat_ = self.mat.copy()
+        mat_ = np.where(mat_ > epsilon, mat_, 0)
+        return DenseMatrix(mat_)
         
     def is_mostly_positive(self):
         return self.mat[self.mat > 0].size > self.mat.size/2 
