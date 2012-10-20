@@ -156,15 +156,15 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
 
     in_file_descr = "CORE_SS." + in_file_prefix.split("/")[-1]
     data_file = '%s.%s' % (in_file_prefix, in_format)
-    if in_format == "sm" and is_gz:
-        data_file = '%s.gz' % data_file
     
     if not in_format in ("sm", "dm", "pickle"):
         raise ValueError("Invalid input format:%s" % in_format) 
     
     if in_format == "pickle":
         space = io_utils.load(data_file, Space)
-    else:    
+    else:
+        if is_gz:
+            data_file = '%s.gz' % data_file    
         row_file = '%s.rows' % (in_file_prefix)
         column_file = '%s.cols' % (in_file_prefix)
         if not os.path.exists(row_file):
