@@ -1,0 +1,46 @@
+1. TEST BUILD CORE:
+	1.1 MEN + (25K X 10K) NOUNS + VERBS CORE MATRIX
+		INPUT CORE DATA:
+			/mnt/cimec-storage-sata/users/georgiana.dinu/MENexp/core_in/:
+				verbnoun.core.cols
+				verbnoun.core.mat.gz
+				verbnoun.core.rows
+		TEST DATA:
+			/mnt/cimec-storage-sata/users/georgiana.dinu/MENexp/test/:
+				MENdata.txt (should only contain words in INPUT CORE DATA)
+				words: columns 1,2
+				gold: column 3					
+
+	1.2 DP-crowdflower + (100K X 10K) DP MATRIX
+		INPUT CORE DATA:
+			/mnt/cimec-storage-sata/users/georgiana.dinu/DPexp/core_in/:
+				lemma.core.cols
+				lemma.core.mat.gz
+				lemma.core.rows	
+		TEST DATA:
+			/mnt/cimec-storage-sata/users/georgiana.dinu/DPexp/test/crowdflower/:
+				new_data.txt (contains a few words that we don't have, don't know why)
+				words: columns 9,10
+				gold: 14 (?? double check) 			
+
+DONE UNTIL HERE ======================
+2. TEST BUILD PERIPHERAL
+	2.1 ML10 - VO data
+		INPUT CORE DATA:
+			THE OUTPUT FROM 1.1
+			
+		INPUT PERIPHERAL DATA: 
+			
+		
+		TEST DATA:
+			
+		
+			
+3. TEST COMPOSE
+	3.1 2D COMPOSE
+	
+	3.2 3D COMPOSE
+	
+	
+	
+						
