@@ -91,6 +91,11 @@ class DenseMatrix(Matrix):
         np_mat_list = [matrix_.mat for matrix_ in mat_list]
         return DenseMatrix(np.vstack(np_mat_list))
     
+    @classmethod
+    def nary_hstack(cls, mat_list):
+        np_mat_list = [matrix_.mat for matrix_ in mat_list]
+        return DenseMatrix(np.hstack(np_mat_list))
+    
     def hstack(self, matrix_):
         self._assert_same_type(matrix_)
         return DenseMatrix(np.hstack((self.mat, matrix_.mat)))
@@ -154,6 +159,11 @@ class DenseMatrix(Matrix):
     
     def to_ones(self):
         self.mat = np.where(self.mat > 0, 1, 0)
+        
+    def remove_small_values(self, epsilon):
+        mat_ = self.mat.copy()
+        mat_ = np.where(mat_ > epsilon, mat_, 0)
+        return DenseMatrix(mat_)
         
     def is_mostly_positive(self):
         return self.mat[self.mat > 0].size > self.mat.size/2 
