@@ -153,7 +153,7 @@ class Space(object):
         
         try:
             v1 = self.get_row(word1)
-        except ValueError:
+        except KeyError:
             warn("Row string %s not found, returning 0.0" % (word1))
             return 0.0
         try:
@@ -161,7 +161,7 @@ class Space(object):
                 v2 = self.get_row(word2)
             else:
                 v2 = space2.get_row(word2)
-        except ValueError:
+        except KeyError:
             warn("Row string %s not found, returning 0.0" % (word2))
             return 0.0
                 
@@ -239,17 +239,12 @@ class Space(object):
         self._cooccurrence_matrix = SparseMatrix(self.cooccurrence_matrix)
                 
     def get_row(self, word):
-        if not word in self.row2id:
-            raise ValueError("Word not found in space rows: %s" % word)
         return self.cooccurrence_matrix[self.row2id[word],:]
     
     def get_rows(self, words):
         row_ids = []
         for word in words:
-            if not word in self.row2id:
-                raise ValueError("Word not found in space rows: %s" % word)
-            else:
-                row_ids.append(self.row2id[word])
+            row_ids.append(self.row2id[word])
         
         return self.cooccurrence_matrix[row_ids,:]
         
