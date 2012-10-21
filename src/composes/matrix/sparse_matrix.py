@@ -164,8 +164,13 @@ class SparseMatrix(Matrix):
             
         Raises:
             TypeError: if the argument is not of type SparseMatrix
+            ValueError: if the two matrices don t have the same shape.
         """
         self._assert_same_type(matrix_)
+        if self.mat.shape != matrix_.mat.shape:
+            raise ValueError("inconsistent shapes: %s %s" 
+                             % (str(self.mat.shape), str(matrix_.mat.shape) ))
+            
         return SparseMatrix(self.mat.multiply(matrix_.mat))
         
     def vstack(self, matrix_):
@@ -235,6 +240,51 @@ class SparseMatrix(Matrix):
         np_mat_list = [matrix_.mat for matrix_ in mat_list]
         return SparseMatrix(hstack(np_mat_list))
         
+    def scale_rows(self, array_):
+        """
+        Scales each row of the matrix by the values given in an array.
+        
+        Args:
+            array_: ndarray containing the values to scale by
+            
+        Returns:
+            A new SparseMatrix with scaled rows. 
+        """
+        
+        self._assert_array(array_)
+        
+        diag_matrix = array_to_csr_diagonal(array_)
+        return SparseMatrix(diag_matrix * self.mat)
+        
+    def scale_columns(self, array_):
+        """
+        Scales each column of the matrix by the values given in an array.
+        
+        Args:
+            array_: ndarray containing the values to scale by
+            
+        Returns:
+            A new SparseMatrix with scaled columns. 
+        """
+        self._assert_array(array_)
+        
+        diag_matrix = array_to_csr_diagonal(array_)
+        return SparseMatrix(self.mat * diag_matrix)
+    
+    def plog(self):
+        """
+        Applies positive log to the matrix elements.
+        
+        Elements smaller than 1 (leading to not-defined log or negative log)
+        are set to 0. Log is applied on all other elements.
+        
+        Modifies the current matrix. 
+        """
+        
+        self.mat.data[self.mat.data <= 1] = 1
+        self.mat.data = np.log(self.mat.data)
+        self.mat.eliminate_zeros()
+
     def get_non_negative(self):
         """
         Turns negative entries to 0.
@@ -287,56 +337,65 @@ class SparseMatrix(Matrix):
         return SparseMatrix(mat_)
                     
     def assert_positive(self):
+        """
+        Asserts that all values are larger or equal to 0.
+        
+        Raises:
+            ValueError if not all values are >= 0.
+        """
         if not np.all(self.mat.data >= 0):
             raise ValueError("expected non-negative matrix")
         
     def is_mostly_positive(self):
+        """
+        Checks if more than 50% of the non zero elements of a 
+        matrix are positive.
+        
+        """
         return self.mat.data[self.mat.data > 0].size > self.mat.data.size/2 
 
     def all_close(self, matrix_):
+        """
+        Checks of the values in two matrices are all_close.
+        
+        Args:
+            matrix_: input matrix of type SparseMatrix
+            
+        Returns:
+            bool: True if the elements are allclose (using np.allclose).
+            
+        """
         diff = self.mat - matrix_.mat
         return np.allclose(diff.data, np.zeros(len(diff.data)))
 
     def norm(self, axis = None):
+        """
+        Computes the norms on a certain axis or of the entire matrix.
+        
+        Args:
+            axis: 0/1 or None, if axis is None computes the norm of the 
+                full matrix
+        Returns:
+            nd.array containing the norms on a given axis, or a scalar
+            if the axis is None.
+            
+        """
         if axis is None:
             return np.linalg.norm(self.mat.data)
         else:
             return np.sqrt(self.multiply(self).sum(axis))
-    
-    def scale_rows(self, array_):
-        
-        self._assert_array(array_)
-        
-        diag_matrix = array_to_csr_diagonal(array_)
-        return SparseMatrix(diag_matrix * self.mat)
-        
-    def scale_columns(self, array_):
-        
-        self._assert_array(array_)
-        
-        diag_matrix = array_to_csr_diagonal(array_)
-        return SparseMatrix(self.mat * diag_matrix)
-    
-    def plog(self):
-        '''
-        Applies positive log to the matrix elements.
-        
-        Elements smaller than 1 (leading to not defined log or negative log)
-        are set to 0. Log is applied on all other elements.
-        '''
-        
-        self.mat.data[self.mat.data <= 1] = 1
-        self.mat.data = np.log(self.mat.data)
-        self.mat.eliminate_zeros()
-            
+                    
     def to_dense_matrix(self):
-        '''
-        Convert to DenseMatrix.
-        '''
+        """
+        Converts to DenseMatrix.
+        """
         from composes.matrix.dense_matrix import DenseMatrix
         return DenseMatrix(self.mat)
     
     def to_sparse_matrix(self, copy = False):
+        """
+        Returns a copy is copy=True, returns self otherwise.
+        """
         if (copy):
             return self.copy()
         else:
