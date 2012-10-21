@@ -89,9 +89,11 @@ class FullAdditive(CompositionModel):
         with open(filename, "w") as output_stream:
             output_stream.write("A\n")
             output_stream.write(str(DenseMatrix(self._mat_a_t).mat.T))
+            
             output_stream.write("\nB\n")
-            mat_b = DenseMatrix(self._mat_b_t[:-1,]).mat.T
-            output_stream.write(str(mat_b))
+            #mat_b = DenseMatrix(self._mat_b_t[:-1,]).mat.T
+            output_stream.write(str(DenseMatrix(self._mat_b_t[:-1,]).mat.T))
+            
             output_stream.write("\nIntercept\n")
             intercept = DenseMatrix(self._mat_b_t[-1:,]).mat.T
             output_stream.write(str(intercept))

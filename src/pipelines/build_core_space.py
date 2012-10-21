@@ -215,15 +215,26 @@ def main(sys_argv):
     gz = "False"   
     section = "build_core_space"
          
-    if (len(argv) == 1):
+    if len(argv) == 1:
         config_file = argv[0]
+        with open(config_file) as f:
+            pass
         config = ConfigParser()
         config.read(config_file)
         out_dir = utils.config_get(section, config, "output", None)
         in_file_prefix = utils.config_get(section, config, "input", None)
         weightings = utils.config_get(section, config, "weighting", [None])
+        if not weightings == [None]:
+            weightings = weightings.split(",") 
+            
         selections = utils.config_get(section, config, "selection", [None]) 
-        reductions = utils.config_get(section, config, "reduction", [None]) 
+        if not selections == [None]:
+            selections = selections.split(",") 
+        
+        reductions = utils.config_get(section, config, "reduction", [None])
+        if not reductions == [None]:
+            reductions = reductions.split(",") 
+             
         log_file = utils.config_get(section, config, "log", None) 
         in_format = utils.config_get(section, config, "input_format", None) 
         out_format = utils.config_get(section, config, "output_format", None) 
