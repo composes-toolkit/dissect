@@ -22,9 +22,28 @@ class PeripheralSpace(Space):
 
 
     def __init__(self, core_space, matrix_, id2row, row2id=None):
-        '''
-        Constructor
-        '''
+        """
+        Constructor.
+        
+        Args:
+            core_space: Space type, the core space that this is peripheral to.
+            matrix_: Matrix type, the data matrix of the space
+            id2row: list, the row elements
+            row2id: dictionary, maps row strings to ids. Optional, built from 
+                id2row by default.
+             
+        Returns:
+             A peripheral semantic space (type PeripheralSpace) on which the 
+             core space operations have been projected. Column indexing structures 
+             and operations are taken over from the core space.
+        
+        Raises:
+            TypeError: if matrix_ or core_space are not of the correct type
+            ValueError: if element shape is not consistent with 
+                         the size of matrix rows
+                        if the matrix and the provided row and column 
+                         indexing structures are not of consistent shapes.
+        """
         assert_is_instance(matrix_, Matrix)
         assert_is_instance(core_space, Space)
         # TODO: assert it is not a peripheral space here!
@@ -68,6 +87,22 @@ class PeripheralSpace(Space):
         
          
     def add_rows(self, matrix_, id2row):
+        """
+        Adds rows to a peripheral space.
+        
+        Args:
+            matrix_: Matrix type, the matrix of the elements to be added.
+            id2row: list, string identifiers of the rows to be added.
+            
+        Modifies the current space by appending the new rows.
+        All operations of the core space are projected to the new rows.
+        
+        Raises:
+            ValueError: if attempting to add row strings which are already 
+                        in the space.
+                        matrix of the new data is not consistent in shape 
+                        with the current data matrix.
+        """
         
         try:
             self._row2id = add_items_to_dict(self.row2id, id2row)
@@ -88,6 +123,30 @@ class PeripheralSpace(Space):
     
     @classmethod            
     def build(cls, core_space, **kwargs):
+        """
+        Reads in data files and extracts the data to construct a semantic space.
+        
+        If the data is read in dense format and no columns are provided, 
+        the column indexing structures are set to empty.
+         
+        Args:
+            data: file containing the counts
+            format: format on the input data file: one of sm/dm
+            rows: file containing the row elements. Optional, if not provided,
+                extracted from the data file.
+            cols: file containing the column elements
+           
+        Returns:
+            A semantic space build from the input data files.
+            
+        Raises:
+            ValueError: if one of data/format arguments is missing.
+                        if cols is missing and format is "sm"
+                        if the input columns provided are not consistent with
+                        the shape of the matrix (for "dm" format)
+            
+        """
+        
         sp = Space.build(**kwargs)
         
         mat = sp._cooccurrence_matrix
