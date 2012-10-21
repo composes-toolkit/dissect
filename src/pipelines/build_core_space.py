@@ -215,8 +215,10 @@ def main(sys_argv):
     gz = "False"   
     section = "build_core_space"
          
-    if (len(argv) == 1):
+    if len(argv) == 1:
         config_file = argv[0]
+        with open(config_file) as f:
+            pass
         config = ConfigParser()
         config.read(config_file)
         out_dir = utils.config_get(section, config, "output", None)
