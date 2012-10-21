@@ -97,7 +97,7 @@ class Test(unittest.TestCase):
                   "-a", self.dir_ + "CORE_SS.N_mat.pickle",
                   "-r", "lstsq",
                   "--intercept", "False",
-                  "--export_params", "True",
+                  "--export_params", "True"
                   ]) 
         
         trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pickle")

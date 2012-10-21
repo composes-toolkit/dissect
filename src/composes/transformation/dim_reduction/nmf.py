@@ -27,6 +27,7 @@ class Nmf(DimensionalityReduction):
         w_init, h_init = self.v_col_init(matrix_)
         #w_init, h_init = self.random_init(matrix_)
         w, h = Linalg.nmf(matrix_, w_init, h_init)
+        print w.shape, h.shape
         return w, Linalg.pinv(h)
         
     def random_init(self, matrix_):

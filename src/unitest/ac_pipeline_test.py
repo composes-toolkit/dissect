@@ -24,21 +24,21 @@ class Test(unittest.TestCase):
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "N_mat", 
                   "-o", self.dir_,
-                  "--input_format", "dm",
+                  "--input_format", "dm"
                   ])
         
         bcs.main(["build_core_space.py", 
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "AN_mat", 
                   "-o", self.dir_,
-                  "--input_format", "dm",
+                  "--input_format", "dm"
                   ])
  
         bcs.main(["build_core_space.py", 
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "A_mat", 
                   "-o", self.dir_,
-                  "--input_format", "dm",
+                  "--input_format", "dm"
                   ])
                         
         tc.main(["train_composition.py", 
@@ -50,7 +50,7 @@ class Test(unittest.TestCase):
                   "-a", self.dir_ + "CORE_SS.N_mat.pickle",
                   "-r", "lstsq",
                   "--intercept", "False",
-                  "--export_params", "True",
+                  "--export_params", "True"
                   ]) 
         
 

@@ -82,7 +82,62 @@ class LexicalFunctionTest(unittest.TestCase):
         self.assertEqual(comp_space.element_shape, (2,))
         self.assertEqual(comp_space2.element_shape, (2,))
         
-           
+  
+    def test_simple_train_compose_with_non_valid_datapoints(self):
+        
+        #TODO test a1_car twice in the phrase list
+        train_data = [("a1", "man", "bla"),
+                      ("a1", "car", "a1_car"),
+                      ("a1", "man", "bla"),
+                      ("a1", "man", "a1_man"),
+                      ("a1", "bla", "a1_man"),
+                      ("a1", "man", "bla")
+                      ]
+        test_data = [("bla", "bla", "a1_car"),
+                     ("a1", "car", "a1_car"),
+                      ("a1", "man", "a1_man"),
+                      ("a1", "bla", "a1_car"),
+                      ("bla", "car", "a1_car")
+                      ]
+                
+        #model with train and then compose
+        learner_ = LstsqRegressionLearner(intercept=True)
+        model = LexicalFunction(learner=learner_)
+  
+        model.train(train_data, self.n_space, self.an_space)
+        
+        new_space = model.function_space
+        
+        np.testing.assert_array_almost_equal(new_space.cooccurrence_matrix.mat, 
+                                             np.mat([[0.66666667,0.33333333,
+                                                      -0.33333333,0.33333333,
+                                                      0.66666667,0.33333333]]),
+                                              7)
+        
+        self.assertTupleEqual(new_space.element_shape, (2,3))
+        self.assertListEqual(new_space.id2row, ["a1"])
+        self.assertListEqual(new_space.id2column, [])
+        
+        comp_space = model.compose(test_data, self.n_space)
+        
+        np.testing.assert_array_almost_equal(comp_space.cooccurrence_matrix.mat,
+                                self.an_space.cooccurrence_matrix.mat, 10
+                                )
+        
+        self.assertListEqual(comp_space.id2row, ["a1_car", "a1_man"])
+        self.assertListEqual(comp_space.id2column, self.ft)
+        
+        #new model, without training 
+        model2 = LexicalFunction(function_space=new_space, intercept=True)
+        comp_space = model2.compose(test_data, self.n_space)
+        
+        self.assertListEqual(comp_space.id2row, ["a1_car", "a1_man"])
+        self.assertListEqual(comp_space.id2column, [])
+        np.testing.assert_array_almost_equal(comp_space.cooccurrence_matrix.mat,
+                                             self.n_space.cooccurrence_matrix.mat,
+                                             8)
+
+                  
     def test_simple_train_compose_no_intercept(self):
         
         #TODO test a1_car twice in the phrase list

@@ -157,7 +157,7 @@ class Test(unittest.TestCase):
                   "-o", self.dir_,
                   "--input_format", "dm",
                   "--output_format", "dm",
-                  "--gz", "True",
+                  "--gz", "True"
                   ])
         
         s1 = Space.build(data = self.dir_ + "mat2.dm", format = "dm")

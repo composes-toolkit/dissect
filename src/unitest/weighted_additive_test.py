@@ -92,6 +92,12 @@ class WeightedAdditiveTest(unittest.TestCase):
                         Space(DenseMatrix(np.mat([[21,5]])), 
                               ["a_b"],[]),
                         1, 2
+                       ),
+                       ([("a", "b", "a_b"), ("bla", "b", "a_b"), ("a", "bla", "a_b")],
+                        self.space1,
+                        Space(DenseMatrix(np.mat([[21,5]])), 
+                              ["a_b"],[]),
+                        1, 2
                        )
                       ]    
         
@@ -144,6 +150,16 @@ class WeightedAdditiveTest(unittest.TestCase):
                        ),
                       (WeightedAdditive(1, 2), 
                        [("a", "b", "a_b")],
+                        self.space1,
+                        ["a_b"],
+                        {"a_b":0},
+                        ["f1", "f2"],
+                        {"f1":0, "f2":1},
+                        np.mat([[21,5]])
+                       ),
+                       (WeightedAdditive(1, 2), 
+                       [("a", "bla", "a_b"), ("a", "b", "a_b"), 
+                        ("a", "bla", "a_b"), ("bla", "b", "a_b")],
                         self.space1,
                         ["a_b"],
                         {"a_b":0},

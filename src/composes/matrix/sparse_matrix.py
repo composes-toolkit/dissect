@@ -192,7 +192,7 @@ class SparseMatrix(Matrix):
         
         diag_matrix = array_to_csr_diagonal(array_)
         return SparseMatrix(self.mat * diag_matrix)
-        
+    
     def plog(self):
         '''
         Applies positive log to the matrix elements.

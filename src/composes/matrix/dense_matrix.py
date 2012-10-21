@@ -104,7 +104,6 @@ class DenseMatrix(Matrix):
         '''
         Scales rows by elements in array.
         '''
-        # TODO maybe return a copy here and not destroy the original??
         self._assert_array(array_)
        
         x_dim = self.mat.shape[0]
@@ -120,7 +119,6 @@ class DenseMatrix(Matrix):
         '''
         Scales columns by elements in array.
         '''
-        #TODO maybe return a copy here and not destroy the original??
         self._assert_array(array_)
                     
         y_dim = self.mat.shape[1]
@@ -150,7 +148,7 @@ class DenseMatrix(Matrix):
 
     def get_non_negative(self):
         mat_ = self.mat.copy()
-        #TODO time against : mat_.data[mat_.data < 0] = 0
+        # TODO: time against : mat_.data[mat_.data < 0] = 0
         mat_ = np.where(mat_ > 0, mat_, 0)
         return DenseMatrix(mat_)
  

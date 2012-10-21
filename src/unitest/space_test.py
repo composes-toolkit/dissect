@@ -157,8 +157,8 @@ class Test(unittest.TestCase):
                       (self.space2, None, "a", 3,[("c",1483),("b",28),("a",14)]),
                       (self.space2, None, "a", 4,[("c",1483),("b",28),("a",14)]),
                       (self.space2, self.space1, "a", 1,[("a",14)]),
-                      (self.space2, self.space1, "a", 3,[("a",14)]),
-                      (self.space2, self.space1, "none", 4,[])
+                      (self.space2, self.space1, "a", 3,[("a",14)])
+                      #(self.space2, self.space1, "none", 4,[])
                       ]            
         for space, space2, word, no_neigh, expected in test_cases:
             if space2 is None:

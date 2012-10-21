@@ -116,23 +116,6 @@
 				ARG_SPACE1 = ARG_SPACE2: ANY OUTPUT FROM 1.1
 
 
-==============
-TO DO 
-==============
-ALL COMPOSITION MODELS THAT TRAIN, DO A FIRST PASS ON THE TRAINING DATA
-AND CHECK which samples are found or not, remove those that are  not found 
-in arg space or phrase space and issue an warning
-=================
- /mnt/cimec-storage-sata/users/thenghia.pham/data/tk/output/core
- ================
- [18:58:58] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/data/tk/output/core
-[19:04:48] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/data/tk/log/
-[19:05:14] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/cfgs
-[19:05:45] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/scripts/tk
-[19:06:20] Pham The Nghia: those are the paths to output, log, config, script directory
- 
- 
-	
 	3.2 3D GS11 - SVO data
 		3.1.1 LexicalFunction
 			3.1.1.1. TRAIN PHASE 1 (run this with --export_params)
@@ -171,16 +154,50 @@ in arg space or phrase space and issue an warning
 			3.1.1.3 COMPOSE SVO (i.e. build an SVO space)
 					1. LOAD THE LEARNED V SPACE (FROM 3.1.1.2)
 					2. COMPOSE STEP 1 ON DATA:
-					
+						ARG_SPACE: any suitable noun space
+						FUNCTION SPACE: the V one learned in 3.1.1.2
+						DATA:
+							/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/GS11/:
+								GS11compose1.txt (299 lines)
+						OUTPUT THE RESULTED COMPOSED SPACE (VO SPACE)
 					
 					3. COMPOSE STEP 2 ON DATA:	
+					4. LOAD THE PREVIOUS VO SPACE FROM STEP 2	
+					5. CREATE A LEXICAL FUNCTION COMPOSITON WITH IT
+						(using "function_space=")
+						ARG_SPACE: any suitable N space
+						FUNCTION SPACE: the VO space
+						DATA:
+						/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/GS11/:
+								GS11compose2.txt (299 lines)
+						OUTPUT THE RESULTED COMPOSED SPACE (SVO SPACE)	
+	
 	
 			3.1.1.4 TEST SIMILARITIES WITH THE COMPOSED SPACE
 					LOAD THE LAST COMPOSED SPACE FROM 3.1.1.3 (contains svo s)
 							
 					COMPUTE SIMILARITIES ON DATA:
-													
-						
+						/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/GS11/:
+							GS11data_new.txt (2500 lines)
+							words: columns 1,2
+							gold: column 3
 			 
 	
-						
+	
+	
+==============
+TO DO 
+==============
+ALL COMPOSITION MODELS THAT TRAIN, DO A FIRST PASS ON THE TRAINING DATA
+AND CHECK which samples are found or not, remove those that are  not found 
+in arg space or phrase space and issue an warning
+=================
+ /mnt/cimec-storage-sata/users/thenghia.pham/data/tk/output/core
+ ================
+ [18:58:58] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/data/tk/output/core
+[19:04:48] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/data/tk/log/
+[19:05:14] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/cfgs
+[19:05:45] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/scripts/tk
+[19:06:20] Pham The Nghia: those are the paths to output, log, config, script directory
+ 
+ 						
