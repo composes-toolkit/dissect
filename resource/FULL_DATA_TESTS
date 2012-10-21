@@ -115,13 +115,23 @@
 			BOTH TRAIN AND COMPOSE:
 				ARG_SPACE1 = ARG_SPACE2: ANY OUTPUT FROM 1.1
 
+
 ==============
 TO DO 
 ==============
 ALL COMPOSITION MODELS THAT TRAIN, DO A FIRST PASS ON THE TRAINING DATA
 AND CHECK which samples are found or not, remove those that are  not found 
-in arg space or phrase space and isseu an warning
+in arg space or phrase space and issue an warning
 =================
+ /mnt/cimec-storage-sata/users/thenghia.pham/data/tk/output/core
+ ================
+ [18:58:58] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/data/tk/output/core
+[19:04:48] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/data/tk/log/
+[19:05:14] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/cfgs
+[19:05:45] Pham The Nghia: /mnt/cimec-storage-sata/users/thenghia.pham/scripts/tk
+[19:06:20] Pham The Nghia: those are the paths to output, log, config, script directory
+ 
+ 
 	
 	3.2 3D GS11 - SVO data
 		3.1.1 LexicalFunction
@@ -133,7 +143,7 @@ in arg space or phrase space and isseu an warning
 					
 					TRAIN DATA:
 						/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/:
-							GS11_SVO_train.txt (459946 total samples, ?vo functions?)
+							GS11_SVO_train.txt (459946 total samples, ?# vo functions)
 	
 					OUTPUT THE LEARNED VO SPACE by using --export_params
 					
@@ -149,10 +159,28 @@ in arg space or phrase space and isseu an warning
 													space)
 					
 					TRAIN DATA:
+						/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/:
+							GS11_V_train.txt (122330 total samples, 30 verbs
+											  a lot of the samples will be ignored
+											  because they contain VO s which have not been trained
+											  due to lack of sufficient train data)										
 					
-					OUTPUT THE LEARNED V SPACE
+					OUTPUT THE LEARNED V SPACE by using --export_params
+					
 					
 			3.1.1.3 COMPOSE SVO (i.e. build an SVO space)
+					1. LOAD THE LEARNED V SPACE (FROM 3.1.1.2)
+					2. COMPOSE STEP 1 ON DATA:
+					
+					
+					3. COMPOSE STEP 2 ON DATA:	
 	
+			3.1.1.4 TEST SIMILARITIES WITH THE COMPOSED SPACE
+					LOAD THE LAST COMPOSED SPACE FROM 3.1.1.3 (contains svo s)
+							
+					COMPUTE SIMILARITIES ON DATA:
+													
+						
+			 
 	
 						
