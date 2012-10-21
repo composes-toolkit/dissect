@@ -6,6 +6,7 @@ Created on Oct 11, 2012
 
 import numpy as np
 import time
+from warnings import warn
 from composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from composes.utils.space_utils import get_partitions
@@ -27,6 +28,7 @@ class LexicalFunction(CompositionModel):
     classdocs
     '''
     _name = "lexical_function"
+    _MIN_SAMPLES = 0
 
     def __init__(self, **kwargs):
         '''
@@ -69,15 +71,21 @@ class LexicalFunction(CompositionModel):
         result_mats = []
                
         train_data = sorted(train_data, key=lambda tup: tup[0])
-        function_word_list, arg_list, phrase_list = self.data_to_lists(train_data)
+        function_word_list, arg_list, phrase_list = self.lf_valid_data_to_lists(train_data,
+                                                                                arg_space.id2row,
+                                                                                phrase_space.id2row)
 
         #this is the list we wanted
         keys, new_key_indices = get_partitions(function_word_list)
         
         for i in range(0, len(new_key_indices) - 1):
 
-            idx_beg, idx_end = new_key_indices[i], new_key_indices[i + 1]            
-
+            idx_beg, idx_end = new_key_indices[i], new_key_indices[i + 1]
+             
+            if idx_end - idx_beg < self._MIN_SAMPLES:
+                warn("Lexical function training. Ignoring:%s. No. samples:%d" 
+                     % (new_key_indices[i], idx_end - idx_beg))
+                            
             arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end]) 
             phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
  
@@ -85,7 +93,7 @@ class LexicalFunction(CompositionModel):
             matrix_type = get_type_of_largest([arg_mat, phrase_mat])
             [arg_mat, phrase_mat] = resolve_type_conflict([arg_mat, phrase_mat],
                                                           matrix_type)
- 
+
             result_mat = self._regression_learner.train(arg_mat, phrase_mat)
             result_mats.append(result_mat.transpose())
 
@@ -121,7 +129,9 @@ class LexicalFunction(CompositionModel):
         start = time.time()
         
         assert_is_instance(arg_space, Space)
-        arg1_list, arg2_list, phrase_list = self.data_to_lists(data)
+        arg1_list, arg2_list, phrase_list = self.valid_data_to_lists(data,
+                                                                     self._function_space.id2row,
+                                                                     arg_space.id2row)
 
         arg1_mat = self._function_space.get_rows(arg1_list)
         arg2_mat = arg_space.get_rows(arg2_list)

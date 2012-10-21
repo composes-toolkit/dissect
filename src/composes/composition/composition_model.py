@@ -4,6 +4,7 @@ Created on Oct 5, 2012
 @author: georgianadinu
 '''
 import time
+from warnings import warn
 from composes.semantic_space.space import Space
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.utils.space_utils import assert_is_instance
@@ -31,7 +32,11 @@ class CompositionModel(object):
         start = time.time()
         
         arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
-        arg1_list, arg2_list, phrase_list = self.data_to_lists(train_data)
+        arg1_list, arg2_list, phrase_list = self.valid_data_to_lists(train_data,
+                                                                     arg1_space.id2row,
+                                                                     arg2_space.id2row,
+                                                                     phrase_space.id2row
+                                                                     )
 
         arg1_mat = arg1_space.get_rows(arg1_list)
         arg2_mat = arg2_space.get_rows(arg2_list)
@@ -59,7 +64,10 @@ class CompositionModel(object):
         start = time.time()
          
         arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
-        arg1_list, arg2_list, phrase_list = self.data_to_lists(data)
+        arg1_list, arg2_list, phrase_list = self.valid_data_to_lists(data,
+                                                                     arg1_space.id2row,
+                                                                     arg2_space.id2row
+                                                                     )
 
         arg1_mat = arg1_space.get_rows(arg1_list)
         arg2_mat = arg2_space.get_rows(arg2_list)
@@ -110,18 +118,56 @@ class CompositionModel(object):
     def _build_id2column(self, arg1_space, arg2_space):
         return arg1_space.id2column
         
+ 
+    def valid_data_to_lists(self, data, id2row1, id2row2, id2row3=None):
         
-    def data_to_lists(self, data):
-                
-        arg1_list = self.extract_list_from_tuples(data, 0)
-        arg2_list = self.extract_list_from_tuples(data, 1)
-        phrase_list = self.extract_list_from_tuples(data, 2)
+        list1 = []
+        list2 = []
+        list3 = []
+        no_not_found = 0
+        for i in xrange(len(data)):
+            sample = data[i]
+            
+            cond = sample[0] in id2row1 and sample[1] in id2row2 
+            if not id2row3 is None:
+                cond = cond and sample[2] in id2row3    
+  
+            if cond:
+                list1.append(sample[0]) 
+                list2.append(sample[1])
+                list3.append(sample[2])
+            else:
+                no_not_found += 1    
+
+        if no_not_found > 0:
+            warn("%d (out of %d) lines are ignored because one of the elements is not found in its semantic space"
+                 % (no_not_found, len(data)))                
+        return list1, list2, list3
+
+    def lf_valid_data_to_lists(self, data, id2row2, id2row3):
         
-        return arg1_list, arg2_list, phrase_list 
-                
-    def extract_list_from_tuples(self, tuples, position):        
-        return [tuples[i][position] for i in xrange(len(tuples))]
-    
+        list1 = []
+        list2 = []
+        list3 = []
+        no_not_found = 0
+        for i in xrange(len(data)):
+            sample = data[i]
+            
+            cond = sample[1] in id2row2 and sample[2] in id2row3    
+  
+            if cond:
+                list1.append(sample[0]) 
+                list2.append(sample[1])
+                list3.append(sample[2])
+            else:
+                no_not_found += 1    
+
+        if no_not_found > 0:
+            warn("%d (out of %d) lines are ignored because one of the elements is not found in its semantic space"
+                 % (no_not_found, len(data)))   
+                                    
+        return list1, list2, list3
+        
     def export(self, filename):
         create_parent_directories(filename)
         self._export(filename)
