@@ -23,36 +23,38 @@ class SparseMatrix(Matrix):
     '''
 
 
-    def __init__(self, data, *args, **kwargs):
-        '''
+    def __init__(self, data):
+        """
         Constructor, creates a SparseMatrix from a numpy matrix-like
         object.
         
         Matrix-like objects (np.ndarray, np.matrix, scipy.sparse.matrix,
          DenseMatrix) are converted into scipy.csr_matrix.
         
-        Params:
+        Args:
             data: numpy matrix-like object or Matrix type
             
         Raises:
-            TypeError
-        '''
+            TypeError: if input data is not one of scipy.sparse/
+            numpy.ndarray/numpy.matrix/Matrix
+            ValueError: if trying to initialize shape-0 matrix 
+        """
         if issparse(data):
             self.mat = data.tocsr()
+            
         elif isinstance(data, np.matrix):
             if data.shape[0] == 0 or data.shape[1] == 0:
-                raise ValueError("cannot initialize empty matrix")
+                raise ValueError("cannot initialize matrix with shape 0")
             warn("Convert numpy dense array to scipy sparse matrix")
             self.mat = csr_matrix(data)
             
         elif isinstance(data, np.ndarray):
             if len(data) == 0:
-                raise ValueError("cannot initialize empty matrix")
+                raise ValueError("cannot initialize matrix with shape 0")
             warn("Convert numpy dense array to scipy sparse matrix")
             self.mat = csr_matrix(data)
             
         elif isinstance(data, Matrix):
-            warn("Convert DenseMatrix to SparseMatrix")
             self.mat = data.to_sparse_matrix().mat
         else:
             raise TypeError("expected scipy sparse matrix, received %s" 
@@ -60,7 +62,11 @@ class SparseMatrix(Matrix):
 
      
     def __getitem__(self, key):
-         
+        """
+        Overwrites csr_matrix m[i,:], m[i] operations which are faulty in
+        current scipy.sparse releases.
+            
+        """ 
         def __get_row(row):
             start = self.mat.indptr[row]
             end = self.mat.indptr[row + 1]
@@ -87,6 +93,20 @@ class SparseMatrix(Matrix):
             return SparseMatrix(result)
     
     def reshape(self, new_shape):
+        """
+        Reshapes current matrix.
+        
+        Overwrites the current matrix with a new matrix of the 
+        given shape!
+        
+        Args: 
+            shape: length 2 tuple or pair of integers
+        
+        Raises:
+            ValueError: if shape is not an integer pair or
+                if new shape is inconsistent with the total
+                size of the current matrix.
+        """
 
         if not isinstance(new_shape, tuple) or len(new_shape) != 2:
             raise ValueError("shape must be integer pair")
@@ -110,53 +130,157 @@ class SparseMatrix(Matrix):
         
     @staticmethod
     def identity(size):
+        """
+        Builds the identity matrix.
+        
+        Args:
+            size: integer, the result matrix is of shape size x size
+            
+        Returns:
+            Identity SparseMatrix.
+        """
         # TODO: should do system-wise
         return SparseMatrix(identity(size, dtype = np.double, format = "csr"))
    
     def transpose(self):
+        """
+        Transposes the current matrix.
+        
+        Returns:
+            SparseMatrix, a transpose of the current matrix.
+                
+        """
         return type(self)(self.mat.transpose())
      
     def multiply(self, matrix_):
-        '''
-        Component-wise multiplication
-        '''
+        """
+        Computes component-wise multiplication of two matrices.
+        
+        Args:
+            matrix_: a second matrix of type SparseMatrix
+            
+        Returns:
+            A SparseMatrix containing the cw multiplication of the two.
+            
+        Raises:
+            TypeError: if the argument is not of type SparseMatrix
+        """
         self._assert_same_type(matrix_)
         return SparseMatrix(self.mat.multiply(matrix_.mat))
         
     def vstack(self, matrix_):
+        """
+        Vertical stack of two matrices.
+        
+        Args:
+            matrix_: a second matrix of type SparseMatrix
+
+        Returns:
+            A SparseMatrix, vertical stack of the two matrices.
+
+        Raises:
+            TypeError: if the argument is not of type SparseMatrix            
+             
+        """
         self._assert_same_type(matrix_)
         return SparseMatrix(vstack([self.mat, matrix_.mat], format = "csr"))
+
+    
+    def hstack(self, matrix_):
+        """
+        Horizontal stack of two matrices.
+        
+        Args:
+            matrix_: a second matrix of type SparseMatrix
+
+        Returns:
+            A SparseMatrix, horizontal stack of the two matrices.
+
+        Raises:
+            TypeError: if the argument is not of type SparseMatrix            
+             
+        """        
+        self._assert_same_type(matrix_)
+        return SparseMatrix(hstack([self.mat, matrix_.mat], format = "csr"))
+
     
     @classmethod
     def nary_vstack(cls, mat_list):
+        """
+        Class method, vertical stack of n matrices.
+        
+        Args:
+            mat_list: a list of matrices of type SparseMatrix
+
+        Returns:
+            A SparseMatrix, vertical stack of the arguments.
+
+        """
         np_mat_list = [matrix_.mat for matrix_ in mat_list]
         return SparseMatrix(vstack(np_mat_list))
     
     @classmethod
     def nary_hstack(cls, mat_list):
+        """
+        Class method, horizontal stack of n matrices.
+        
+        Args:
+            mat_list: a list of matrices of type SparseMatrix
+
+        Returns:
+            A SparseMatrix, horizontal stack of the arguments.
+
+        """
+        
         np_mat_list = [matrix_.mat for matrix_ in mat_list]
         return SparseMatrix(hstack(np_mat_list))
-    
-    def hstack(self, matrix_):
-        self._assert_same_type(matrix_)
-        return SparseMatrix(hstack([self.mat, matrix_.mat], format = "csr"))
-    
+        
     def get_non_negative(self):
+        """
+        Turns negative entries to 0.
+        
+        Returns:
+            A new SparseMatrix matrix in which negative entries are set to 0.
+            
+        """
         mat_ = self.mat.copy()
-        #TODO time against : mat_.data[mat_.data < 0] = 0
+        #TODO: time against : mat_.data[mat_.data < 0] = 0
         mat_.data = np.where(mat_.data > 0, mat_.data, 0)
         mat_.eliminate_zeros()
         return SparseMatrix(mat_)
             
     def to_non_negative(self):
+        """
+        Turns negative entries to 0.
+        
+        Modifies the current matrix: all negative entries are set to 0.
+            
+        """
         self.mat.data = np.where(self.mat.data > 0, self.mat.data, 0)
         self.mat.eliminate_zeros()
 
     def to_ones(self):
+        """
+        Turns strictly positive entries to 1 and negative entries to 0.
+        
+        Modifies the current matrix: all strictly positive entries are
+            set to 1, all negative entries are set to 0.
+            
+        """
         self.mat.data = np.where(self.mat.data > 0, 1, 0)
         self.mat.eliminate_zeros()
     
     def remove_small_values(self, epsilon):
+        """
+        Sets values smaller than an epsilon to 0.
+        
+        Args:
+            epsilon: scalar, threshold
+        Returns:
+            A SparseMatrix in which all values smaller than epsilon are
+                set to 0.
+           
+        """
         mat_ = self.mat.copy()
         mat_.data = np.where(mat_.data > epsilon, mat_.data, 0)
         mat_.eliminate_zeros()

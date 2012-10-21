@@ -33,6 +33,7 @@ class Matrix(object):
         return type(self)(self.mat - matrix_.mat)
     
     def __neg__(self):
+        ''' - operation'''
         return type(self)(-self.mat)
     
     def __mul__(self, factor):
@@ -44,6 +45,7 @@ class Matrix(object):
             return type(self)(self.mat * factor.mat)
         
     def __div__(self, factor):
+        ''' / operation'''
         if is_numeric(factor):
             if factor == 0:
                 raise ZeroDivisionError("Division by zero")
@@ -65,6 +67,17 @@ class Matrix(object):
                              (type(self), type(operand)))
     
     def assert_same_shape(self, matrix_):
+        """
+        Asserts that the matrix has the same shape as a second matrix.
+        
+        Args:
+            matrix_: A second matrix of type Matrix.
+            
+        Raises:
+            ValueError: If the current matrix and the argument matrix 
+                do not have the same shape.
+        """
+        
         if self.mat.shape != matrix_.mat.shape:
             raise ValueError("inconsistent shapes: %s %s" 
                              % (str(self.mat.shape), str(matrix_.mat.shape) ))
@@ -82,9 +95,24 @@ class Matrix(object):
             
     def sorted_permutation(self, norm_function, axis_):
         """
+        Computes the permutation resulted when sorting the matrix 
+        on an axis, according to a function, in descending order.
+            
         Sorts the rows or the columns (as given by axis)
-        of a matrix according to norm_function and returns 
+        of a matrix according to a norm_function and returns 
         the permutation of this as a np.array
+    
+        Args:
+            norm_function: One of sum/length. A function that 
+                takes an axis as an argument (i.e. 0 or 1) and 
+                returns an array of values (i.e. sum of all rows 
+                if axis = 0 and norm_function = sum). 
+                
+            axis_: axis value, one of 0/1
+            
+        Returns:
+            perm_srtd: np.array containing the permutation of the 
+                sorting
         """    
         
         #norms = norm_function(axis=axis_)
