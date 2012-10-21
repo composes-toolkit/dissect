@@ -85,6 +85,8 @@ class LexicalFunction(CompositionModel):
             if idx_end - idx_beg < self._MIN_SAMPLES:
                 warn("Lexical function training. Ignoring:%s. No. samples:%d" 
                      % (new_key_indices[i], idx_end - idx_beg))
+                keys.remove(keys[i])
+                continue
                             
             arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end]) 
             phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
