@@ -99,6 +99,10 @@ class LexicalFunction(CompositionModel):
             result_mat = self._regression_learner.train(arg_mat, phrase_mat)
             result_mats.append(result_mat.transpose())
 
+        #TODO: HERE AND IN OTHER PLACES; WHAT IF THERE NOTHING LEFT TO STACK??
+        #NONe of the training data was valid!!
+        if not result_mats:
+            raise ValueError("No valid train data found!")
         new_space_mat = arg_mat.nary_vstack(result_mats)
         assert(len(arg_space.element_shape) == 1)
         

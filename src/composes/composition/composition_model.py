@@ -141,7 +141,9 @@ class CompositionModel(object):
 
         if no_not_found > 0:
             warn("%d (out of %d) lines are ignored because one of the elements is not found in its semantic space"
-                 % (no_not_found, len(data)))                
+                 % (no_not_found, len(data)))
+        if not list1:
+            raise ValueError("No valid data found!")
         return list1, list2, list3
 
     def lf_valid_data_to_lists(self, data, id2row2, id2row3):
@@ -165,7 +167,8 @@ class CompositionModel(object):
         if no_not_found > 0:
             warn("%d (out of %d) lines are ignored because one of the elements is not found in its semantic space"
                  % (no_not_found, len(data)))   
-                                    
+        if not list1:
+            raise ValueError("No valid data found!")                            
         return list1, list2, list3
         
     def export(self, filename):
