@@ -25,6 +25,8 @@ from composes.transformation.scaling.plog_weighting import PlogWeighting
 from composes.transformation.feature_selection.top_feature_selection import TopFeatureSelection
 from composes.transformation.dim_reduction.nmf import Nmf
 from composes.transformation.dim_reduction.svd import Svd
+from composes.transformation.scaling.normalization import Normalization
+from composes.transformation.scaling.row_normalization import RowNormalization
 from composes.utils import io_utils
 from composes.utils import log_utils
 import pipeline_utils as utils
@@ -138,7 +140,25 @@ def apply_reduction(s_space, r):
     else:
         r_space = s_space
       
-    return r_space            
+    return r_space        
+
+def apply_normalization(r_space, n):
+    reductions_dict = {"all": Normalization,
+                       "row": RowNormalization}
+        
+    if not n in (None, "none"):
+        print "Applying normalization: %s" % n
+        if not n in reductions_dict:
+            warn("Dimensionality reduction: %s not defined" % n)
+            return r_space
+        
+        norm_cls = reductions_dict[n]
+        norm = norm_cls()
+        n_space = r_space.apply(norm)
+    else:
+        n_space = r_space
+      
+    return n_space       
 
 
 def print_space(space, out_dir, op_list, out_format):
@@ -152,7 +172,7 @@ def print_space(space, out_dir, op_list, out_format):
     
                     
 def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings, 
-                 selections, reductions, is_gz):
+                 selections, reductions, normalizations, is_gz):
 
     in_file_descr = "CORE_SS." + in_file_prefix.split("/")[-1]
     data_file = '%s.%s' % (in_file_prefix, in_format)
@@ -188,17 +208,21 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
             for r in reductions:
                 r_space = apply_reduction(s_space, r)
                 
-                print "Printing..."
-                print_space(r_space, out_dir, [in_file_descr, w, s, r], out_format)
+                for n in normalizations:
+                    n_space = apply_normalization(r_space, n)
+                    
+                    print "Printing..."
+                    print_space(n_space, out_dir, [in_file_descr, w, s, r, n], out_format)
 
     
 def main(sys_argv):
 
     try:
-        opts, argv = getopt.getopt(sys_argv[1:], "hi:o:w:s:r:l:", 
-                                   ["help", "input=", "output=", "weighting=",
-                                    "selection=", "reduction=", "log=", "gz=",
-                                    "input_format=", "output_format="])
+        opts, argv = getopt.getopt(sys_argv[1:], "hi:o:w:s:r:n:l:", 
+                                   ["help", "input=", "output=",
+                                    "weighting=", "selection=", "reduction=",
+                                     "normalization=", "log=", "gz=", 
+                                     "input_format=", "output_format="])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -209,6 +233,7 @@ def main(sys_argv):
     weightings = [None]         
     selections = [None]
     reductions = [None]
+    normalizations = [None]
     log_file = None
     in_format = None
     out_format = None
@@ -234,6 +259,10 @@ def main(sys_argv):
         reductions = utils.config_get(section, config, "reduction", [None])
         if not reductions == [None]:
             reductions = reductions.split(",") 
+        
+        normalizations = utils.config_get(section, config, "normalization", [None])
+        if not normalizations == [None]:
+            normalizations = normalizations.split(",") 
              
         log_file = utils.config_get(section, config, "log", None) 
         in_format = utils.config_get(section, config, "input_format", None) 
@@ -253,6 +282,8 @@ def main(sys_argv):
             selections = val.split(",") 
         elif opt in ("-r", "--reduction"):
             reductions = val.split(",") 
+        elif opt in ("-n", "--normalization"):
+            normalizations = val.split(",") 
         elif opt in ("-l", "--log"):
             log_file = val
             print log_file 
@@ -277,7 +308,7 @@ def main(sys_argv):
     utils.assert_bool(gz, "--gz value must be True/False", usage)
     
     build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings, 
-                 selections, reductions, gz)
+                 selections, reductions, normalizations, gz)
     
    
 if __name__ == '__main__':

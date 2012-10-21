@@ -9,6 +9,8 @@ from unitest import data_dir
 from pipelines import build_core_space as bcs
 from composes.semantic_space.space import Space
 import composes.utils.io_utils as io_utils
+from composes.transformation.scaling.normalization import Normalization
+from composes.transformation.scaling.row_normalization import RowNormalization
 
 class Test(unittest.TestCase):
 
@@ -249,6 +251,7 @@ class Test(unittest.TestCase):
                   "-w", "raw",
                   "-s", "top_sum_3,top_length_3,top_sum_4",
                   "-r", "svd_2,svd_1",
+                  "-n", "none,all,row",
                   "-o", self.dir_,
                   "--input_format", "dm",
                   "--output_format", "dm"
@@ -260,9 +263,15 @@ class Test(unittest.TestCase):
         s4 = Space.build(data = self.dir_ + "CORE_SS.mat3.raw.top_length_3.svd_1.dm", format="dm")
         s5 = Space.build(data = self.dir_ + "CORE_SS.mat3.raw.top_sum_4.svd_2.dm", format="dm")
         s6 = Space.build(data = self.dir_ + "CORE_SS.mat3.raw.top_sum_4.svd_1.dm", format="dm")
-            
+        s7 = Space.build(data = self.dir_ + "CORE_SS.mat3.raw.top_sum_4.svd_1.all.dm", format="dm")
+        s8 = Space.build(data = self.dir_ + "CORE_SS.mat3.raw.top_sum_4.svd_1.row.dm", format="dm")
+        s9 = s6.apply(Normalization())
+        s10 = s6.apply(RowNormalization())
+        
         self._test_equal_spaces_dense(s1, s3)            
         self._test_equal_spaces_dense(s2, s4)
+        #self._test_equal_spaces_dense(s7, s9)
+        self._test_equal_spaces_dense(s8, s10)
         
         np.testing.assert_array_almost_equal(abs(s1.cooccurrence_matrix.mat), abs(us), 2)
         np.testing.assert_array_almost_equal(abs(s2.cooccurrence_matrix.mat), abs(us[:,0:1]), 2)
