@@ -28,7 +28,7 @@ class Linalg(object):
     _NMF_ALPHA = 1.0
     _NMF_BETA = 0.1
     _NMF_MAX_ITER = 20
-    _NMF_MAX_ITER_SUBPROB = 30 
+    _NMF_MAX_ITER_SUBPROB = 10 
     _NMF_MIN_TOL = 0.001
     _NMF_TOL = _NMF_MIN_TOL
     _NMF_TOL_DECREASE_FACTOR = 0.5
