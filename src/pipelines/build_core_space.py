@@ -52,6 +52,9 @@ def usage(errno=0):
     -r --reduction <list(string_int)>: comma-separated dimension reduction types. 
              A reduction is: method_reduced-dim. Method is one of "svd/nmf".
              Examples: svd_300, nmf_100. Optional.
+    -n --normalization <list(strings)>: comma-separated normalization methods, 
+         one of row/all. Row normalizes rows to length 1, sum normalizes sum 
+         of all elements 1.    
     -l --log <file>: log file. Optional.
     --input_format: <string>: one of sm(sparse matrix), dm(dense matrix), pickle. 
     --gz <bool>: if --input_format=sm, True if the input matrix file is zipped. 
@@ -143,16 +146,16 @@ def apply_reduction(s_space, r):
     return r_space        
 
 def apply_normalization(r_space, n):
-    reductions_dict = {"all": Normalization,
-                       "row": RowNormalization}
+    normalizations_dict = {"all": Normalization,
+                           "row": RowNormalization}
         
     if not n in (None, "none"):
         print "Applying normalization: %s" % n
-        if not n in reductions_dict:
-            warn("Dimensionality reduction: %s not defined" % n)
+        if not n in normalizations_dict:
+            warn("Normalization: %s not defined" % n)
             return r_space
         
-        norm_cls = reductions_dict[n]
+        norm_cls = normalizations_dict[n]
         norm = norm_cls()
         n_space = r_space.apply(norm)
     else:
