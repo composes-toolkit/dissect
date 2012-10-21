@@ -112,7 +112,7 @@ def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
                     col[i] = column2id[word2]
                     data[i] = element_type(count)
                     i += 1
-                    if i % 50000 == 0:
+                    if i % 1000000 == 0:
                         print "Progress...%d" % i
             #if len(line_elements) > 3:
             #    warn("Invalid input line:%s. Expected 3 fields, ignoring additional ones!" % line.strip())        
@@ -177,12 +177,17 @@ def read_dense_space_data(self, matrix_file, row2id=None, id2row=None, **kwargs)
 
 def read_dense_space_data(matrix_file, row2id, **kwargs):
     #get number of rows and columns
-    with open(matrix_file, "rb") as f:
-        first_line = f.next()
-        no_cols = len(first_line.strip().split()) - 1
-        if no_cols <= 0:
-            raise ValueError("Invalid row: %s, expected at least %d fields" 
-                                     % (first_line.strip(), 2))
+    if matrix_file.endswith(".gz"):
+        f = gzip.open(matrix_file, "rb")
+    else:
+        f = open(matrix_file, "rb")  
+        
+    first_line = f.next()
+    no_cols = len(first_line.strip().split()) - 1
+    if no_cols <= 0:
+        raise ValueError("Invalid row: %s, expected at least %d fields" 
+                                 % (first_line.strip(), 2))
+    f.close()
 
     no_rows = len(row2id)
     row_string_set = set([])
