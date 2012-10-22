@@ -57,7 +57,7 @@ def usage(errno=0):
          one of row/all. Row normalizes rows to length 1, sum normalizes sum 
          of all elements 1.    
     -l --log <file>: log file. Optional.
-    --input_format: <string>: one of sm(sparse matrix), dm(dense matrix), pickle. 
+    --input_format: <string>: one of sm(sparse matrix), dm(dense matrix), pkl (pickle). 
     --gz <bool>: if --input_format=sm, True if the input matrix file is zipped. 
             Option, default False.
     --output_format: <string> Additional output format: one of sm(sparse matrix), 
@@ -170,7 +170,7 @@ def print_space(space, out_dir, op_list, out_format):
     ops = [op for op in op_list if (op and (not op == "none"))]     
     space_descr = ".".join(ops)
     out_file = out_dir + "/" + space_descr
-    io_utils.save(space, out_file + ".pickle")
+    io_utils.save(space, out_file + ".pkl")
     if not out_format is None:
         space.export(out_file, format=out_format)
     
@@ -181,10 +181,10 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
     in_file_descr = "CORE_SS." + in_file_prefix.split("/")[-1]
     data_file = '%s.%s' % (in_file_prefix, in_format)
     
-    if not in_format in ("sm", "dm", "pickle"):
+    if not in_format in ("sm", "dm", "pkl"):
         raise ValueError("Invalid input format:%s" % in_format) 
     
-    if in_format == "pickle":
+    if in_format == "pkl":
         space = io_utils.load(data_file, Space)
     else:
         if is_gz:

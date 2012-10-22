@@ -49,7 +49,7 @@ class Test(unittest.TestCase):
                   "-i", self.dir_ + "mat1", 
                   "-o", self.dir_,
                   "--core_in_dir", self.dir_,
-                  "--core_filter", "CORE_SS.mat1.pickle",
+                  "--core_filter", "CORE_SS.mat1.pkl",
                   "--input_format", "sm",
                   "--output_format", "sm"
                   ])
@@ -73,7 +73,7 @@ class Test(unittest.TestCase):
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "mat1", 
                   "-o", self.dir_,
-                  "-c", self.dir_ + "CORE_SS.mat1.pickle",
+                  "-c", self.dir_ + "CORE_SS.mat1.pkl",
                   "--input_format", "sm",
                   "--output_format", "sm"
                   ])
@@ -92,7 +92,7 @@ class Test(unittest.TestCase):
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "mat2", 
                   "-o", self.dir_,
-                  "-c", self.dir_ + "CORE_SS.mat2.pickle",
+                  "-c", self.dir_ + "CORE_SS.mat2.pkl",
                   "--input_format", "dm",
                   "--output_format", "dm"
                   ])
@@ -129,7 +129,7 @@ class Test(unittest.TestCase):
                       "-l", self.dir_ + "log1.txt",
                       "-i", self.dir_ + "mat3", 
                       "-o", self.dir_ ,
-                      "-c", self.dir_ + core_mat + ".pickle",
+                      "-c", self.dir_ + core_mat + ".pkl",
                       "--input_format", "dm",
                       "--output_format", "dm"
                       ])
@@ -143,7 +143,7 @@ class Test(unittest.TestCase):
                       "-l", self.dir_ + "log1.txt",
                       "-i", self.dir_ + "mat3", 
                       "-o", self.dir_ ,
-                      "-c", self.dir_ + core_mat + ".pickle",
+                      "-c", self.dir_ + core_mat + ".pkl",
                       "--input_format", "sm",
                       "--output_format", "dm"
                       ])

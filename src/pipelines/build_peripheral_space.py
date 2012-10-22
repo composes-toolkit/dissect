@@ -34,14 +34,14 @@ def usage(errno=0):
     Options:
     -i --input <file>: prefix of input file.
     -o --output <dir>: output directory. Space is output in pickle format.
-    -c --core <file>: core space file (pickle dump of a space, .pickle expected)
+    -c --core <file>: core space file (pickle dump of a space, .pkl expected)
     --core_in_dir: <dir>: input directory, all files that pass the --filter are tested.
                 -i value is ignored. Optional.
     --core_filter: <string>: when --in_dir, it acts as a filter on the files to be tested:
                 only files containing this substring are tested. Optional, 
                 default all files in in_dir are tested.
     -l --log <file>: log file. Optional, default ./build_core_space.log
-    --input_format: <string>: one of sm(sparse matrix), dm(dense matrix), pickle. 
+    --input_format: <string>: one of sm(sparse matrix), dm(dense matrix), pkl(pickle). 
     --output_format: <string> Additional output format: one of sm(sparse matrix), 
             dm(dense matrix). Optional.
     -h --help : help
@@ -63,12 +63,12 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file,
     in_file_descr = "PER_SS." + in_file_prefix.split("/")[-1]
     core_descr = ".".join(core_space_file.split("/")[-1].split(".")[0:-1])
      
-    if not in_format in ("sm", "dm", "pickle"):
+    if not in_format in ("sm", "dm", "pkl"):
         raise ValueError("Invalid input format:%s" % in_format) 
     
     data_file = '%s.%s' % (in_file_prefix, in_format)
         
-    if in_format == "pickle":
+    if in_format == "pkl":
         space = io_utils.load(data_file, Space)
     else:
         if is_gz:
@@ -87,7 +87,7 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file,
     
     print "Printing..."
     out_file_prefix = "%s/%s.%s" % (out_dir, in_file_descr, core_descr)
-    io_utils.save(space, out_file_prefix + ".pickle")
+    io_utils.save(space, out_file_prefix + ".pkl")
     if not out_format is None:
         space.export(out_file_prefix, format=out_format)  
 
@@ -101,7 +101,7 @@ def build_space_batch(in_file_prefix, in_format, out_dir, out_format,
         core_in_dir = core_in_dir + "/"
         
     for file_ in os.listdir(core_in_dir):
-        if file_.find(core_filter) != -1 and file_.endswith(".pickle"):
+        if file_.find(core_filter) != -1 and file_.endswith(".pkl"):
             print file_
             core_space_file = core_in_dir + file_ 
             build_space(in_file_prefix, in_format, out_dir, out_format, 

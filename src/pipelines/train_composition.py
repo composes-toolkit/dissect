@@ -119,7 +119,7 @@ def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, reg
     
     print "Printing..."    
     out_file = ".".join([out_dir + "TRAINED_COMP_MODEL", model, in_descr])    
-    io_utils.save(model_obj, "%s.pickle" % out_file)
+    io_utils.save(model_obj, "%s.pkl" % out_file)
     
     if export_params:
         model_obj.export("%s.params" % out_file)

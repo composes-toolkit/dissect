@@ -43,7 +43,7 @@ class NeighboursPipelineTest(unittest.TestCase):
                            "-i", self.dir_ + "neighbours_input.txt",
                            "-m", "dot_prod",
                            "-n", "3",  
-                           "-s", self.dir_ + "CORE_SS.mat3.raw.top_sum_3.svd_2.pickle",
+                           "-s", self.dir_ + "CORE_SS.mat3.raw.top_sum_3.svd_2.pkl",
                            "-o", self.dir_
                            ])
         
@@ -61,13 +61,13 @@ class NeighboursPipelineTest(unittest.TestCase):
                               ])
         find_neighbours.main(["compute_neighbours.py",
                                "-m", "euclidean",
-                               "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle" %(self.dir_,self.dir_),
+                               "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
                                "%sconfig/neighbours_config.cfg" %self.dir_
                               ])'''
         find_neighbours.main(["compute_neighbours.py",
                                "-m", "euclidean",
                                "-n", "2",
-                               "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pickle" %(self.dir_,self.dir_),
+                               "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
                                "%sconfig/neighbours_config.cfg" %self.dir_
                               ])
         neighbours_list = read_neighbours_list(self.dir_ + "NEIGHBOURS.neighbours_input.txt.euclidean")

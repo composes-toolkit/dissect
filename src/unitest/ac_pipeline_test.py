@@ -46,8 +46,8 @@ class Test(unittest.TestCase):
                   "-i", self.dir_ + "an_train_data.txt", 
                   "-o", self.dir_,
                   "-m", "lexical_func",
-                  "-p", self.dir_ + "CORE_SS.AN_mat.pickle",
-                  "-a", self.dir_ + "CORE_SS.N_mat.pickle",
+                  "-p", self.dir_ + "CORE_SS.AN_mat.pkl",
+                  "-a", self.dir_ + "CORE_SS.N_mat.pkl",
                   "-r", "lstsq",
                   "--intercept", "False",
                   "--export_params", "True"
@@ -77,15 +77,15 @@ class Test(unittest.TestCase):
 
     def test_simple_load(self):
         
-        #trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pickle")
+        #trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl")
         #new_space = trained.function_space
         
         ac.main(["apply_composition.py", 
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "an_train_data.txt", 
                   "-o", self.dir_,
-                  "-t", self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pickle",
-                  "-a", self.dir_ + "CORE_SS.N_mat.pickle",
+                  "-t", self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl",
+                  "-a", self.dir_ + "CORE_SS.N_mat.pkl",
                   "--output_format", "dm"
                   ]
                 )
@@ -100,7 +100,7 @@ class Test(unittest.TestCase):
 
     def test_simple_define(self):
             
-        #trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pickle")
+        #trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl")
         #new_space = trained.function_space
 
         #compose with lexical function
@@ -108,8 +108,8 @@ class Test(unittest.TestCase):
           "-l", self.dir_ + "log1.txt",
           "-i", self.dir_ + "an_train_data.txt", 
           "-o", self.dir_,
-          "-t", self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pickle",
-          "-a", self.dir_ + "CORE_SS.N_mat.pickle",
+          "-t", self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl",
+          "-a", self.dir_ + "CORE_SS.N_mat.pkl",
           "--output_format", "dm"
           ]
         )
@@ -125,14 +125,14 @@ class Test(unittest.TestCase):
                   "-m", "weighted_add",
                   "--alpha", "0.5",
                   "--beta", "0.5",
-                  "-a", self.dir_ + "CORE_SS.A_mat.pickle"+ "," + self.dir_ + "CORE_SS.N_mat.pickle",
+                  "-a", self.dir_ + "CORE_SS.A_mat.pkl"+ "," + self.dir_ + "CORE_SS.N_mat.pkl",
                   "--output_format", "dm"
                   ]
                 )
         
         sp1 = Space.build(data=self.dir_ + "COMPOSED_SS.WeightedAdditive.an_train_data.txt.dm",
                          format="dm")
-        sp3 = io_utils.load(self.dir_ + "COMPOSED_SS.WeightedAdditive.an_train_data.txt.pickle")
+        sp3 = io_utils.load(self.dir_ + "COMPOSED_SS.WeightedAdditive.an_train_data.txt.pkl")
         
         np.testing.assert_array_equal(sp1.cooccurrence_matrix.mat, np.mat([[3,4],[4,5]]))
         self._test_equal_spaces_structs(sp1, sp2)
@@ -152,14 +152,14 @@ class Test(unittest.TestCase):
           "-o", self.dir_,
           "-m", "dilation",
           "--lambda", "1",
-          "-a", self.dir_ + "CORE_SS.A_mat.pickle"+ "," + self.dir_ + "CORE_SS.N_mat.pickle",
+          "-a", self.dir_ + "CORE_SS.A_mat.pkl"+ "," + self.dir_ + "CORE_SS.N_mat.pkl",
           "--output_format", "dm"
           ]
         )
         
         sp1 = Space.build(data=self.dir_ + "COMPOSED_SS.Dilation.an_train_data.txt.dm",
                          format="dm")
-        n_space = io_utils.load(self.dir_ + "CORE_SS.N_mat.pickle")
+        n_space = io_utils.load(self.dir_ + "CORE_SS.N_mat.pkl")
         sp1.to_dense()
         n_space.to_dense()
         np.testing.assert_array_almost_equal(sp1.cooccurrence_matrix.mat, n_space.cooccurrence_matrix.mat)
@@ -172,7 +172,7 @@ class Test(unittest.TestCase):
           "-o", self.dir_,
           "-m", "dilation",
           "--lambda", "1",
-          "-a", self.dir_ + "CORE_SS.N_mat.pickle" + "," + self.dir_ + "CORE_SS.A_mat.pickle",
+          "-a", self.dir_ + "CORE_SS.N_mat.pkl" + "," + self.dir_ + "CORE_SS.A_mat.pkl",
           "--output_format", "dm"
           ]
         )
@@ -190,7 +190,7 @@ class Test(unittest.TestCase):
           "-i", self.dir_ + "aan_train_data.txt", 
           "-o", self.dir_,
           "-m", "mult",
-          "-a", self.dir_ + "CORE_SS.A_mat.pickle"+ "," + self.dir_ + "COMPOSED_SS.Dilation.an_train_data.txt.pickle",
+          "-a", self.dir_ + "CORE_SS.A_mat.pkl"+ "," + self.dir_ + "COMPOSED_SS.Dilation.an_train_data.txt.pkl",
           "--output_format", "dm"
           ]
         )

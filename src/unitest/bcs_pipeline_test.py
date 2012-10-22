@@ -62,7 +62,7 @@ class Test(unittest.TestCase):
         s2 = Space.build(data=self.dir_ + "CORE_SS.mat1.sm",
                          cols=self.dir_ + "CORE_SS.mat1.cols",
                          format="sm")
-        s3 = io_utils.load(self.dir_ + "CORE_SS.mat1.pickle", Space)
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat1.pkl", Space)
         
         self._test_equal_spaces_sparse(s1, s2)
         self._test_equal_spaces_sparse(s1, s3)
@@ -85,7 +85,7 @@ class Test(unittest.TestCase):
         s2 = Space.build(data=self.dir_ + "CORE_SS.mat1.sm",
                          cols=self.dir_ + "CORE_SS.mat1.cols",
                          format="sm")
-        s3 = io_utils.load(self.dir_ + "CORE_SS.mat1.pickle", Space)
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat1.pkl", Space)
         s4 = Space.build(data=self.dir_ + "mat1.sm",
                          cols= self.dir_ + "mat1.cols",
                          format = "sm")
@@ -110,7 +110,7 @@ class Test(unittest.TestCase):
                          rows=self.dir_ + "CORE_SS.mat3.rows",
                          cols=self.dir_ + "CORE_SS.mat3.cols", 
                          format="sm")
-        s3 = io_utils.load(self.dir_ + "CORE_SS.mat3.pickle", Space)
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat3.pkl", Space)
         
         self._test_equal_spaces_sparse(s1, s2)
         self._test_equal_spaces_sparse(s1, s3)
@@ -129,7 +129,7 @@ class Test(unittest.TestCase):
                          rows=self.dir_ + "CORE_SS.mat3.rows",
                          cols=self.dir_ + "CORE_SS.mat3.cols",
                          format = "dm")                 
-        s3 = io_utils.load(self.dir_ + "CORE_SS.mat3.pickle", Space)
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat3.pkl", Space)
 
         self._test_equal_spaces_dense(s1, s2)
         s3.to_dense()
@@ -145,7 +145,7 @@ class Test(unittest.TestCase):
         s1 = Space.build(data=self.dir_ + "CORE_SS.mat3.dm",
                          cols=self.dir_ + "CORE_SS.mat3.cols",
                          format = "dm")                 
-        s3 = io_utils.load(self.dir_ + "CORE_SS.mat3.pickle", Space)
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat3.pkl", Space)
         
         s3.to_dense()
         self._test_equal_spaces_dense(s1, s3)
@@ -164,7 +164,7 @@ class Test(unittest.TestCase):
         
         s1 = Space.build(data = self.dir_ + "mat2.dm", format = "dm")
         s2 = Space.build(data = self.dir_ + "CORE_SS.mat2.dm", format="dm")
-        s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pickle", Space)
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pkl", Space)
         s4 = Space.build(data = self.dir_ + "mat2.dm.gz", format = "dm")
         
         self._test_equal_spaces_dense(s1, s2)
@@ -175,13 +175,13 @@ class Test(unittest.TestCase):
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "CORE_SS.mat2", 
                   "-o", self.dir_,
-                  "--input_format", "pickle",
+                  "--input_format", "pkl",
                   "--output_format", "dm",
                   "--gz", "True",
                   ])
         
-        s1 = io_utils.load(self.dir_ + "CORE_SS.CORE_SS.mat2.pickle", Space)
-        s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pickle", Space)
+        s1 = io_utils.load(self.dir_ + "CORE_SS.CORE_SS.mat2.pkl", Space)
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pkl", Space)
         
         self._test_equal_spaces_dense(s1, s3)
                 
@@ -197,7 +197,7 @@ class Test(unittest.TestCase):
         
         s1 = Space.build(data = self.dir_ + "mat2.dm", format = "dm")
         s2 = Space.build(data = self.dir_ + "CORE_SS.mat2.dm", format="dm")
-        s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pickle", Space)
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pkl", Space)
         
         self._test_equal_spaces_dense(s1, s2)
         self._test_equal_spaces_dense(s1, s3)        
@@ -206,12 +206,12 @@ class Test(unittest.TestCase):
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "CORE_SS.mat2", 
                   "-o", self.dir_,
-                  "--input_format", "pickle",
+                  "--input_format", "pkl",
                   "--output_format", "dm"
                   ])
         
-        s1 = io_utils.load(self.dir_ + "CORE_SS.CORE_SS.mat2.pickle", Space)
-        s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pickle", Space)
+        s1 = io_utils.load(self.dir_ + "CORE_SS.CORE_SS.mat2.pkl", Space)
+        s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pkl", Space)
         
         self._test_equal_spaces_dense(s1, s3)  
 

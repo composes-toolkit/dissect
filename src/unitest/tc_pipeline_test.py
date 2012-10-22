@@ -60,14 +60,14 @@ class Test(unittest.TestCase):
                   "-i", self.dir_ + "an_train_data.txt", 
                   "-o", self.dir_,
                   "-m", "lexical_func",
-                  "-p", self.dir_ + "CORE_SS.AN_mat.pickle",
-                  "-a", self.dir_ + "CORE_SS.N_mat.pickle",
+                  "-p", self.dir_ + "CORE_SS.AN_mat.pkl",
+                  "-a", self.dir_ + "CORE_SS.N_mat.pkl",
                   "-r", "lstsq",
                   "--intercept", "True",
                   "--export_params", "True",
                   ])        
 
-        trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pickle")
+        trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl")
         new_space = trained.function_space
         
         np.testing.assert_array_almost_equal(new_space.cooccurrence_matrix.mat, 
@@ -93,14 +93,14 @@ class Test(unittest.TestCase):
                   "-i", self.dir_ + "an_train_data.txt", 
                   "-o", self.dir_,
                   "-m", "lexical_func",
-                  "-p", self.dir_ + "CORE_SS.AN_mat.pickle",
-                  "-a", self.dir_ + "CORE_SS.N_mat.pickle",
+                  "-p", self.dir_ + "CORE_SS.AN_mat.pkl",
+                  "-a", self.dir_ + "CORE_SS.N_mat.pkl",
                   "-r", "lstsq",
                   "--intercept", "False",
                   "--export_params", "True"
                   ]) 
         
-        trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pickle")
+        trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl")
         new_space = trained.function_space
         np.testing.assert_array_almost_equal(new_space.cooccurrence_matrix.mat, 
                                              np.mat([1,0,0,1]), 10)
@@ -118,8 +118,8 @@ class Test(unittest.TestCase):
                   "-i", self.dir_ + "an_train_data.txt", 
                   "-o", self.dir_,
                   "-m", "lexical_func",
-                  "-p", self.dir_ + "CORE_SS.AN_mat.pickle",
-                  "-a", self.dir_ + "CORE_SS.N_mat.pickle",
+                  "-p", self.dir_ + "CORE_SS.AN_mat.pkl",
+                  "-a", self.dir_ + "CORE_SS.N_mat.pkl",
                   "-r", "ridge",
                   "--param", "0",
                   "--crossvalidation", "False",
@@ -127,7 +127,7 @@ class Test(unittest.TestCase):
                   "--export_params", "True"
                   ]) 
         
-        trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pickle")
+        trained = io_utils.load(self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl")
         new_space2 = trained.function_space
         np.testing.assert_array_almost_equal(new_space2.cooccurrence_matrix.mat, 
                                              np.mat([1,0,0,1]), 10)

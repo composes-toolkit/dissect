@@ -99,7 +99,7 @@ def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
     
     print "Printing..."
     out_file = ".".join([out_dir + "COMPOSED_SS", model_descr, in_descr])    
-    io_utils.save(composed_space, "%s.pickle" % out_file)
+    io_utils.save(composed_space, "%s.pkl" % out_file)
     
     if not out_format is None:
         composed_space.export(out_file, format=out_format)
