@@ -131,7 +131,7 @@ def main(sys_argv):
                                    ["help", "input=", "output=", "model=",
                                     "regression=", "intercept=", "arg_space=",
                                     "phrase_space=", "export_params=", "log=",
-                                    "crossvalidation=", "param="])
+                                    "crossvalidation=", "param_range=", "param="])
     except getopt.GetoptError, err:
         print str(err)
         usage()
