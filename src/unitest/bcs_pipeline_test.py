@@ -270,7 +270,7 @@ class Test(unittest.TestCase):
         
         self._test_equal_spaces_dense(s1, s3)            
         self._test_equal_spaces_dense(s2, s4)
-        #self._test_equal_spaces_dense(s7, s9)
+        self._test_equal_spaces_dense(s7, s9)
         self._test_equal_spaces_dense(s8, s10)
         
         np.testing.assert_array_almost_equal(abs(s1.cooccurrence_matrix.mat), abs(us), 2)

@@ -38,7 +38,8 @@ logger = logging.getLogger("test vector space construction pipeline")
 
 def usage(errno=0):
     print >>sys.stderr,\
-    """Usage:
+    """
+    Usage:
     python build_core_space.py [options] [config_file]
     \n\
     Options:
