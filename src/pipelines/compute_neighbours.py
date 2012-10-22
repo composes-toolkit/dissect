@@ -109,6 +109,8 @@ def main(sys_argv):
 
     if (len(argv) == 1):
         config_file = argv[0]
+        with open(config_file) as f:
+            pass
         config = ConfigParser()
         config.read(config_file)
         out_dir = utils.config_get(section, config, "output", None) 
