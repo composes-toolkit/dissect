@@ -21,9 +21,15 @@ import composes.utils.log_utils as log
 logger = logging.getLogger(__name__)
 
 class Linalg(object):
-    '''
-    classdocs
-    '''
+    """
+    Contains a set of liniar algebra utilities defined to work both with sparse and
+    with dense matrices as an input (i.e. with objects of type SparseMatrix/DenseMatrix).
+    
+    Implements:
+        svd
+        nmf
+        pinv
+    """
 
     _NMF_ALPHA = 1.0
     _NMF_BETA = 0.1
@@ -36,6 +42,21 @@ class Linalg(object):
 
     @staticmethod
     def svd(matrix_, reduced_dimension):
+        """
+        Performs SVD decomposition.
+        
+        If the rank is smaller than the requested reduced dimension,
+        reduction to rank is performed.
+        
+        Args:
+           matrix_: input of type Matrix
+           reduced_dimension: int, the desired reduced dimension
+        
+        Returns:
+            U,S,V of the decomposition X = USV^T. U, V: Matrix type, 
+            S: ndarray of singular values.
+            
+        """
         log.print_info(logger, 4, "In SVD..reducing to dim %d" % reduced_dimension)
         log.print_matrix_info(logger, matrix_, 5, "Input matrix:")
 
@@ -59,18 +80,24 @@ class Linalg(object):
         #log.print_info(logger, "In Ridge regression..", 4)
         #log.print_matrix_info(logger, matrix_a, 5, "Input matrix A:")
         #log.print_matrix_info(logger, matrix_b, 5, "Input matrix B:")   
-        '''
+        """
+        Performs Ridge Regression.
+        
         This method use the general formulae:
             X = (A^T * A + P^T * P)^-1 * A^T * Y 
         to solve simple ridge regression
         
         Args:
             a_matrix <Matrix>: A
-            b_matrix <Matrix>: B    
+            b_matrix <Matrix>: B
+            lambda_: scalar, lambda parameter
+            intercept: bool. If True intercept is used. Optional, False by default.
+                 
         Returns:
             X <Matrix>: X matrix, A * X = B
                         
-        '''
+        """
+        
         matrix_a._assert_same_type(matrix_b)
         # TODO: check out where to define this assert
         assert_same_shape(matrix_a, matrix_b, 0)
@@ -94,6 +121,18 @@ class Linalg(object):
     
     @classmethod
     def lstsq_regression(cls, matrix_a, matrix_b, intercept=False):
+        """
+        Performs Least Squares Regression.
+        
+        Args:
+            a_matrix <Matrix>: A
+            b_matrix <Matrix>: B
+            intercept: bool. If True intercept is used. Optional, False by default.
+                 
+        Returns:
+            X <Matrix>: X matrix, A * X = B
+                        
+        """
 
         matrix_a._assert_same_type(matrix_b)
         # TODO: check out where to define this assert
@@ -183,7 +222,7 @@ class Linalg(object):
             warn("Rank of matrix smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions." % (rank, reduced_dimension, rank))
     
     @staticmethod
-    def _nmf_nlssubprob(v, w, h_init, tol, maxiter):
+    def _nmf_nlssubprob(v, w, w_t, h_init, tol, maxiter):
         """
         h, grad: output solution and gradient
         iteration: #iterations used
@@ -193,8 +232,8 @@ class Linalg(object):
         maxiter: limit of iterations
         """
         h = h_init
-        w_t_v = w.transpose() * v
-        w_t_w = w.transpose() * w 
+        w_t_v = w_t * v
+        w_t_w = w_t * w 
 
         alpha = Linalg._NMF_ALPHA
         beta = Linalg._NMF_BETA
@@ -202,9 +241,6 @@ class Linalg(object):
         #sub_loop_time = time()
         
         for iteration in xrange(1, maxiter):
-            #logger.info("nmf subiteration: " + str(iteration))
-            #logger.info("sub loop time:%f" % (time() - sub_loop_time))
-            #sub_loop_time = time()  
             grad = w_t_w * h - w_t_v
 
             # search step size 
@@ -214,7 +250,7 @@ class Linalg(object):
                 d = hn - h
                 gradd = grad.multiply(d).sum()
                 dQd = (w_t_w * d).multiply(d).sum()
-                suff_decr = 0.99 * gradd + 0.5 * dQd < 0;
+                suff_decr = 0.99 * gradd + 0.5 * dQd < 0
                 if inner_iter == 1:
                     decr_alpha = not suff_decr
                     hp = h
@@ -231,34 +267,38 @@ class Linalg(object):
                     else:
                         alpha = alpha / beta
                         hp = hn
-        if iteration == maxiter:
-            print 'Max iteration in nlssubprob'
+
         return h, grad, iteration
 
     @staticmethod
     def nmf(v, w_init, h_init):
+        """
+        Performs Non-negative Matrix Factorization.
+        
+        Args:
+            w_init <Matrix>: initial value for matrix W
+            h_init <Matrix>: initial value for matrix H
+                 
+        Returns:
+            W, H <Matrix>: where X = WH
+                        
+        """
+        
         log.print_info(logger, 4, "In NMF..reducing to dim %d" % w_init.shape[1])
         log.print_matrix_info(logger, w_init, 5, "W init matrix:")
         log.print_matrix_info(logger, h_init, 5, "H init matrix:")
-        """
-        (w,h) = nmf(v,w_init,h_init,tol,timelimit,maxiter)
-        w,h: output solution
-        w_init,h_init: initial solution
-        tol: tolerance for a relative stopping condition
-        timelimit, maxiter: limit of time and iterations
-        """
 
-        # TODO: we removed a check of the proj gradient here
-        # which was one of the stopping conditions (both here and in the
-        # subproblem)
         if not isinstance(v, Matrix):
             raise TypeError("expected Matrix type, received %s" % type(v))
         w = w_init
         h = h_init
         init_time = time()
         
-        gradW = (w * (h * h.transpose())) - (v * h.transpose())
-        gradH = ((w.transpose() * w) * h) - (w.transpose() * v)
+        wt = w.transpose()
+        ht = h.transpose()
+        vt = v.transpose()
+        gradW = (w * (h * ht)) - (v * ht)
+        gradH = ((wt * w) * h) - (wt * v)
 
         gradW_norm = gradW.norm()
         gradH_norm = gradH.norm()
@@ -271,33 +311,21 @@ class Linalg(object):
         #loop_time = init_time
         for iteration in xrange(1, Linalg._NMF_MAX_ITER):
             log.print_info(logger, 5, "Iteration: %d(%d)" % (iteration, Linalg._NMF_MAX_ITER))
-            #print "iteration: ", iteration
-            #print "loop time:", time() - loop_time
-            #logger.info("iteration: " + str(iteration))
-            #logger.info("loop time: " + str(time() - loop_time))
-            #loop_time = time()
-            # stopping condition
-            #logger.info("nmf iteration: " + str(iteration))
-            
-            #TODO compute projnorm here!!!
-            
-            #print 'projnorm %f' % projnorm
-            #logger.info('projnorm %f' % projnorm)
-            #if projnorm < tol*initgrad or time() - init_time > time_limit: break
           
             if time() - init_time > Linalg._NMF_TIME_LIMIT:
                 break
           
-            w, gradW, iterW = Linalg._nmf_nlssubprob(v.transpose(), h.transpose(),
+            w, gradW, iterW = Linalg._nmf_nlssubprob(vt, h.transpose(), h,
                                               w.transpose(), tolW, 
                                               Linalg._NMF_MAX_ITER_SUBPROB)
+            old_w = w
             w = w.transpose()
             gradW = gradW.transpose()
           
             if iterW == 1:
                 tolW = Linalg._NMF_TOL_DECREASE_FACTOR * tolW
         
-            h, gradH, iterH = Linalg._nmf_nlssubprob(v, w, h, tolH, 
+            h, gradH, iterH = Linalg._nmf_nlssubprob(v, w, old_w, h, tolH, 
                                               Linalg._NMF_MAX_ITER_SUBPROB)
             
             if iterH == 1:

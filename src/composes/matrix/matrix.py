@@ -4,19 +4,18 @@ Created on Sep 17, 2012
 @author: georgianadinu
 '''
 
-import numpy as np
 from composes.utils.num_utils import is_numeric
 from composes.utils.py_matrix_utils import is_array
 
 class Matrix(object):
-    '''
+    """
     Provides a common interface for matrix implementations.
     
     Provides a common interface for different matrix implementations
     (sparse/dense). In vector space models, a matrix is used to encode
     a set of entities such as words or phrases (rows) described in terms
     of contextual features (columns). 
-    '''
+    """
 
     def __init__(self, *args, **kwargs):
         raise NotImplementedError()
