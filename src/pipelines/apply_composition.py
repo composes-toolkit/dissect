@@ -98,7 +98,7 @@ def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
         composed_space = model_obj.compose(data, (arg_space, arg_space2))
     
     print "Printing..."
-    out_file = ".".join([out_dir + "COMPOSED_SS", model_descr, in_descr])    
+    out_file = ".".join([out_dir + "/COMPOSED_SS", model_descr, in_descr])    
     io_utils.save(composed_space, "%s.pkl" % out_file)
     
     if not out_format is None:

@@ -118,7 +118,7 @@ def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, reg
         model_obj.train(train_data, (arg_space, arg_space2), phrase_space)
     
     print "Printing..."    
-    out_file = ".".join([out_dir + "TRAINED_COMP_MODEL", model, in_descr])    
+    out_file = ".".join([out_dir + "/TRAINED_COMP_MODEL", model, in_descr])    
     io_utils.save(model_obj, "%s.pkl" % out_file)
     
     if export_params:
