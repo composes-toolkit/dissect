@@ -139,7 +139,7 @@ def main(sys_argv):
         in_file_prefix = utils.config_get(section, config, "input", None)
         core_space_file = utils.config_get(section, config, "core", None) 
         core_in_dir = utils.config_get(section, config, "core_in_dir", None) 
-        core_filter = utils.config_get(section, config, "core_filter", None) 
+        core_filter = utils.config_get(section, config, "core_filter", "") 
         log_file = utils.config_get(section, config, "log", None) 
         in_format = utils.config_get(section, config, "input_format", None) 
         out_format = utils.config_get(section, config, "output_format", None)
