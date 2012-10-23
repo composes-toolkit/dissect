@@ -29,8 +29,7 @@ def usage(errno=0):
     -i --input <file>: input file.
     -o --output <dir>: output directory. Resulted composed space is output 
                         in pickle format.
-    -m --model <string>: one of WeightedAdditive/FullAdditive/LexicalFunction/
-                        Dilation/Multiplicative
+    -m --model <string>: one of WeightedAdditive/Dilation/Multiplicative
     --alpha <scalar>: parameter for model=WeightedAdditive
     --beta <scalar>: parameter for model=WeightedAdditive
     --lambda <scalar>: parameter for model=Dilation
@@ -55,6 +54,7 @@ def usage(errno=0):
 
 def create_model(model, alpha, beta, lambda_): 
 
+    #TODO: IMPORTANT here: if alpha, beta of lambda are none
     model_dict = {"weighted_add": WeightedAdditive,
                  "dilation": Dilation,
                  "mult": Multiplicative
@@ -98,7 +98,7 @@ def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
         composed_space = model_obj.compose(data, (arg_space, arg_space2))
     
     print "Printing..."
-    out_file = ".".join([out_dir + "COMPOSED_SS", model_descr, in_descr])    
+    out_file = ".".join([out_dir + "/COMPOSED_SS", model_descr, in_descr])    
     io_utils.save(composed_space, "%s.pkl" % out_file)
     
     if not out_format is None:
@@ -192,6 +192,9 @@ def main(sys_argv):
     apply_model(in_file, out_dir, model, trained_model, arg_space,
                 alpha, beta, lambda_, out_format)
     
+    
+    #TODO: VERY IMPORTAT change the name of -t --trained_model 
+    #TI DOES NOT HAVE TO BE TRAINED BEFORE; JUST SAVED
     
 if __name__ == '__main__':
     print sys.argv
