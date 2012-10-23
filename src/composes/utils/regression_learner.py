@@ -1,9 +1,3 @@
-'''
-Created on Oct 8, 2012
-
-@author: georgianadinu
-'''
-
 import numpy as np
 from composes.matrix.linalg import Linalg
 from crossvalidation_utils import get_split_indices
@@ -26,6 +20,16 @@ class RegressionLearner(object):
         
 class LstsqRegressionLearner(RegressionLearner):
         
+    """
+    This class performs Least Squares Regression.
+        
+    It finds the matrix X which solves:
+    
+    :math:`X = argmin(||AX - B||)`
+    
+    It can be used with intercept or without (by default intercept=True).
+    
+    """    
     def __init__(self, **kwargs):
         
         self._intercept = True
@@ -38,6 +42,20 @@ class LstsqRegressionLearner(RegressionLearner):
         
 class RidgeRegressionLearner(RegressionLearner):
     
+    """
+    This class performs Ridge Regression.
+        
+    It finds the matrix X which solves:
+    
+    :math:`X = argmin(||AX - B|| + \\lambda||X||_{2})`
+    
+    It can be used with intercept or without (by default intercept=True).
+    Crossvalidation can be used with default :math:`\\lambda` range of 
+    :math:`linspace(0, 0.5, 10)`. By default 10-fold crossvalidation is performed.
+    If crossvalidation is set False it requires the input of a :math:`\\lambda` value.
+    
+    """ 
+        
     def __init__(self, **kwargs):
 
         self._intercept = True
