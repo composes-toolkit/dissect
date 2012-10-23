@@ -84,7 +84,7 @@ class Test(unittest.TestCase):
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "an_train_data.txt", 
                   "-o", self.dir_,
-                  "-t", self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl",
+                  "--load_model", self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl",
                   "-a", self.dir_ + "CORE_SS.N_mat.pkl",
                   "--output_format", "dm"
                   ]
@@ -108,7 +108,7 @@ class Test(unittest.TestCase):
           "-l", self.dir_ + "log1.txt",
           "-i", self.dir_ + "an_train_data.txt", 
           "-o", self.dir_,
-          "-t", self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl",
+          "--load_model", self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.pkl",
           "-a", self.dir_ + "CORE_SS.N_mat.pkl",
           "--output_format", "dm"
           ]
