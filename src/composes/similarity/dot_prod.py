@@ -9,7 +9,10 @@ class DotProdSimilarity(Similarity):
     """
     Computes the scalar product (dot product) of two vectors.
         
-    :math:`<\\vec{u},\\vec{v}> = \\sum_iu_iv_i`
+    .. math::
+    
+        sim(\\vec{u},\\vec{v}) &= <\\vec{u},\\vec{v}> \\\\
+                               &= \\sum_iu_iv_i
     """
     _name = "dot_prod"
         

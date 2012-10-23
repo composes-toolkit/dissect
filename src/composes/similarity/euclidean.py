@@ -10,7 +10,7 @@ class EuclideanSimilarity(Similarity):
     Computes the euclidean similarity of two vectors as the inverse of their
     euclidean distance.
         
-    :math:`sim(\\vec{u},\\vec{v}) = \\frac{1}{||\\vec{u}-\\vec{v}|| + 1}`
+    .. math:: sim(\\vec{u},\\vec{v}) = \\frac{1}{||\\vec{u}-\\vec{v}|| + 1}
     """
     
     _name = "euclidean"
