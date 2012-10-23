@@ -6,9 +6,13 @@ Created on Oct 2, 2012
 
 from similarity import Similarity
 class EuclideanSimilarity(Similarity):
-    '''
-    classdocs
-    '''
+    """
+    Computes the euclidean similarity of two vectors as the inverse of their
+    euclidean distance.
+        
+    :math:`sim(\\vec{u},\\vec{v}) = \\frac{1}{||\\vec{u}-\\vec{v}|| + 1}`
+    """
+    
     _name = "euclidean"
 
     def __init__(self):

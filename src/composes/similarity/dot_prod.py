@@ -6,15 +6,15 @@ Created on Oct 2, 2012
 
 from similarity import Similarity
 class DotProdSimilarity(Similarity):
-    '''
-    classdocs
-    '''
+    """
+    Computes the scalar product (dot product) of two vectors.
+        
+    :math:`<\\vec{u},\\vec{v}> = \\sum_iu_iv_i`
+    """
     _name = "dot_prod"
-
+        
     def __init__(self):
-        '''
-        Constructor
-        '''
+        pass
         
     def _sim(self, v1, v2):
         return v1.multiply(v2).sum()

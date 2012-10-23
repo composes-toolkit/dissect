@@ -8,9 +8,16 @@ import numpy as np
 from similarity import Similarity
 
 class LinSimilarity(Similarity):
-    '''
-    classdocs
-    '''
+    """
+    Computes the Lin similarity of two vectors.
+        
+    :math:`sim(\\vec{u},\\vec{v}) = \\frac{\\sum_{i \\in I}u_i+v_i}{\\sum_iu_i + \\sum_iv_i}`
+    
+    Where :math:`I=\\{i | u_i > 0 \\text{ and } v_i > 0\\}`, the set of components
+    on which both vectors are strictly positive.
+     
+    """
+    
     _name = "lin"
 
     def __init__(self):
