@@ -13,7 +13,7 @@ class CosSimilarity(Similarity):
     """
     Computes the cosine similarity of two vectors.
         
-    :math:`sim(\\vec{u},\\vec{v}) = \\frac{<\\vec{u},\\vec{v}>}{\\sqrt{||\\vec{u}||||\\vec{v}||}}`
+    .. math::  sim(\\vec{u},\\vec{v}) = \\frac{<\\vec{u},\\vec{v}>}{\\sqrt{||\\vec{u}||||\\vec{v}||}}
     """
     _name = "cos"
 

@@ -5,7 +5,7 @@ class PlogWeighting(Scaling):
     """
      Positive Log Weighting
 
-     :math:`plog(r,c)= log(r,c) \\text{ if } log(r,c) \\geq 0 \\text{ else } 0`         
+     .. math::  plog(r,c)= log(r,c) \\text{ if } log(r,c) \\geq 0 \\text{ else } 0         
     """
     
     _name = "plog"
