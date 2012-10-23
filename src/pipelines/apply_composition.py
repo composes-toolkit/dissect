@@ -29,11 +29,13 @@ def usage(errno=0):
     -i --input <file>: input file.
     -o --output <dir>: output directory. Resulted composed space is output 
                         in pickle format.
-    -m --model <string>: one of WeightedAdditive/Dilation/Multiplicative
-    --alpha <scalar>: parameter for model=WeightedAdditive
-    --beta <scalar>: parameter for model=WeightedAdditive
-    --lambda <scalar>: parameter for model=Dilation
-    -t --trained_model <file>: file containing a previously trained model.
+    -m --model <string>: model name. One of weighted_add (WeightedAdditive)
+                        dilation (Dilation) or mult (Multiplicative).
+    --alpha <scalar>: parameter for model=weighted_add
+    --beta <scalar>: parameter for model=weighted_add
+    --lambda <scalar>: parameter for model=dilation
+    --load_model <file>: file containing a previously saved model. Only one of
+                        --model or --load_model can be provided.
     -a --arg_space <file[,file]>: file(s) of argument semantic space (in pickle 
                         format). The second word of a word pair is interpreted 
                         in the second space, if provided.
@@ -107,10 +109,10 @@ def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
     
 def main(sys_argv):
     try:
-        opts, argv = getopt.getopt(sys_argv[1:], "hi:o:m:a:t:l:", 
+        opts, argv = getopt.getopt(sys_argv[1:], "hi:o:m:a:l:", 
                                    ["help", "input=", "output=", "model=",
                                     "alpha=", "beta=", "lambda=", "arg_space=", 
-                                    "trained_model=", "output_format=", "log="])
+                                    "load_model=", "output_format=", "log="])
         
     except getopt.GetoptError, err:
         print str(err)
@@ -137,7 +139,7 @@ def main(sys_argv):
         out_dir = utils.config_get(section, config, "output", None)
         in_file = utils.config_get(section, config, "input", None)
         model = utils.config_get(section, config, "model", None)
-        trained_model = utils.config_get(section, config, "trained_model", None)
+        trained_model = utils.config_get(section, config, "load_model", None)
         arg_space = utils.config_get(section, config, "arg_space", None)
         if not arg_space is None:
             arg_space = arg_space.split(",")
@@ -157,7 +159,7 @@ def main(sys_argv):
             model = val
         elif opt in ("-a", "--arg_space"):
             arg_space = val.split(",")
-        elif opt in ("-t", "--trained_model"):
+        elif opt == "--load_model":
             trained_model = val
         elif opt == "--alpha":
             alpha = val 
@@ -179,7 +181,7 @@ def main(sys_argv):
 
     utils.assert_option_not_none(in_file, "Input file required", usage)
     utils.assert_option_not_none(out_dir, "Output directory required", usage)    
-    utils.assert_xor_options(model, trained_model, "(Only) one of model type (-m) or file of model object (-t) are required!", usage)
+    utils.assert_xor_options(model, trained_model, "(Only) one of model name (-m) or file of model object (--load_model) are required!", usage)
     utils.assert_option_not_none(arg_space, "Argument space(s) file(s) required", usage)
 
     if not alpha is None:
