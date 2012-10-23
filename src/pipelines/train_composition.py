@@ -106,7 +106,8 @@ def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, reg
                                                        param=param,
                                                        param_range=param_range)
             model_obj = model_cls(learner=regression_obj)
-            
+        else:
+            model_obj = model_cls()    
             
     train_data = io_utils.read_tuple_list(in_file, 3)
     

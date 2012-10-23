@@ -23,7 +23,7 @@ logger = logging.getLogger("test vector space construction pipeline")
 def usage(errno=0):
     print >>sys.stderr,\
     """Usage:
-    python train_composition.py [options] [config_file]
+    python apply_composition.py [options] [config_file]
 
     Options:
     -i --input <file>: input file.
@@ -93,7 +93,7 @@ def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
     
     data = io_utils.read_tuple_list(in_file, 3)
     
-    print "Applying composition model:%s" % type(model_obj)
+    print "Applying composition model:%s" % model_descr
     if arg_space2 is None or type(model_obj) is LexicalFunction:
         composed_space = model_obj.compose(data, arg_space)
     else:
@@ -199,5 +199,4 @@ def main(sys_argv):
     #TI DOES NOT HAVE TO BE TRAINED BEFORE; JUST SAVED
     
 if __name__ == '__main__':
-    print sys.argv
     main(sys.argv)    
