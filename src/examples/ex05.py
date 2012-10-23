@@ -1,57 +1,24 @@
-'''
-Created on Sep 14, 2012
+from composes.utils import io_utils
+from composes.semantic_space.peripheral_space import PeripheralSpace
+from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
 
-@author: georgianadinu
-'''
 
-if __name__ == '__main__':
-    def main(): 
-    
-    #load saved space
-    ..
-    #Initialize a composition model
-    
-    #Option1: provide the parameters
-    params = WeightedAdditiveModel.train()
-    comp = WeightedAdditiveModel(params)
-    
-    #
-    params = WeightedAdditiveModel.load("file")
-    comp = WeightedAdditiveModel(params)
-    
-    #
-    params = (1,1)
-    comp = WeightedAdditiveModel(params)
-    
-    
-    #
-    comp = WeightedAdditiveModel.train("input data file", core_space, phrase_space)
-    comp = WeightedAdditiveModel.load("input data file")
-    comp.save("input data file")
-    
-    comp = WeightedAdditiveModel(params)
-    
-    #1
-    comp = WeightedAdditiveModel()
-    comp.train("input data file")
-    comp.save("file")
-    
-    #2
-    comp = WeightedAdditiveModel()
-    comp.load("file")
+#load a space and apply Ppmi on it
+my_space = io_utils.load("./data/out/ex01.pkl")
+my_space = my_space.apply(PpmiWeighting())
 
-    #3
-    params = (1,1)
-    comp = WeightedAdditiveModel(params)
-    
-    
+print my_space.cooccurrence_matrix
+print my_space.id2row
 
-    #Create a new composed space
-    phrase_space = composition.createComposedSpace(my_space, ...)
-    
-    #
-    calculator = SimilarityCalculator(phrase_space)
-    
-    print calculator.computeSimilarity("middle-age_man", "red_porsche")
-    
-    
+#create a peripheral space 
+my_per_space = PeripheralSpace.build(my_space,
+                                     data="./data/in/ex05.sm",
+                                     cols="./data/in/ex05.cols",
+                                     format="sm")
+
+print my_per_space.cooccurrence_matrix
+print my_per_space.id2row
+
+#save the space
+io_utils.save(my_per_space, "./data/out/PER_SS.ex05.pkl")
+

@@ -1,37 +1,16 @@
-'''
-Created on Sep 14, 2012
+from composes.utils import io_utils
+from composes.transformation.dim_reduction.svd import Svd
 
-@author: georgianadinu
-'''
+#create a space from co-occurrence counts in sparse format
+my_space = io_utils.load("./data/out/ex01.pkl")
 
-if __name__ == '__main__':
-    '''
-Created on Sep 14, 2012
+#print the co-occurrence matrix and the columns of the space
+print my_space.cooccurrence_matrix
+print my_space.id2column
 
-@author: georgianadinu
-'''
+#apply svd reduction
+my_space = my_space.apply(Svd(2))
 
-
-
-def main(): 
-    
-    #load saved space
-    
-    #Initialize a composition  model
-        
-    #Option2: Load a pretrained model
-    paras = load(filename)
-    composition = WeightedAdditiveModel(paras)
- 
-    #compose two words and return the vector
-    red_car_vector = composition.compose(my_space, ("red", "car"))
-    man_vector = my_space("man")
-    
-    #
-    print similarity.computeSimilarity(red_car_vector, man_vector)
-    
-        
-    
-    
-if __name__ == '__main__':
-    pass
+#print the transformed space
+print my_space.cooccurrence_matrix
+print my_space.id2column
