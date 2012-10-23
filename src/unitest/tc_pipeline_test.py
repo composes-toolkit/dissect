@@ -121,7 +121,7 @@ class Test(unittest.TestCase):
                   "-p", self.dir_ + "CORE_SS.AN_mat.pkl",
                   "-a", self.dir_ + "CORE_SS.N_mat.pkl",
                   "-r", "ridge",
-                  "--param", "0",
+                  "--lambda", "0",
                   "--crossvalidation", "False",
                   "--intercept", "False",
                   "--export_params", "True"
@@ -138,7 +138,9 @@ class Test(unittest.TestCase):
         a_space = Space.build(data=self.dir_ + "TRAINED_COMP_MODEL.lexical_func.an_train_data.txt.params.dm", 
                               format="dm")
         
-        self._test_equal_spaces_dense(a_space, new_space2)        
+        self._test_equal_spaces_dense(a_space, new_space2)
+        
+                
          
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
