@@ -37,7 +37,7 @@ def usage(errno=0):
     -c --core <file>: core space file (pickle dump of a space, .pkl expected)
     --core_in_dir: <dir>: input directory, all files that pass the --filter are tested.
                 -i value is ignored. Optional.
-    --core_filter: <string>: when --in_dir, it acts as a filter on the files to be tested:
+    --core_filter: <string>: when --core_in_dir, it acts as a filter on the files to be tested:
                 only files containing this substring are tested. Optional, 
                 default all files in in_dir are tested.
     -l --log <file>: log file. Optional, default ./build_core_space.log
@@ -139,7 +139,7 @@ def main(sys_argv):
         in_file_prefix = utils.config_get(section, config, "input", None)
         core_space_file = utils.config_get(section, config, "core", None) 
         core_in_dir = utils.config_get(section, config, "core_in_dir", None) 
-        core_filter = utils.config_get(section, config, "core_filter", None) 
+        core_filter = utils.config_get(section, config, "core_filter", "") 
         log_file = utils.config_get(section, config, "log", None) 
         in_format = utils.config_get(section, config, "input_format", None) 
         out_format = utils.config_get(section, config, "output_format", None)
