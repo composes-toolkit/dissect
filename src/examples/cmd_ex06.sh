@@ -1,0 +1,2 @@
+python2.7 train_composition.py -i ../examples/data/in/train_data.txt -m lexical_func -a ../examples/data/out/ex01.pkl -p ../examples/data/out/PHRASE_SS.ex10.pkl -o ../examples/data/out/ --export_params True
+python2.7 train_composition.py -i ../examples/data/in/train_data.txt -m lexical_func -r ridge --lambda 0.0 -a ../examples/data/out/ex01.pkl -p ../examples/data/out/PHRASE_SS.ex10.pkl -o ../examples/data/out/ --export_params True

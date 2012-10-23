@@ -1,0 +1,2 @@
+python2.7 compute_neighbours.py -i ../examples/data/in/word_list.txt -n 2 -s ../examples/data/out/ex01.pkl -o ../examples/data/out/ -m cos    
+python2.7 compute_neighbours.py -i ../examples/data/in/word_list.txt -n 2 -s ../examples/data/out/ex01.pkl,../examples/data/out/PER_SS.ex05.pkl -o ../examples/data/out/ -m cos    
