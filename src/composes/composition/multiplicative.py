@@ -8,9 +8,17 @@ from composition_model import CompositionModel
 from composes.exception.illegal_state_error import IllegalOperationError
 
 class Multiplicative(CompositionModel):
-    '''
-    classdocs
-    '''
+    """
+    Implements the component-wise multiplication compositional model:
+    
+        :math:`\\vec{p} = \\vec{u} \\cdot \\vec{v}`
+    
+    where :math:`\\vec{p}` is the vector of the composed phrase and
+    :math:`\\vec{u}, \\vec{v}` are the vectors of the components.
+    
+    :math:`\\vec{u} \\cdot \\vec{v} = (u_1v_1,...,u_nv_n)`  
+    """
+    
     _name = "multiplicative"
 
     def __init__(self):

@@ -10,9 +10,16 @@ from numpy import double
 import numpy as np
 
 class WeightedAdditive(CompositionModel):
-    '''
-    classdocs
-    '''
+    """
+    Implements weighted additive compositional model:
+
+        :math:`\\vec{p} = \\alpha \\vec{u} + \\beta \\vec{v}`
+
+    where :math:`\\vec{p}` is the vector of the composed phrase and
+    :math:`\\vec{u}, \\vec{v}` are the vectors of the components
+          
+    When :math:`\\alpha=\\beta=0.5` the model performs simple vector addition.
+    """
 
     _name = "weighted_additive"
     
@@ -55,15 +62,15 @@ class WeightedAdditive(CompositionModel):
         nom = arg1_norm_sqr * arg2_norm_sqr - arg1_arg2_dot * arg1_arg2_dot
         
         #if the system is under-determined we use pinv to get a solution
-        if nom == 0:
-            a = np.linalg.pinv(np.mat([[arg1_norm_sqr,arg1_arg2_dot],
-                                       [arg1_arg2_dot,arg2_norm_sqr]]))
-            a = a * np.mat([[arg1_phrase_dot],[arg2_phrase_dot]])
-            self._alpha = a[0, 0]
-            self._beta = a[1, 0]
-        else:    
-            self._alpha =  alpha_denom / double(nom)
-            self._beta = beta_denom / double(nom)
+        #if nom == 0:
+        a = np.linalg.pinv(np.mat([[arg1_norm_sqr,arg1_arg2_dot],
+                                   [arg1_arg2_dot,arg2_norm_sqr]]))
+        a = a * np.mat([[arg1_phrase_dot],[arg2_phrase_dot]])
+        self._alpha = a[0, 0]
+        self._beta = a[1, 0]
+        #else:    
+            #self._alpha =  alpha_denom / double(nom)
+            #self._beta = beta_denom / double(nom)
         
     def _compose(self, arg1_mat, arg2_mat):    
         return self._alpha * arg1_mat + self._beta * arg2_mat

@@ -10,9 +10,16 @@ from composes.utils.py_matrix_utils import nonzero_invert
 
 
 class Dilation(CompositionModel):
-    '''
-    classdocs
-    '''
+    """
+    Implements the dilation compositional model:
+
+        :math:`\\vec{p} = (\\vec{u} \\cdot \\vec{u}) \\vec{v} + (\\lambda - 1) (\\vec{u} \\cdot \\vec{v}) \\vec{u}`
+    
+    where :math:`\\vec{p}` is the vector of the composed phrase, :math:`\\vec{u}, \\vec{v}` the vectors of the components
+    and :math:`\\lambda` is a scalar.
+
+    """
+
 
     _name = "dilation"
     

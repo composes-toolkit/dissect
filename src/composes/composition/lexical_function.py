@@ -24,9 +24,17 @@ from composes.utils import log_utils as log
 logger = logging.getLogger(__name__)
 
 class LexicalFunction(CompositionModel):
-    '''
-    classdocs
-    '''
+    """
+    Implements the lexical function compositional model.
+    
+        :math:`\\vec{p} = U \\vec{v}`
+     
+    where :math:`\\vec{p}` is the vector of the composed phrase,
+    :math:`U` is the matrix representation of the first component (the lexical function)
+    and :math:`\\vec{v}` is the vector representation of the second component
+          
+    """ 
+         
     _name = "lexical_function"
     _MIN_SAMPLES = 0
 

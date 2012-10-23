@@ -16,9 +16,17 @@ from composes.matrix.dense_matrix import DenseMatrix
 from composes.exception.illegal_state_error import IllegalStateError
 
 class FullAdditive(CompositionModel):
-    '''
-    classdocs
-    '''
+    """
+    Implements the full additive compositional model: 
+    
+        :math:`\\vec{p} = A \\vec{u} + B \\vec{v}`
+    
+    where :math:`\\vec{p}` is the vector of the composed phrase,
+    :math:`\\vec{u}, \\vec{v}`, the vectors of the components
+    and :math:`A`, :math:`B` are two matrices.
+          
+    """
+    
     _name = "full_additive"
     
     def __init__(self, **kwargs):
