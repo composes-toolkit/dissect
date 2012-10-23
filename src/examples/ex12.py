@@ -1,3 +1,5 @@
+#ex12.py
+#-------
 from composes.utils import io_utils
 
 #load a previously saved weighted additive model

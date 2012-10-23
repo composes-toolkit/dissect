@@ -1,7 +1,9 @@
+#ex03.py
+#-------
 from composes.utils import io_utils
 from composes.transformation.dim_reduction.svd import Svd
 
-#create a space from co-occurrence counts in sparse format
+#load a space
 my_space = io_utils.load("./data/out/ex01.pkl")
 
 #print the co-occurrence matrix and the columns of the space

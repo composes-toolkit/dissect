@@ -1,3 +1,5 @@
+#ex10.py
+#-------
 from composes.utils import io_utils
 from composes.composition.weighted_additive import WeightedAdditive
 
@@ -10,7 +12,7 @@ print my_space.cooccurrence_matrix
 # instantiate a weighted additive model
 my_comp = WeightedAdditive(alpha = 1, beta = 1)
 
-# use the model to compose two words in my_space
+# use the model to compose words in my_space
 composed_space = my_comp.compose([("car", "book", "my_car_book"),
                                   ("book", "book", "my_special_book")], my_space)
 

@@ -14,7 +14,7 @@ train_data = [("book", "car", "my_car_book"),
 arg_space = io_utils.load("./data/out/ex01.pkl")
 phrase_space = io_utils.load("data/out/PHRASE_SS.ex10.pkl")
 
-#train an weighted additive model on the data
+#train an lexical function model on the data
 my_comp = LexicalFunction()
 my_comp.train(train_data, arg_space, phrase_space)
 

@@ -1,3 +1,5 @@
+#ex06.py
+#-------
 from composes.utils import io_utils
 from composes.similarity.cos import CosSimilarity
 

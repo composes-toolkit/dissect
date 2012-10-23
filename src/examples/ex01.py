@@ -1,4 +1,5 @@
-
+#ex01.py
+#-------
 from composes.semantic_space.space import Space
 
 #create a space from co-occurrence counts in sparse format

@@ -17,7 +17,7 @@ print "Training phrase space"
 print phrase_space.id2row
 print phrase_space.cooccurrence_matrix
 
-#train an weighted additive model on the data
+#train an FullAdditive model on the data
 my_comp = FullAdditive()
 my_comp.train(train_data, arg_space, phrase_space)
 

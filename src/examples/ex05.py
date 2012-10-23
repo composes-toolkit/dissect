@@ -1,9 +1,11 @@
+#ex05.py
+#-------
 from composes.utils import io_utils
 from composes.semantic_space.peripheral_space import PeripheralSpace
 from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
 
 
-#load a space and apply Ppmi on it
+#load a space and apply ppmi on it
 my_space = io_utils.load("./data/out/ex01.pkl")
 my_space = my_space.apply(PpmiWeighting())
 
