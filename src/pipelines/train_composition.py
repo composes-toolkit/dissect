@@ -28,7 +28,6 @@ from composes.utils.regression_learner import RidgeRegressionLearner
 from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.utils import io_utils
 from composes.utils import log_utils
-import numpy as np
 import pipeline_utils as utils 
 
 import logging
@@ -50,8 +49,8 @@ def usage(errno=0):
     -r --regression <string>: one of lstsq/ridge. Optional, default lstsq.
     --crossvalidation <bool>: for -r=ridge, one of True/False. Optional, default True. 
     --intercept <bool>: one of True/False, default True.
-    --param <scalar>: for -r=ridge, lambda value 
-    --param_range <list(scalar)>: comma separated list of lambda values to be 
+    --lambda <scalar>: for -r=ridge, lambda value 
+    --lambda_range <list(scalar)>: comma separated list of lambda values to be 
                                 searched through when ridge regression uses 
                                 crossvalidation. Optional, default linspace(0,0.5,10)
     -a --arg_space <file[,file]>: file(s) of argument semantic space (in pickle 
@@ -131,7 +130,7 @@ def main(sys_argv):
                                    ["help", "input=", "output=", "model=",
                                     "regression=", "intercept=", "arg_space=",
                                     "phrase_space=", "export_params=", "log=",
-                                    "crossvalidation=", "param_range=", "param="])
+                                    "crossvalidation=", "lambda_range=", "lambda="])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -163,10 +162,10 @@ def main(sys_argv):
         regression = utils.config_get(section, config, "regression", None) 
         crossvalidation = utils.config_get(section, config, "crossvalidation", crossvalidation) 
         intercept = utils.config_get(section, config, "intercept", intercept) 
-        param_range = utils.config_get(section, config, "param_range", None)
+        param_range = utils.config_get(section, config, "lambda_range", None)
         if not param_range is None:
             param_range = param_range.split(",")  
-        param = utils.config_get(section, config, "param", None)
+        param = utils.config_get(section, config, "lambda", None)
         arg_space = utils.config_get(section, config, "arg_space", None)
         if not arg_space is None:
             arg_space = arg_space.split(",") 
@@ -191,9 +190,9 @@ def main(sys_argv):
             crossvalidation = val
         elif opt == "--intercept":
             intercept = val
-        elif opt == "--param":
+        elif opt == "--lambda":
             param = val
-        elif opt == "--param_range":
+        elif opt == "--lambda_range":
             param_range = val.split(",")
         elif opt == "--export_params":
             export_params = val
@@ -224,8 +223,6 @@ def main(sys_argv):
         param = float(param)
     if not param_range is None:
         param_range = [float(param) for param in param_range]
-    
-    
     
     if not crossvalidation and regression == "ridge":
         utils.assert_option_not_none(param, "Cannot run (no-crossvalidation) RidgeRegression with no lambda value!", usage)
