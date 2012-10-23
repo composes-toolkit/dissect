@@ -221,7 +221,7 @@ class Space(object):
         return similarity.get_sim(v1, v2)
       
     def get_neighbours(self, word, no_neighbours, similarity, 
-                       neighbour_space=None):            
+                       space2=None):            
         """
         Computes the neighbours of a word in the semantic space.
 
@@ -245,18 +245,18 @@ class Space(object):
         assert_is_instance(similarity, Similarity)       
         vector = self.get_row(word)
         
-        if neighbour_space is None:
+        if space2 is None:
             id2row = self.id2row
             sims_to_matrix = similarity.get_sims_to_matrix(vector, 
                                                           self.cooccurrence_matrix)
         else:
-            mat_type = type(neighbour_space.cooccurrence_matrix)
+            mat_type = type(space2.cooccurrence_matrix)
             if not isinstance(vector, mat_type):
                 vector = mat_type(vector)
             
             sims_to_matrix = similarity.get_sims_to_matrix(vector, 
-                                         neighbour_space.cooccurrence_matrix)
-            id2row = neighbour_space.id2row 
+                                         space2.cooccurrence_matrix)
+            id2row = space2.id2row 
         
         sorted_perm = sims_to_matrix.sorted_permutation(sims_to_matrix.sum, 1)
         no_neighbours = min(no_neighbours, len(id2row))
