@@ -8,9 +8,17 @@ from scaling import Scaling
 from composes.utils.py_matrix_utils import nonzero_invert
 
 class RowNormalization(Scaling):
-    '''
-    classdocs
-    '''
+    """
+    Normalizes the rows of a space according to a some criterion.
+    
+    Available criteria:
+    
+    length: Default. Each row :math:`X_i` of the result matrix will satisfy: :math:`\\sqrt{\\sum_j X_{ij}^2}=1`
+    
+    
+    sum: Each row :math:`X_i` of the result matrix will satisfy: :math:`\\sum_j X_{ij}=1`  
+    
+    """
     _name = "row_normalization"
     _valid_criteria = ["sum", "length"]
     criterion = "length"

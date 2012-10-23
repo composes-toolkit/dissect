@@ -8,9 +8,16 @@ from warnings import warn
 from scaling import Scaling
 
 class Normalization(Scaling):
-    '''
-    classdocs
-    '''
+    """
+    Normalizes the a space according to a some criterion.
+    
+    Available criteria:
+    
+    sum: Default. The result matrix :math:`X` will satisfy: :math:`\\sum_{i,j} X_{ij}=1`  
+    
+    length: The result matrix :math:`X` will satisfy: :math:`\\sqrt{\\sum_{i,j} X_{ij}^2}=1`
+    
+    """
     _name = "row_normalization"
     _valid_criteria = ["sum", "length"]
     criterion = "sum"

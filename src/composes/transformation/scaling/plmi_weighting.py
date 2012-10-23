@@ -1,16 +1,15 @@
-'''
-Created on Sep 20, 2012
-
-@author: georgianadinu
-'''
 
 from scaling import Scaling
 from ppmi_weighting import PpmiWeighting
 
 class PlmiWeighting(Scaling):
-    '''
-    classdocs
-    '''
+    """
+     Positive Local Mutual Information.
+
+     :math:`plmi(r,c)=ppmi(r,c)count(r,c)`
+              
+    """
+    
     _name = "plmi"
     _uses_column_stats = True
 

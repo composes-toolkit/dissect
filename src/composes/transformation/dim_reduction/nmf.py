@@ -10,9 +10,17 @@ from composes.matrix.linalg import Linalg
 from math import sqrt
 
 class Nmf(DimensionalityReduction):
-    '''
-    classdocs
-    '''
+    """
+    Performs Non-negative Matrix Factorization to reduced dimension :math:`k`.
+    
+    Given an input non-negative matrix :math:`X`, it computes the decomposition:
+    
+    :math:`X \\approx WH` where W and H are non-negative matrices which minimize
+    :math:`||X-WH||_{2}`
+
+    It returns the matrix W.
+    """
+    
     _name = "nmf"
 
     def __init__(self, reduced_dimension):
@@ -28,7 +36,6 @@ class Nmf(DimensionalityReduction):
         w_init, h_init = self.v_col_init(matrix_)
         #w_init, h_init = self.random_init(matrix_)
         w, h = Linalg.nmf(matrix_, w_init, h_init)
-        print w.shape, h.shape
         return w, Linalg.pinv(h)
         
     def random_init(self, matrix_):

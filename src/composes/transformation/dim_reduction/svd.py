@@ -8,9 +8,16 @@ from dimensionality_reduction import DimensionalityReduction
 from composes.matrix.linalg import Linalg
 
 class Svd(DimensionalityReduction):
-    '''
-    classdocs
-    '''
+    """
+    Performs truncated Singular Value Decomposition to a reduced dimension :math:`k`.
+    
+    Given an input matrix :math:`X`, it computes the decomposition:
+    
+    :math:`X = U \\Sigma V^{T}`
+    
+    It returns :math:`U \\Sigma` truncated to dimension  :math:`min(k,rank(X))` 
+    """
+    
     _name = "svd"
     
     def __init__(self, reduced_dimension):

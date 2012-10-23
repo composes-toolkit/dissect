@@ -7,9 +7,18 @@ from warnings import warn
 from feature_selection import FeatureSelection
 
 class TopFeatureSelection(FeatureSelection):
-    '''
-    classdocs
-    '''
+    """
+    Sorts the columns of a space according to some criterion and returns a space
+    containing only the top :math:`k` ones.
+    
+    Available criteria:
+    
+    sum: Default. Ranks columns according to the sum on their elements.
+    
+    length: Ranks columns according to their vector length.
+    
+    """
+    
     _name = "top_feature_selection"
     _valid_criteria = ["sum", "length"]
     criterion = "sum"

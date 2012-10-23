@@ -1,31 +1,32 @@
-'''
-Created on Jun 3, 2012
 
-@author: thenghia.pham
-'''
 from scaling import Scaling
 from composes.utils.py_matrix_utils import nonzero_invert
 
 class EpmiWeighting(Scaling):
-    '''
-    Exponential Pointwise Mututal Information weighting
-    '''
+    """
+     Exponential Point-wise Mutual Information.
+    
+     :math:`epmi(r,c) = \\frac{P(r,c)}{P(r)P(c)}`
+     
+    """
     
     _name = 'epmi'
     _uses_column_stats = True
     
     def apply(self, matrix_, column_marginal=None):
-        '''
-        Perform EPMI weighting
+        """
+        Performs epmi weighting.
         
         Args:
             matrix_ (Matrix): Input matrix
-            column_marginal (array): column marginals of the core matrix if the matrix is a peripheral matrix
+            
+            column_marginal (np.ndarray): column marginals of the 
+                core matrix if the matrix is a peripheral matrix
     
         Returns:
-            Matrix: the matrix after applying EPMI
+            Matrix: the matrix after applying epmi.
             
-        '''
+        """
         
         matrix_.assert_positive()
         row_sum = matrix_.sum(axis = 1)

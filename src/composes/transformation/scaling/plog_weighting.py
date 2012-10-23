@@ -1,14 +1,13 @@
-'''
-Created on Jun 3, 2012
 
-@author: thenghia.pham
-'''
 from scaling import Scaling
     
 class PlogWeighting(Scaling):
-    '''
-    Positive Log Weighting
-    '''
+    """
+     Positive Log Weighting
+
+     :math:`plog(r,c)= log(r,c) \\text{ if } log(r,c) \\geq 0 \\text{ else } 0`         
+    """
+    
     _name = "plog"
 
     def apply(self, matrix_):
