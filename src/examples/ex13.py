@@ -6,7 +6,7 @@ from composes.composition.weighted_additive import WeightedAdditive
 
 #training data
 train_data = [("car", "book", "my_car_book"),
-              ("book", "book", "my_special_book")
+              ("book", "book", "2x_book")
               ]
 
 #load an argument space

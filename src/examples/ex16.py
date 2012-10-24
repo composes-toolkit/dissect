@@ -6,8 +6,8 @@ from composes.similarity.cos import CosSimilarity
 
 #training data 
 #trying to learn a "book" function
-train_data = [("book", "car", "my_car_book"),
-              ("book", "book", "2x_book")
+train_data = [("book_function", "car", "my_car_book"),
+              ("book_function", "book", "2x_book")
               ]
 
 #load argument and phrase space
@@ -27,4 +27,5 @@ print cooc_mat
 
 #similarity within the learned functional space
 print "\nSimilarity between book and book in the function space:" 
-print my_comp.function_space.get_sim("book", "book", CosSimilarity())
+print my_comp.function_space.get_sim("book_function", "book_function", 
+                                     CosSimilarity())
