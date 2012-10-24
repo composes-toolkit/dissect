@@ -7,7 +7,7 @@ from composes.similarity.cos import CosSimilarity
 #training data 
 #trying to learn a "book" function
 train_data = [("book", "car", "my_car_book"),
-              ("book", "book", "my_special_book")
+              ("book", "book", "2x_book")
               ]
 
 #load argument and phrase space
