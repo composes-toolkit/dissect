@@ -12,7 +12,7 @@ my_space = Space.build(data = "./data/in/ex01.sm",
 #print the co-occurrence matrix of the space
 print my_space.cooccurrence_matrix
 
-#save the Space object in binary format
+#save the Space object in pickle format
 io_utils.save(my_space, "./data/out/ex01.pkl")
     
 #load the saved object
