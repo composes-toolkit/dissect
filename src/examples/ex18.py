@@ -5,8 +5,8 @@ from composes.composition.lexical_function import LexicalFunction
 
 #training data 
 #trying to learn a "book" function
-train_data = [("book", "car", "my_car_book"),
-              ("book", "book", "my_special_book")
+train_data = [("book_function", "car", "my_car_book"),
+              ("book_function", "book", "2x_book")
               ]
 
 #load argument and phrase space
@@ -18,19 +18,21 @@ my_comp = LexicalFunction()
 my_comp.train(train_data, arg_space, phrase_space)
 
 #apply the trained model
-composed_space1 = my_comp.compose([("book", "car", "composed_book_car")], 
-                                  arg_space)
+comp_sp1 = my_comp.compose([("book_function", "car", 
+                             "composed_book_car")], 
+                           arg_space)
 
 #apply the trained model a second time
-composed_space2 = my_comp.compose([("book", "composed_book_car", "composed_book_book_car")], 
-                                   composed_space1)
+comp_sp2 = my_comp.compose([("book_function", "composed_book_car", 
+                             "composed_book_book_car")], 
+                           comp_sp1)
 
 
 #print the composed spaces:
 print "\nComposed space 1:" 
-print composed_space1.id2row
-print composed_space1.cooccurrence_matrix
+print comp_sp1.id2row
+print comp_sp1.cooccurrence_matrix
 
 print "\nComposed space 2:"
-print composed_space2.id2row
-print composed_space2.cooccurrence_matrix
+print comp_sp2.id2row
+print comp_sp2.cooccurrence_matrix
