@@ -10,4 +10,5 @@ print my_space.cooccurrence_matrix
 print my_space.id2row
 
 #compute similarity between two words in the space 
+print my_space.get_sim("car", "car", CosSimilarity())
 print my_space.get_sim("car", "book", CosSimilarity())
