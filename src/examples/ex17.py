@@ -7,7 +7,7 @@ from composes.utils.regression_learner import RidgeRegressionLearner
 #training data 
 #trying to learn a "book" function
 train_data = [("book_function", "car", "my_car_book"),
-              ("book_function", "book", "2x__book")
+              ("book_function", "book", "2x_book")
               ]
 
 #load argument and phrase space
