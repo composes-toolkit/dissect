@@ -6,7 +6,7 @@ class EpmiWeighting(Scaling):
     """
      Exponential Point-wise Mutual Information.
     
-     .. math::  epmi(r,c) = \\frac{P(r,c)}{P(r)P(c)}
+     :math:`epmi(r,c) = \\frac{P(r,c)}{P(r)P(c)}`
      
     """
     

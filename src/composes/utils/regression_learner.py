@@ -47,7 +47,7 @@ class RidgeRegressionLearner(RegressionLearner):
         
     It finds the matrix X which solves:
     
-    :math:`X = argmin(||AX - B|| + \\lambda||X||_{2})`
+    :math:`X = argmin(||AX - B|| + \\lambda||X||)`
     
     It can be used with intercept or without (by default intercept=True).
     Crossvalidation can be used with default :math:`\\lambda` range of 

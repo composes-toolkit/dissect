@@ -4,13 +4,12 @@ from epmi_weighting import EpmiWeighting
 
 class PpmiWeighting(Scaling):
     """
-     Positive Point-wise Mutual Information.
+    Positive Point-wise Mutual Information.
     
-     .. math:: 
      
-         pmi(r,c) = log\\frac{P(r,c)}{P(r)P(c)}
+    :math:`pmi(r,c) = log\\frac{P(r,c)}{P(r)P(c)}`
      
-         ppmi(r,c)= pmi(r,c) \\text{ if } pmi(r,c)\\geq 0 \\text{ else } 0         
+    :math:`ppmi(r,c)= pmi(r,c) \\text{ if } pmi(r,c)\\geq 0 \\text{ else } 0`         
     """
     
     _name = "ppmi"

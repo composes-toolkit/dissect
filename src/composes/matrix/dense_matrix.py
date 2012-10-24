@@ -32,7 +32,6 @@ class DenseMatrix(Matrix):
         '''
           
         if issparse(data):
-            warn("Convert scipy sparse matrix to numpy dense matrix.")
             self.mat = data.todense()
         elif isinstance(data, np.matrix):
             if data.shape[0] == 0 or data.shape[1] == 0:
@@ -45,15 +44,15 @@ class DenseMatrix(Matrix):
         elif isinstance(data, Matrix):
             # TODO: remove warning or remove import somehow fix this!!
             from composes.matrix.sparse_matrix import SparseMatrix
-            if isinstance(data, SparseMatrix):
-                warn("Convert SparseMatrix to DenseMatrix")
             self.mat = data.to_dense_matrix().mat
         else:
             # TODO: raise suitable message
             raise TypeError("expected matrix-like type, received %s"
                             % type(data))
- 
- 
+
+    def __str__(self):
+        return str(self.mat)
+     
     def __getitem__(self, index):
         result = self.mat[index]
         if is_numeric(result):

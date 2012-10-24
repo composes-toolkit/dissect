@@ -34,7 +34,7 @@
 			
 		INPUT PERIPHERAL DATA:
 			/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/:
-				per.raw.VO.sm.gz
+				per.raw.VO.sm
 				per.raw.VO.rows
 				per.raw.VO.cols 
 			

@@ -6,7 +6,7 @@ class PlmiWeighting(Scaling):
     """
      Positive Local Mutual Information.
 
-     .. math::  plmi(r,c)=ppmi(r,c)count(r,c)
+     :math:`plmi(r,c)=ppmi(r,c)count(r,c)`
               
     """
     

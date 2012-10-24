@@ -45,13 +45,11 @@ class SparseMatrix(Matrix):
         elif isinstance(data, np.matrix):
             if data.shape[0] == 0 or data.shape[1] == 0:
                 raise ValueError("cannot initialize matrix with shape 0")
-            warn("Convert numpy dense array to scipy sparse matrix")
             self.mat = csr_matrix(data)
             
         elif isinstance(data, np.ndarray):
             if len(data) == 0:
                 raise ValueError("cannot initialize matrix with shape 0")
-            warn("Convert numpy dense array to scipy sparse matrix")
             self.mat = csr_matrix(data)
             
         elif isinstance(data, Matrix):
@@ -60,6 +58,8 @@ class SparseMatrix(Matrix):
             raise TypeError("expected scipy sparse matrix, received %s" 
                             % (type(data)))
 
+    def __str__(self):
+        return str(self.mat.todense())
      
     def __getitem__(self, key):
         """
