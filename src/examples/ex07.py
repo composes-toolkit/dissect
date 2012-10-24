@@ -11,4 +11,5 @@ print my_space.id2row
 print my_per_space.id2row
 
 #compute similarity between two words in the two spaces 
-print my_space.get_sim("car", "sports_car", CosSimilarity(), space2 = my_per_space)
+print my_space.get_sim("car", "sports_car", CosSimilarity(), 
+                       space2 = my_per_space)
