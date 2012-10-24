@@ -14,7 +14,8 @@ my_comp = WeightedAdditive(alpha = 1, beta = 1)
 
 # use the model to compose words in my_space
 composed_space = my_comp.compose([("car", "book", "my_car_book"),
-                                  ("book", "book", "my_special_book")], my_space)
+                                  ("book", "book", "2x_book")], 
+                                 my_space)
 
 print composed_space.id2row
 print composed_space.cooccurrence_matrix
