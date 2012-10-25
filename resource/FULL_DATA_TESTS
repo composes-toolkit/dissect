@@ -59,6 +59,16 @@
 				
 		TESTING: no testing, used for 3D composition
 
+	2.3 ML08 - SV data
+		INPUT CORE DATA:
+			THE OUTPUT FROM 1.1
+			
+		INPUT PERIPHERAL DATA:
+			/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/:
+				per.raw.SV.sm
+				per.raw.SV.rows
+				per.raw.SV.cols 
+				
 3. TEST GET NEIGHBOURS
 		3.1 WITHIN THE SAME SPACE
 			INPUT SPACE:
