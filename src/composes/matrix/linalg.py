@@ -38,7 +38,7 @@ class Linalg(object):
     _NMF_MIN_TOL = 0.001
     _NMF_TOL = _NMF_MIN_TOL
     _NMF_TOL_DECREASE_FACTOR = 0.5
-    _NMF_TIME_LIMIT = 5000
+    _NMF_TIME_LIMIT = 7000
 
     @staticmethod
     def svd(matrix_, reduced_dimension):
