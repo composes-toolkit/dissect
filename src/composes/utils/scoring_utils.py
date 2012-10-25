@@ -38,6 +38,8 @@ def auc(gold, prediction):
     total_count = gold.size
     point_set = np.empty(total_count, dtype = [('gold',float),('score',float)])
     for i in range(total_count):
+        if not gold[i] in (0,1):
+            raise ValueError("For evaluating AUC, gold scores are required to be 0 or 1.")
         point_set[i]=(gold[i], prediction[i])
          
     point_set.sort(order = 'score')

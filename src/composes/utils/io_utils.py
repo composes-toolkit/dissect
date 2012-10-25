@@ -15,7 +15,7 @@ from composes.utils.space_utils import assert_is_instance
 def save(object_, file_name):
     create_parent_directories(file_name)
     with open(file_name,'w') as f:
-        pickle.dump(object_, f)
+        pickle.dump(object_, f, 2)
 
 def load(file_name, data_type=None):
     with open(file_name) as f:
