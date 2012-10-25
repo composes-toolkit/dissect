@@ -60,8 +60,8 @@ def evaluate_sim(in_file, columns, corr_measures):
     
     if not len(columns) == 2:
         raise ValueError("Column description unrecognized!") 
-    columns[0] = int(columns[0]) + 1
-    columns[1] = int(columns[1]) + 1
+    col0 = int(columns[0]) - 1
+    col1 = int(columns[1]) - 1
     
     gold = []
     prediction = []
@@ -69,8 +69,8 @@ def evaluate_sim(in_file, columns, corr_measures):
         for line in in_stream:
             if not line.strip() == "":
                 elems = line.strip().split()
-                gold.append(float(elems[columns[0]]))
-                prediction.append(float(elems[columns[1]]))
+                gold.append(float(elems[col0]))
+                prediction.append(float(elems[col1]))
     
     for corr_measure in corr_measures:
         print "CORELATION:%s" % corr_measure                    

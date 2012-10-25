@@ -24,7 +24,7 @@ class Test(unittest.TestCase):
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "pred1.txt",
                   "-m", "pearson,spearman",
-                  "-c", "0,2", 
+                  "-c", "1,3", 
                   ])        
 
         es.main(["evaluate_similarities.py", 
@@ -33,7 +33,7 @@ class Test(unittest.TestCase):
                   "--in_dir", self.dir_,
                   "--filter", "pred",
                   "-m", "pearson,spearman",
-                  "-c", "0,2", 
+                  "-c", "1,3", 
                   ]) 
         
 if __name__ == "__main__":

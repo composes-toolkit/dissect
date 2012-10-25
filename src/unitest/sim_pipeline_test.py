@@ -40,7 +40,7 @@ class SimilarityPipelineTest(unittest.TestCase):
                            "-i", self.dir_ + "sim_input.txt",
                            "-m", "cos,dot_prod,euclidean,lin", 
                            "-s", self.dir_ + "CORE_SS.mat3.raw.top_sum_3.svd_2.pkl",
-                           "-c", "0,1",
+                           "-c", "1,2",
                            "-o", self.dir_
                            ])
         for sim_measure in "cos,dot_prod,euclidean,lin".split(","):
@@ -54,14 +54,14 @@ class SimilarityPipelineTest(unittest.TestCase):
                            "-i", self.dir_ + "sim_input.txt",
                            "--sim_measure", "cos,dot_prod,euclidean,lin", 
                            "--space", self.dir_ + "CORE_SS.mat3.raw.top_sum_3.svd_2.pkl",
-                           "--columns", "0,1",
+                           "--columns", "1,2",
                            "-o", self.dir_
                            ])
         
         sim_pipeline.main(["compute_similarities.py", 
                            "--sim_measure", "cos,dot_prod,euclidean,lin", 
                            "--space", self.dir_ + "CORE_SS.mat3.raw.top_sum_3.svd_2.pkl",
-                           "--columns", "0,1",
+                           "--columns", "1,2",
                            "-o", self.dir_,
                            self.dir_ + "config/sim_config.cfg"
                            ])
@@ -69,7 +69,7 @@ class SimilarityPipelineTest(unittest.TestCase):
         sim_pipeline.main(["compute_similarities.py", 
                            "--sim_measure", "cos,dot_prod,euclidean,lin", 
                            "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
-                           "--columns", "0,1",
+                           "--columns", "1,2",
                            "-o", self.dir_,
                            self.dir_ + "config/sim_config.cfg"
                            ])

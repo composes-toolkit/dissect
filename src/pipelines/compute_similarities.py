@@ -70,8 +70,8 @@ def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
     
     if not len(columns) == 2:
         raise ValueError("Column description unrecognized!") 
-    columns[0] = int(columns[0]) + 1
-    columns[1] = int(columns[1]) + 1
+    col0 = int(columns[0]) - 1
+    col1 = int(columns[1]) - 1
     
     in_descr = "SIMS." + in_file.split("/")[-1] 
     
@@ -93,8 +93,8 @@ def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
             for line in in_stream:
                 if not line.strip() == "":
                     elems = line.strip().split()
-                    word1 = elems[columns[0]]
-                    word2 = elems[columns[1]]
+                    word1 = elems[col0]
+                    word2 = elems[col1]
                  
                     predicted_sim = space.get_sim(word1, word2, sim, space2)
                     out_stream.write("%s %s\n" % (line.strip(), str(predicted_sim)))
