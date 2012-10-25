@@ -1,0 +1,3 @@
+book history_book 0.894427191 other_field 4
+car sports_car 0.980580675691 other_field 4
+book sports_car 0.4472135955 other_field 6
