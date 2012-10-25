@@ -37,7 +37,7 @@ per_space = PeripheralSpace.build(space,
 
 #train a composition model
 train_data_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/ML08_SV_train.txt"
-train_data = io_utils.read_list(train_data_file)
+train_data = io_utils.read_tuple_list(train_data_file, 3)
 
 print "Training composition model..."
 comp_model = LexicalFunction()
@@ -46,7 +46,7 @@ comp_model.train(train_data, space, per_space)
 print "Composing phrases..."
 #use it to compose the phrases we need
 test_phrases_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML10/ML10_VO_test.txt" 
-test_phrases = io_utils.read_list(test_phrases_file)
+test_phrases = io_utils.read_tuple_list(test_phrases_file, 3)
 composed_space = comp_model.compose(test_phrases, space, per_space)
 
 
