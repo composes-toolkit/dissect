@@ -41,7 +41,7 @@ def usage(errno=0):
     --filter: <string>: when --in_dir, it acts as a filter on the files to be tested:
                 only files containing this substring are tested. Optional, 
                 default all files in in_dir are tested.
-    -m --correlation_measures <list(string)>: comma-separated correlation measures
+    -m --correlation_measure <list(string)>: comma-separated correlation measures
     -c --columns <(int,int)>: pair of columns, indicating which columns contain 
             the words to be compared
     -l --log <file>: log file. Optional, default ./build_core_space.log
@@ -95,7 +95,7 @@ def evaluate_sim_batch(in_dir, columns, corr_measures, filter_=""):
 def main(sys_argv):
     try:
         opts, argv = getopt.getopt(sys_argv[1:], "hi:m:c:l:", 
-                                   ["help", "input=", "correlation_measures=",
+                                   ["help", "input=", "correlation_measure=",
                                     "columns=", "log=", "in_dir=", "filter="])
         
     except getopt.GetoptError, err:
@@ -119,7 +119,7 @@ def main(sys_argv):
         in_file = utils.config_get(section, config, "input", None) 
         in_dir = utils.config_get(section, config, "in_dir", None) 
         filter_ = utils.config_get(section, config, "filter", filter_) 
-        corr_measures = utils.config_get(section, config, "correlation_measures", None) 
+        corr_measures = utils.config_get(section, config, "correlation_measure", None) 
         if not corr_measures is None:
             corr_measures = corr_measures.split(",")
         columns = utils.config_get(section, config, "columns", None) 
@@ -130,12 +130,10 @@ def main(sys_argv):
     for opt, val in opts:
         if opt in ("-i", "--input"):
             in_file = val 
-        elif opt in ("-m", "--correlation_measures"):
+        elif opt in ("-m", "--correlation_measure"):
             corr_measures = val.split(",") 
         elif opt in ("-c", "--columns"):
             columns = val.split(",")
-            if len(columns) != 2:
-                raise ValueError("Columns (-c) field should contain two comma-separated integers (e.g. -c 3,4)")
         elif opt == "--in_dir":
             in_dir = val
         elif opt == "--filter":
@@ -153,6 +151,9 @@ def main(sys_argv):
     utils.assert_option_not_none(corr_measures, "Correlation measures required", usage)
     utils.assert_option_not_none(columns, "Columns to be read from input file required", usage)
     
+    if len(columns) != 2:
+        raise ValueError("Columns (-c) field should contain two comma-separated integers (e.g. -c 3,4)")
+            
     if not in_dir is None:
         evaluate_sim_batch(in_dir, columns, corr_measures, filter_)
     else:
