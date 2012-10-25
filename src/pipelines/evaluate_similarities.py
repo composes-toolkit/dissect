@@ -60,8 +60,8 @@ def evaluate_sim(in_file, columns, corr_measures):
     
     if not len(columns) == 2:
         raise ValueError("Column description unrecognized!") 
-    columns[0] = int(columns[0])
-    columns[1] = int(columns[1])
+    columns[0] = int(columns[0]) + 1
+    columns[1] = int(columns[1]) + 1
     
     gold = []
     prediction = []

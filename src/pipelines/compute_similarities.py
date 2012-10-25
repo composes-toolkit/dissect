@@ -70,8 +70,8 @@ def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
     
     if not len(columns) == 2:
         raise ValueError("Column description unrecognized!") 
-    columns[0] = int(columns[0])
-    columns[1] = int(columns[1])
+    columns[0] = int(columns[0]) + 1
+    columns[1] = int(columns[1]) + 1
     
     in_descr = "SIMS." + in_file.split("/")[-1] 
     
