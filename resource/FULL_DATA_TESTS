@@ -93,12 +93,23 @@
 	3.0 2D ML08 - SV data
 		   TRAIN_DATA:
 			/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/:
-					ML08_SV_train.txt (22011 total samples, 42 verbs)
+				ML08_SV_train.txt (22011 total samples, 42 verbs)
+			
+			INPUT DATA FOR COMPOSE:
+			/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML08/:
+				ML08nvs_test.txt (180 elements)
+			!!!This will output a composed space			
 			
 			
-			
-			
-	
+			SIMILARITY TEST DATA WITH THE COMPOSED SPACE:
+			/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML08/
+				ML08data_new.txt 
+					words: columns 1,2
+					gold: column 3
+					test: pearson,spearman	
+		
+		
+					
 	
 	3.1 2D ML10 - VO data
 		FOR ALL MODELS:	
