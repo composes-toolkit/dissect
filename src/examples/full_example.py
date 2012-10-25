@@ -31,7 +31,8 @@ print "Creating peripheral space.."
 per_space_path = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/"
 per_space = PeripheralSpace.build(space,
                                   data = per_space_path + "per.raw.SV.sm",
-                                  cols = per_space_path + "per.raw.SV.cols"                                
+                                  cols = per_space_path + "per.raw.SV.cols",
+                                  format = "sm"                                
                                   )
 
 #train a composition model
