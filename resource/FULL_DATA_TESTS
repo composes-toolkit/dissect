@@ -89,6 +89,17 @@
 				
 			
 3. TEST COMPOSITION
+
+	3.0 2D ML08 - SV data
+		   TRAIN_DATA:
+			/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/:
+					ML08_SV_train.txt (22011 total samples, 42 verbs)
+			
+			
+			
+			
+	
+	
 	3.1 2D ML10 - VO data
 		FOR ALL MODELS:	
 			PHRASE_SPACE: ANY OUTPUT FROM 2.1
