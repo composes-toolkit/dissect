@@ -10,9 +10,6 @@ import composes.utils.scoring_utils as scoring_utils
 
 #load a core space
 print "Loading the data..."
-#core_space_file = "/mnt/cimec-storage-sata/users/thenghia.pham/data/tutorial/raw_core/CORE_SS.verbnoun.core.pkl"
-#space = io_utils.load(core_space_file)
-
 space_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/core_in/core.raw.pkl"
 space = io_utils.load(space_file)
 
@@ -36,7 +33,6 @@ per_space = PeripheralSpace.build(space,
                                   cols = per_space_path + "per.raw.SV.cols",
                                   format = "sm"                                
                                   )
-
 
 #train a composition model
 train_data_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/ML08_SV_train.txt"
@@ -67,7 +63,7 @@ print scoring_utils.score(gold, pred, "spearman")
                     
 print "Testing additive model.."
 comp_model = WeightedAdditive(1,1)
-composed_space = comp_model.compose(train_data, space, per_space)
+composed_space = comp_model.compose(test_phrases, space)
 
 print "Computing similarity with weighted_additive(1,1)..."
 pred = composed_space.get_sims(test_pairs, CosSimilarity())
