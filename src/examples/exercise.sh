@@ -39,7 +39,7 @@ export PER_SPC=PER_SS.per.raw.SV.CORE_SS.CORE_SS.verbnoun.core.ppmi.top_sum_2000
 export MODEL=lexical_func
 
 # run training pipeline
-/opt/python/bin/python2.7 $TOOLKIT_DIR/src/pipelines/train_composition.py -i $TRAIN_FILE -m $MODEL -o $MODEL_DIR -a $CORE_OUT_DIR/$CORE_SPC -p $PER_OUT_DIR/$PER_SPC --regression ridge --intercept True --export_param True --crossvalidation False --lambda 2.0 -l $LOG_FILE
+/opt/python/bin/python2.7 $TOOLKIT_DIR/src/pipelines/train_composition.py -i $TRAIN_FILE -m $MODEL -o $MODEL_DIR -a $CORE_OUT_DIR/$CORE_SPC -p $PER_OUT_DIR/$PER_SPC --regression ridge --intercept True --crossvalidation False --lambda 2.0 -l $LOG_FILE
 
 echo FINISHED TRAINING
 #**************************************************************************************

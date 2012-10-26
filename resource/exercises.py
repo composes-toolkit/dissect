@@ -12,7 +12,6 @@ PART 1 - build_core_space.py
 PART 2 - build_peripheral_space.py
 1. Create a peripheral space using the counts in DATA_PATH/per.raw.SV.sm,
 DATA_PATH/per.raw.SV.rows, DATA_PATH/per.raw.SV.cols and the core space from 1
-2. Output it as pickle
 
 PART 3 - train_composition.py
 1. Load training data from file DATA_PATH/ML08_SV_train.txt
