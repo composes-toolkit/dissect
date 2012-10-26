@@ -15,13 +15,8 @@ print "Loading the data..."
 #core_space_file = "/mnt/cimec-storage-sata/users/thenghia.pham/data/tutorial/raw_core/CORE_SS.verbnoun.core.pkl"
 #space = io_utils.load(core_space_file)
 
-space_path = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/core_in/"
-space = Space.build(data = space_path + "core.raw.mat",
-                    rows = space_path + "core.raw.rows",
-                    cols = space_path + "core.raw.cols",
-                    format = "sm")
-
-io_utils.save(space, space_path + "core.raw.pkl")
+space_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/core_in/core.raw.pkl"
+space = io_utils.load(space_file)
 
 print "Applying PPMI..."
 #apply ppmi weighting

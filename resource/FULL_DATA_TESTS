@@ -2,10 +2,9 @@
 1. TEST BUILD CORE:
 	1.1 MEN + (25K X 10K) NOUNS + VERBS CORE MATRIX
 		INPUT CORE DATA:
-			/mnt/cimec-storage-sata/users/georgiana.dinu/MENexp/core_in/:
-				verbnoun.core.cols
-				verbnoun.core.sm.gz
-				verbnoun.core.rows
+			/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/core_in/core.raw.pkl:
+				....
+				
 		TEST DATA:
 			/mnt/cimec-storage-sata/users/georgiana.dinu/MENexp/test/:
 				MENdata.txt (should only contain words in INPUT CORE DATA)
