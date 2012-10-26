@@ -290,7 +290,6 @@ def main(sys_argv):
             normalizations = val.split(",") 
         elif opt in ("-l", "--log"):
             log_file = val
-            print log_file 
         elif opt == "--input_format":
             in_format = val 
         elif opt == "--output_format":
