@@ -10,7 +10,9 @@ import composes.utils.scoring_utils as scoring_utils
 
 #load a core space
 print "Loading the data..."
-space_file = "/mnt/cimec-storage-sata/users/thenghia.pham/shared/tutorial/CORE_SS.verbnoun.core.pkl"
+data_path = "/mnt/cimec-storage-sata/users/thenghia.pham/shared/tutorial/"
+
+space_file = data_path + "CORE_SS.verbnoun.core.pkl"
 space = io_utils.load(space_file)
 
 print "Applying PPMI..."
@@ -27,15 +29,14 @@ space = space.apply(Svd(100))
 
 print "Creating peripheral space.."
 #create peripheral space
-per_space_path = "/mnt/cimec-storage-sata/users/thenghia.pham/shared/tutorial/"
 per_space = PeripheralSpace.build(space,
-                                  data = per_space_path + "per.raw.SV.sm",
-                                  cols = per_space_path + "per.raw.SV.cols",
+                                  data = data_path + "per.raw.SV.sm",
+                                  cols = data_path + "per.raw.SV.cols",
                                   format = "sm"                                
                                   )
 
 #train a composition model
-train_data_file = "/mnt/cimec-storage-sata/users/thenghia.pham/shared/tutorial/ML08_SV_train.txt"
+train_data_file = data_path + "ML08_SV_train.txt"
 train_data = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
 
 print "Training Lexical Function composition model..."
@@ -44,13 +45,12 @@ comp_model.train(train_data, space, per_space)
 
 print "Composing phrases..."
 #use it to compose the phrases we need
-test_phrases_file = "/mnt/cimec-storage-sata/users/thenghia.pham/shared/tutorial/ML08nvs_test.txt" 
+test_phrases_file = data_path + "ML08nvs_test.txt" 
 test_phrases = io_utils.read_tuple_list(test_phrases_file, fields=[0,1,2])
 composed_space = comp_model.compose(test_phrases, space)
 
-
 print "Reading similarity test data..."
-test_similarity_file = "/mnt/cimec-storage-sata/users/thenghia.pham/shared/tutorial/ML08data_new.txt"
+test_similarity_file = data_path + "ML08data_new.txt"
 test_pairs = io_utils.read_tuple_list(test_similarity_file, fields=[0,1])
 gold = io_utils.read_list(test_similarity_file, field=2)
 
