@@ -1,5 +1,4 @@
 from composes.similarity.cos import CosSimilarity
-from composes.semantic_space.space import Space
 from composes.semantic_space.peripheral_space import PeripheralSpace
 from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
 from composes.transformation.dim_reduction.svd import Svd 
@@ -50,7 +49,7 @@ comp_model.train(train_data, space, per_space)
 
 print "Composing phrases..."
 #use it to compose the phrases we need
-test_phrases_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML08/nvs_test.txt" 
+test_phrases_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML08/ML08nvs_test.txt" 
 test_phrases = io_utils.read_tuple_list(test_phrases_file, 3)
 composed_space = comp_model.compose(test_phrases, space)
 
