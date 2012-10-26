@@ -219,7 +219,30 @@ class Space(object):
                 
         [v1, v2] = resolve_type_conflict([v1, v2], DenseMatrix)
         return similarity.get_sim(v1, v2)
-      
+
+    def get_sims(self, word_pair_list, similarity, space2=None):
+        """
+        Computes the similarity between two LIST of targets in the semantic 
+        space.
+
+        If one of the two targets to be compared is not found, it returns 0..
+        
+        Args:
+            word_pair_list: list of (string, string) tuples. Words to be compared.
+            similarity: of type Similarity, the similarity measure to be used
+            space2: Space type, Optional. If provided, the second word of the word pairs
+                is interpreted in this space, rather than the current space. 
+                Default, both words are interpreted in the current space.
+        Returns:
+            list, list of similarity scores
+            
+        """
+        sims = []
+        for word1, word2 in word_pair_list:
+            sims.append(self.get_sim(word1, word2, similarity, space2))
+        
+        return sims
+          
     def get_neighbours(self, word, no_neighbours, similarity, 
                        space2=None):            
         """

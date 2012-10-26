@@ -4,6 +4,7 @@ Created on Oct 16, 2012
 @author: nghia
 '''
 
+import numpy as np
 import pickle
 import os
 import gzip as gzip
@@ -72,26 +73,47 @@ def extract_indexing_structs(filename, field_list):
     return (id2str_list, str2id_list)
 
 
-def read_tuple_list(data_file, no_fields):
+def read_tuple_list(data_file, **kwargs):
+    field_list = []
     result = []
+    if "fields" in kwargs:
+        field_list = kwargs["fields"]
+    
     with open(data_file) as f:
         for line in f:
             line = line.strip()
             if (line != ""):
                 elements = line.split()
-                if len(elements) != no_fields:
-                    raise ValueError("Expected %d fields in %s" % (no_fields, 
-                                                                   data_file))
+                if field_list:
+                    try:
+                        elements = np.array(elements)[field_list]
+                    except IndexError:
+                        raise IndexError("Cannot extract fields:%s from %s!" 
+                                         % (field_list, data_file))
+                        
                 result.append(tuple(elements))
                     
     return result 
-
-def read_list(file_name):
+                
+                
+def read_list(file_name, **kwargs):
+    field = None
     result = []
+    if "field" in kwargs:
+        field = kwargs["field"]
+        
     with open(file_name) as f:
         for line in f:
-            if line.strip() != "":
-                result.append(line.strip())
+            line = line.strip()
+            if line != "":
+                if not field is None:
+                    try:
+                        result.append(line.split()[field])
+                    except IndexError:
+                        raise IndexError("Cannot extract field:%s from %s!" 
+                                         % (field, file_name))  
+                else:    
+                    result.append(line)
     return result
                 
 def print_list(list_, file_name):

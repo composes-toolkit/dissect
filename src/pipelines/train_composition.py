@@ -109,7 +109,7 @@ def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, reg
         else:
             model_obj = model_cls()    
             
-    train_data = io_utils.read_tuple_list(in_file, 3)
+    train_data = io_utils.read_tuple_list(in_file, fields=[0, 1, 2])
     
     print "Training %s model" % model
     if arg_space2 is None or model == "lexical_func":

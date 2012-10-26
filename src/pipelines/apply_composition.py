@@ -91,7 +91,7 @@ def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
     if len(arg_space_files) == 2:
         arg_space2 = io_utils.load(arg_space_files[1], Space)
     
-    data = io_utils.read_tuple_list(in_file, 3)
+    data = io_utils.read_tuple_list(in_file, fields=[0, 1, 2])
     
     print "Applying composition model:%s" % model_descr
     if arg_space2 is None or type(model_obj) is LexicalFunction:

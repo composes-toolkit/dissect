@@ -5,7 +5,6 @@ from composes.transformation.dim_reduction.svd import Svd
 from composes.transformation.feature_selection.top_feature_selection import TopFeatureSelection 
 from composes.composition.lexical_function import LexicalFunction 
 from composes.composition.weighted_additive import WeightedAdditive
-from composes.composition.dilation import Dilation
 import composes.utils.io_utils as io_utils
 import composes.utils.scoring_utils as scoring_utils
 
@@ -41,31 +40,39 @@ per_space = PeripheralSpace.build(space,
 
 #train a composition model
 train_data_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/ML08_SV_train.txt"
-train_data = io_utils.read_tuple_list(train_data_file, 3)
+train_data = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
 
-print "Training composition model..."
+print "Training Lexical Function composition model..."
 comp_model = LexicalFunction()
 comp_model.train(train_data, space, per_space)
 
 print "Composing phrases..."
 #use it to compose the phrases we need
 test_phrases_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML08/ML08nvs_test.txt" 
-test_phrases = io_utils.read_tuple_list(test_phrases_file, 3)
+test_phrases = io_utils.read_tuple_list(test_phrases_file, fields=[0,1,2])
 composed_space = comp_model.compose(test_phrases, space)
 
 
-print "Computing similarity..."
-#use this composed space to assign similarities
+print "Reading similarity test data..."
 test_similarity_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML08/ML08data_new.txt" 
-pred = []
-gold = []
-with open(test_similarity_file) as instream:
-    for line in instream: 
-        [w1, w2, g] = line.split()
-        gold.append(g)
-        pred.append(composed_space.get_sim(w1, w2, CosSimilarity()))
+test_pairs = io_utils.read_tuple_list(test_similarity_file, fields=[0,1])
+gold = io_utils.read_list(test_similarity_file, field=2)
 
+print "Computing similarity with lexical function..."
+pred = composed_space.get_sims(test_pairs, CosSimilarity())
+
+#use this composed space to assign similarities
 print "Scoring lexical function..."
 print scoring_utils.score(gold, pred, "spearman")
                     
+print "Testing additive model.."
+comp_model = WeightedAdditive(1,1)
+composed_space = comp_model.compose(train_data, space, per_space)
+
+print "Computing similarity with weighted_additive(1,1)..."
+pred = composed_space.get_sims(test_pairs, CosSimilarity())
+
+print "Scoring additive..."
+print scoring_utils.score(gold, pred, "spearman")
+
 
