@@ -4,7 +4,8 @@ from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
 from composes.transformation.dim_reduction.svd import Svd 
 from composes.transformation.feature_selection.top_feature_selection import TopFeatureSelection 
 from composes.composition.lexical_function import LexicalFunction 
-from composes.composition.weighted_additive import WeightedAdditive
+from composes.utils.regression_learner import RidgeRegressionLearner
+
 import composes.utils.io_utils as io_utils
 import composes.utils.scoring_utils as scoring_utils
 
@@ -40,7 +41,7 @@ train_data_file = data_path + "ML08_SV_train.txt"
 train_data = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
 
 print "Training Lexical Function composition model..."
-comp_model = LexicalFunction()
+comp_model = LexicalFunction(learner = RidgeRegressionLearner(param=2))
 comp_model.train(train_data, space, per_space)
 
 print "Composing phrases..."
@@ -61,14 +62,5 @@ pred = composed_space.get_sims(test_pairs, CosSimilarity())
 print "Scoring lexical function..."
 print scoring_utils.score(gold, pred, "spearman")
                     
-print "Testing additive model.."
-comp_model = WeightedAdditive(1,1)
-composed_space = comp_model.compose(test_phrases, space)
-
-print "Computing similarity with weighted_additive(1,1)..."
-pred = composed_space.get_sims(test_pairs, CosSimilarity())
-
-print "Scoring additive..."
-print scoring_utils.score(gold, pred, "spearman")
 
 

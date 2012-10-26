@@ -16,7 +16,7 @@ and /mnt/cimec-storage-sata/users/thenghia.pham/shared/tutorial/per.raw.SV.cols,
 PART 3 - train_composition.py
 1. Load training data from file /mnt/cimec-storage-sata/users/thenghia.pham/shared/tutorial/ML08_SV_train.txt
 2. Load argument space from part 1 and phrase space from part 2
-3. Train lexical function model on it
+3. Train a lexical function model on it using Ridge Regression with lambda=2
 4. Save this trained model to a file
 
 PART 4 - apply_composition.py
