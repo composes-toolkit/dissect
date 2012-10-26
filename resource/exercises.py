@@ -31,3 +31,12 @@ PART 5 - compute_similarities.py
 PART 6 - evaluate_similarities.py
 1. evaluate the similarities, the file .. contains the gold in field...
 
+
+
+- document how to set a logger path
+- document io functions for reading data
+- document space (get rows... and so on)
+- link the documentation fo matrix
+- create some examples.... show it from a script
+
+

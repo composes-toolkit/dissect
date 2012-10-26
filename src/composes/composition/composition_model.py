@@ -162,6 +162,10 @@ class CompositionModel(object):
                 list2.append(sample[1])
                 list3.append(sample[2])
             else:
+                if not sample[1] in id2row2:
+                    print sample[1]
+                if not sample[2] in id2row3:
+                    print sample[2]                    
                 no_not_found += 1    
 
         if no_not_found > 0:

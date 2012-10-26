@@ -45,14 +45,14 @@ comp_model.train(train_data, space, per_space)
 
 print "Composing phrases..."
 #use it to compose the phrases we need
-test_phrases_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML10/ML10_VO_test.txt" 
+test_phrases_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML08/ML08/nvs_test.txt" 
 test_phrases = io_utils.read_tuple_list(test_phrases_file, 3)
 composed_space = comp_model.compose(test_phrases, space)
 
 
 print "Computing similarity..."
 #use this composed space to assign similarities
-test_similarity_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML10/ML10data_new.txt" 
+test_similarity_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML08/ML08data_new.txt" 
 pred = []
 gold = []
 with open(test_similarity_file) as instream:
