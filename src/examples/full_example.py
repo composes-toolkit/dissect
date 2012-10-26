@@ -35,6 +35,7 @@ per_space = PeripheralSpace.build(space,
                                   format = "sm"                                
                                   )
 
+
 #train a composition model
 train_data_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/ML08_SV_train.txt"
 train_data = io_utils.read_tuple_list(train_data_file, 3)
@@ -45,7 +46,7 @@ comp_model.train(train_data, space, per_space)
 
 print "Composing phrases..."
 #use it to compose the phrases we need
-test_phrases_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML08/ML08/nvs_test.txt" 
+test_phrases_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML08/nvs_test.txt" 
 test_phrases = io_utils.read_tuple_list(test_phrases_file, 3)
 composed_space = comp_model.compose(test_phrases, space)
 
@@ -64,36 +65,4 @@ with open(test_similarity_file) as instream:
 print "Scoring lexical function..."
 print scoring_utils.score(gold, pred, "spearman")
                     
-                    
-comp_model_add = WeightedAdditive(1,1)
-composed_space = comp_model.compose(test_phrases, space)
-print "Computing similarity..."
-#use this composed space to assign similarities
-test_similarity_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML10/ML10data_new.txt" 
-pred = []
-gold = []
-with open(test_similarity_file) as instream:
-    for line in instream: 
-        [w1, w2, g] = line.split()
-        gold.append(g)
-        pred.append(composed_space.get_sim(w1, w2, CosSimilarity()))
-
-print "Scoring addition..."
-print scoring_utils.score(gold, pred, "spearman")
-
-comp_model_dil = Dilation()
-composed_space = comp_model.compose(test_phrases, space)
-print "Computing similarity..."
-#use this composed space to assign similarities
-test_similarity_file = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/test/ML10/ML10data_new.txt" 
-pred = []
-gold = []
-with open(test_similarity_file) as instream:
-    for line in instream: 
-        [w1, w2, g] = line.split()
-        gold.append(g)
-        pred.append(composed_space.get_sim(w1, w2, CosSimilarity()))
-
-print "Scoring dilation..."
-print scoring_utils.score(gold, pred, "spearman")
 

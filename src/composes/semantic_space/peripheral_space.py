@@ -149,6 +149,10 @@ class PeripheralSpace(Space):
         
         sp = Space.build(**kwargs)
         
+        
+        sp.export("/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/per_in/NODUP.per.raw.SV",
+                  format = "sm")
+
         mat = sp._cooccurrence_matrix
         id2row = sp.id2row
         row2id = sp.row2id
