@@ -33,7 +33,7 @@ print data
 my_space = io_utils.load("./data/out/ex01.pkl")
 
 #similarity of two words
-print "Similarity of car book"
+print "\nSimilarity of car book"
 print my_space.get_sim("car", "book", CosSimilarity())
 
 #similarity for a list of word pairs (list of tuples)
@@ -47,7 +47,7 @@ print my_space.get_sims(pair_list, CosSimilarity())
 predicted = my_space.get_sims(pair_list, CosSimilarity())
 gold = io_utils.read_list(fname, field=4)
 
-print "Gold"
+print "\nGold"
 print gold
 print "Predicted"
 print predicted
