@@ -1,4 +1,5 @@
 from composes.similarity.cos import CosSimilarity
+from composes.semantic_space.space import Space
 from composes.semantic_space.peripheral_space import PeripheralSpace
 from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
 from composes.transformation.dim_reduction.svd import Svd 
@@ -11,8 +12,16 @@ import composes.utils.scoring_utils as scoring_utils
 
 #load a core space
 print "Loading the data..."
-core_space_file = "/mnt/cimec-storage-sata/users/thenghia.pham/data/tutorial/raw_core/CORE_SS.verbnoun.core.pkl"
-space = io_utils.load(core_space_file)
+#core_space_file = "/mnt/cimec-storage-sata/users/thenghia.pham/data/tutorial/raw_core/CORE_SS.verbnoun.core.pkl"
+#space = io_utils.load(core_space_file)
+
+space_path = "/mnt/cimec-storage-sata/users/georgiana.dinu/COLING/core_in/"
+space = Space.build(data = space_path + "core.raw.mat",
+                    rows = space_path + "core.raw.rows",
+                    cols = space_path + "core.raw.cols",
+                    format = "sm")
+
+io_utils.save(space, space_path + "core.raw.pkl")
 
 print "Applying PPMI..."
 #apply ppmi weighting
