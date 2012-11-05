@@ -17,6 +17,7 @@ Created on Jun 12, 2012
 
 
 import sys
+import os
 import getopt
 from warnings import warn
 from ConfigParser import ConfigParser
@@ -44,7 +45,9 @@ def usage(errno=0):
     -o --output <dir>: output directory. 
     -s --space <file[,file2]>: file of semantic space. The second 
             word of a word pair is interpreted in the second space argument, 
-            if provided. 
+            if provided.
+    --in_dir: <dir>: input directory for the semantic spaces, all files are loaded
+                one at a time and -s value is ignored. Optional.
     -m --sim_measure <list(string)>: comma-separated similarity measures
     -c --columns <(int,int)>: pair of columns, indicating which columns contain 
             the words to be compared
@@ -61,6 +64,21 @@ def usage(errno=0):
     sys.exit(errno)
 
 
+def compute_sim_batch(in_file, columns, out_dir, sim_measures, in_dir):
+
+    if not os.path.exists(in_dir):
+        raise ValueError("Input directory not found: %s" % in_dir)
+    
+    if not in_dir.endswith("/"):
+        in_dir = in_dir + "/"
+        
+    for file_ in os.listdir(in_dir):
+        if file_.endswith(".pkl"):
+            space_file = in_dir + file_
+            print space_file 
+            compute_sim(in_file, columns, out_dir, sim_measures, [space_file])
+    
+    
 def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
     
     sim_dict = {"cos": CosSimilarity(),
@@ -107,7 +125,7 @@ def main(sys_argv):
     try:
         opts, argv = getopt.getopt(sys_argv[1:], "hi:o:s:m:c:l:", 
                                    ["help", "input=", "output=", "sim_measures=",
-                                    "space=", "columns=", "log=" ])
+                                    "space=", "in_dir=", "columns=", "log=" ])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -120,6 +138,7 @@ def main(sys_argv):
     spaces = None
     columns = None
     log_file = None
+    in_dir = None
     section = "compute_similarities"
 
     if (len(argv) == 1):
@@ -128,6 +147,7 @@ def main(sys_argv):
         config.read(config_file)
         out_dir = utils.config_get(section, config, "output", None) 
         in_file = utils.config_get(section, config, "input", None)
+        in_dir = utils.config_get(section, config, "in_dir", None)
         sim_measures = utils.config_get(section, config, "sim_measures", None)
         if not sim_measures is None: 
             sim_measures = sim_measures.split(",")
@@ -144,6 +164,8 @@ def main(sys_argv):
             in_file = val 
         elif opt in ("-o", "--output"):
             out_dir = val 
+        elif opt == ("--in_dir"):
+            in_dir = val 
         elif opt in ("-m", "--sim_measures"):
             sim_measures = val.split(",") 
         elif opt in ("-s", "--space"):
@@ -163,12 +185,15 @@ def main(sys_argv):
     utils.assert_option_not_none(in_file, "Input file required", usage)
     utils.assert_option_not_none(out_dir, "Output directory required", usage)    
     utils.assert_option_not_none(sim_measures, "Similarity measures required", usage)
-    utils.assert_option_not_none(spaces, "Semantic space file required", usage)
     utils.assert_option_not_none(columns, "Columns to be read from input file required", usage)
-        
-    compute_sim(in_file, columns, out_dir, sim_measures, spaces)
     
-    
+    if not in_dir is None:
+        compute_sim_batch(in_file, columns, out_dir, sim_measures, in_dir)
+    else:
+        utils.assert_option_not_none(spaces, "Semantic space file required", usage)
+        compute_sim(in_file, columns, out_dir, sim_measures, spaces)
+                
    
 if __name__ == '__main__':
     main(sys.argv)
+    
