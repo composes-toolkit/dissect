@@ -4,6 +4,10 @@ from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
 from composes.transformation.dim_reduction.svd import Svd 
 from composes.transformation.feature_selection.top_feature_selection import TopFeatureSelection 
 from composes.composition.lexical_function import LexicalFunction 
+from composes.composition.full_additive import FullAdditive
+from composes.composition.weighted_additive import WeightedAdditive
+from composes.composition.multiplicative import Multiplicative
+from composes.composition.dilation import Dilation
 from composes.utils.regression_learner import RidgeRegressionLearner
 
 import composes.utils.io_utils as io_utils
@@ -58,4 +62,29 @@ print "Scoring lexical function..."
 print scoring_utils.score(gold, pred, "spearman")
                     
 
+print "Training Full Additive composition model..."
+comp_model = FullAdditive(learner = RidgeRegressionLearner(param=2))
+comp_model.train(train_data, space, per_space)
+composed_space = comp_model.compose(test_phrases, space)
+pred = composed_space.get_sims(test_pairs, CosSimilarity())
+print scoring_utils.score(gold, pred, "spearman")
 
+print "Training Weighted Additive composition model..."
+comp_model = WeightedAdditive()
+comp_model.train(train_data, space, per_space)
+composed_space = comp_model.compose(test_phrases, space)
+pred = composed_space.get_sims(test_pairs, CosSimilarity())
+print scoring_utils.score(gold, pred, "spearman")
+
+print "Training Dilation composition model..."
+comp_model = Dilation()
+comp_model.train(train_data, space, per_space)
+composed_space = comp_model.compose(test_phrases, space)
+pred = composed_space.get_sims(test_pairs, CosSimilarity())
+print scoring_utils.score(gold, pred, "spearman")
+
+print "Multiplicative composition model..."
+comp_model = Multiplicative()
+composed_space = comp_model.compose(test_phrases, space)
+pred = composed_space.get_sims(test_pairs, CosSimilarity())
+print scoring_utils.score(gold, pred, "spearman")
