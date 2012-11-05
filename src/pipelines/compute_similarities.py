@@ -73,12 +73,15 @@ def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
     col0 = int(columns[0]) - 1
     col1 = int(columns[1]) - 1
     
-    in_descr = "SIMS." + in_file.split("/")[-1] 
-    
     space = io_utils.load(space_files[0], Space)
     space2 = None
+    space_descr = ".".join(space_files[0].split("/")[-1].split(".")[0:-1])
+    
     if len(space_files) == 2:
         space2 = io_utils.load(space_files[1], Space)
+        space_descr = ".".join([space_descr] + space_files[1].split("/")[-1].split(".")[0:-1])
+
+    descr = ".".join(["SIMS", in_file.split("/")[-1], space_descr])
     
     for sim_measure in sim_measures:
         print "Computing similarities: %s" % sim_measure 
@@ -87,7 +90,7 @@ def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
             continue
         
         sim = sim_dict[sim_measure]
-        out_file = '%s/%s.%s' % (out_dir, in_descr, sim_measure)
+        out_file = '%s/%s.%s' % (out_dir, descr, sim_measure)
         
         with open(in_file) as in_stream, open(out_file,"w") as out_stream:
             for line in in_stream:
