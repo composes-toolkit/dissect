@@ -72,6 +72,7 @@ print scoring_utils.score(gold, pred, "spearman")
 print "Training Weighted Additive composition model..."
 comp_model = WeightedAdditive()
 comp_model.train(train_data, space, per_space)
+print "alpha, beta:", comp_model.alpha, comp_model.beta
 composed_space = comp_model.compose(test_phrases, space)
 pred = composed_space.get_sims(test_pairs, CosSimilarity())
 print scoring_utils.score(gold, pred, "spearman")
@@ -79,12 +80,25 @@ print scoring_utils.score(gold, pred, "spearman")
 print "Training Dilation composition model..."
 comp_model = Dilation()
 comp_model.train(train_data, space, per_space)
+print "lambda:", comp_model._lambda
 composed_space = comp_model.compose(test_phrases, space)
 pred = composed_space.get_sims(test_pairs, CosSimilarity())
 print scoring_utils.score(gold, pred, "spearman")
 
 print "Multiplicative composition model..."
 comp_model = Multiplicative()
+composed_space = comp_model.compose(test_phrases, space)
+pred = composed_space.get_sims(test_pairs, CosSimilarity())
+print scoring_utils.score(gold, pred, "spearman")
+
+print "Simple additive composition model..."
+comp_model = WeightedAdditive(1,1)
+composed_space = comp_model.compose(test_phrases, space)
+pred = composed_space.get_sims(test_pairs, CosSimilarity())
+print scoring_utils.score(gold, pred, "spearman")
+
+print "Simple dilation composition model..."
+comp_model = Dilation()
 composed_space = comp_model.compose(test_phrases, space)
 pred = composed_space.get_sims(test_pairs, CosSimilarity())
 print scoring_utils.score(gold, pred, "spearman")
