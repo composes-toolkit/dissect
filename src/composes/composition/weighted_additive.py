@@ -6,7 +6,6 @@ Created on Oct 5, 2012
 
 from composition_model import CompositionModel
 from composes.utils.num_utils import is_numeric
-from numpy import double
 import numpy as np
 
 class WeightedAdditive(CompositionModel):
@@ -31,13 +30,13 @@ class WeightedAdditive(CompositionModel):
         self._beta = 0.5
         if not alpha is None:
             if not is_numeric(alpha):
-                raise ValueError("Parameter not numeric: %s " %(type(alpha)))
+                raise ValueError("Parameter not numeric: %s " % (type(alpha)))
             else:
                 self._alpha = alpha
                 
         if not beta is None:
             if not is_numeric(beta):
-                raise ValueError("Parameter not numeric: %s " %(type(beta)))
+                raise ValueError("Parameter not numeric: %s " % (type(beta)))
             else:
                 self._beta = beta
                 

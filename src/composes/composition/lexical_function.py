@@ -6,7 +6,6 @@ Created on Oct 11, 2012
 
 import numpy as np
 import time
-from warnings import warn
 from composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from composes.utils.space_utils import get_partitions
@@ -36,7 +35,7 @@ class LexicalFunction(CompositionModel):
     """ 
          
     _name = "lexical_function"
-    _MIN_SAMPLES = 0
+    _MIN_SAMPLES = 3
 
     def __init__(self, **kwargs):
         '''
@@ -84,17 +83,16 @@ class LexicalFunction(CompositionModel):
                                                                               phrase_space.id2row))
 
         #partitions the sorted input data
-        keys, new_key_indices = get_partitions(function_word_list)
+        keys, key_ranges = get_partitions(function_word_list, self._MIN_SAMPLES)
+        if not keys:
+            raise ValueError("No valid training data found!")
         
-        for i in range(0, len(new_key_indices) - 1):
-
-            idx_beg, idx_end = new_key_indices[i], new_key_indices[i + 1]
-             
-            if idx_end - idx_beg < self._MIN_SAMPLES:
-                warn("Lexical function training. Ignoring:%s. No. samples:%d" 
-                     % (new_key_indices[i], idx_end - idx_beg))
-                keys.remove(keys[i])
-                continue
+        for i in xrange(len(key_ranges)):
+            
+            idx_beg, idx_end = key_ranges[i]
+            
+            print ("Training lexical function...%s with %d samples" 
+                    % (keys[i], idx_end - idx_beg))
                             
             arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end]) 
             phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
@@ -107,12 +105,9 @@ class LexicalFunction(CompositionModel):
             result_mat = self._regression_learner.train(arg_mat, phrase_mat)
             result_mats.append(result_mat.transpose())
 
-        #TODO: HERE AND IN OTHER PLACES; WHAT IF THERE NOTHING LEFT TO STACK??
-        #NONe of the training data was valid!!
-        if not result_mats:
-            raise ValueError("No valid train data found!")
         
         new_space_mat = arg_mat.nary_vstack(result_mats)
+        
         assert(len(arg_space.element_shape) == 1)
         
         if self._has_intercept:
@@ -136,7 +131,6 @@ class LexicalFunction(CompositionModel):
                        % (new_element_shape,))
         log.print_matrix_info(logger, new_space_mat, 3, 
                               "Semantic space of lexical functions:")
-        
         log.print_time_info(logger, time.time(), start, 2)
         
     def compose(self, data, arg_space):
@@ -215,8 +209,5 @@ class LexicalFunction(CompositionModel):
             raise IllegalStateError("cannot export an untrained LexicalFunction model.")
         self._function_space.export(filename, format="dm")
             
-        
-        
-        
         
             

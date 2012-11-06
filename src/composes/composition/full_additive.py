@@ -98,8 +98,8 @@ class FullAdditive(CompositionModel):
             output_stream.write("A\n")
             output_stream.write(str(DenseMatrix(self._mat_a_t).mat.T))
             
+            #TODO: bug here, only if it has intercept!!! do this!
             output_stream.write("\nB\n")
-            #mat_b = DenseMatrix(self._mat_b_t[:-1,]).mat.T
             output_stream.write(str(DenseMatrix(self._mat_b_t[:-1,]).mat.T))
             
             output_stream.write("\nIntercept\n")

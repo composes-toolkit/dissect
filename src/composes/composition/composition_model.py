@@ -123,7 +123,7 @@ class CompositionModel(object):
         
         list1 = []
         list2 = []
-        list3 = []
+        list3 = [] 
         no_not_found = 0
         for i in xrange(len(data)):
             sample = data[i]
@@ -143,14 +143,16 @@ class CompositionModel(object):
                 list1.append(sample[0]) 
                 list2.append(sample[1])
                 list3.append(sample[2])
+                
             else:
                 no_not_found += 1    
-
+        
         if no_not_found > 0:
             warn("%d (out of %d) lines are ignored because one of the elements is not found in its semantic space"
                  % (no_not_found, len(data)))
+            
         if not list1:
-            raise ValueError("No valid data found!")
+            raise ValueError("No valid training data found!")
         
         return list1, list2, list3
 
