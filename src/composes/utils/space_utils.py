@@ -11,17 +11,28 @@ from scipy.sparse import csr_matrix
 from composes.matrix.sparse_matrix import SparseMatrix
 from composes.matrix.dense_matrix import DenseMatrix
 
-def get_partitions(sorted_list):
+def get_partitions(sorted_list, min_samples):
     
-    new_elem_index_list = [0]
-    for i in range(1, len(sorted_list) - 1):
+    prev_idx = 0
+    range_list = []
+    for i in range(1, len(sorted_list)):
         if sorted_list[i] != sorted_list[i-1]:
-            new_elem_index_list.append(i)
-    new_elem_index_list.append(len(sorted_list))
+            if i - prev_idx >= min_samples:
+                range_list.append((prev_idx, i))
+            else:
+                warn("Ignoring: %s, only %d samples found." 
+                     % (sorted_list[prev_idx], i - prev_idx))    
+            prev_idx = i 
+
+    if len(sorted_list) - prev_idx >= min_samples:            
+        range_list.append((prev_idx, len(sorted_list)))
+    else:
+        warn("Ignoring: %s, only %d samples found." 
+                     % (sorted_list[prev_idx], len(sorted_list) - prev_idx)) 
+        
+    keys = [sorted_list[range_list[i][0]] for i in xrange(len(range_list))]
     
-    keys = [sorted_list[new_elem_index_list[i]] for i in range(0, len(new_elem_index_list) - 1)]
-    
-    return keys, new_elem_index_list
+    return keys, range_list
             
 
 def list2dict(list_):

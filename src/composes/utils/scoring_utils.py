@@ -12,8 +12,8 @@ def score(gold, prediction, method):
     if len(gold) != len(prediction):
         raise ValueError("The two arrays must have the same length!")
     
-    gold = np.array(gold)
-    prediction = np.array(prediction)
+    gold = np.array(gold, dtype=np.double)
+    prediction = np.array(prediction, dtype=np.double)
     
     if method == "pearson":
         return pearson(gold, prediction)[0]
@@ -28,7 +28,7 @@ def pearson(gold, prediction):
     return stats.pearsonr(gold, prediction)
 
 def spearman(gold, prediction):
-    return stats.spearmanr(gold, prediction, 0)
+    return stats.spearmanr(gold, prediction, None)
 
 def auc(gold, prediction):
 
@@ -62,4 +62,3 @@ def auc(gold, prediction):
             xi_old = xi
             
     return auc
- 

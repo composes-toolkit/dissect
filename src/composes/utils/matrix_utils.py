@@ -71,6 +71,7 @@ def get_type_of_largest(matrix_list):
     for matrix_ in matrix_list:
         if matrix_.shape[0] * matrix_.shape[1] > max_dim:
             max_type = type(matrix_)
+            max_dim = matrix_.shape[0] * matrix_.shape[1]
                 
     return max_type
 
