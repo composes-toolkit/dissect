@@ -68,22 +68,22 @@ class LexicalFunction(CompositionModel):
             self._regression_learner = kwargs["learner"] 
         
     def train(self, train_data, arg_space, phrase_space):
-        
         start = time.time()
- 
-        # TODO: VERY IMPORTANT lower limit on number of instances per function here!
+
         self._has_intercept = self._regression_learner.has_intercept()
+
         if not isinstance(arg_space, Space):
             raise ValueError("expected one input spaces!")  
                
         result_mats = []
                
         train_data = sorted(train_data, key=lambda tup: tup[0])
-        function_word_list, arg_list, phrase_list = self.lf_valid_data_to_lists(train_data,
-                                                                                arg_space.id2row,
-                                                                                phrase_space.id2row)
+        function_word_list, arg_list, phrase_list = self.valid_data_to_lists(train_data,
+                                                                             (None,
+                                                                              arg_space.id2row,
+                                                                              phrase_space.id2row))
 
-        #this is the list we wanted
+        #partitions the sorted input data
         keys, new_key_indices = get_partitions(function_word_list)
         
         for i in range(0, len(new_key_indices) - 1):
@@ -111,6 +111,7 @@ class LexicalFunction(CompositionModel):
         #NONe of the training data was valid!!
         if not result_mats:
             raise ValueError("No valid train data found!")
+        
         new_space_mat = arg_mat.nary_vstack(result_mats)
         assert(len(arg_space.element_shape) == 1)
         
@@ -124,7 +125,7 @@ class LexicalFunction(CompositionModel):
         self.composed_id2column = phrase_space.id2column
             
         self._function_space = Space(new_space_mat, keys, [], 
-                                    element_shape=new_element_shape)
+                                     element_shape=new_element_shape)
         
         log.print_composition_model_info(logger, self, 1, "\nTrained composition model:")
         log.print_info(logger, 3, "Trained: %s lexical functions" % len(keys))
@@ -144,8 +145,9 @@ class LexicalFunction(CompositionModel):
         
         assert_is_instance(arg_space, Space)
         arg1_list, arg2_list, phrase_list = self.valid_data_to_lists(data,
-                                                                     self._function_space.id2row,
-                                                                     arg_space.id2row)
+                                                                     (self._function_space.id2row,
+                                                                      arg_space.id2row,
+                                                                      None))
 
         arg1_mat = self._function_space.get_rows(arg1_list)
         arg2_mat = arg_space.get_rows(arg2_list)
