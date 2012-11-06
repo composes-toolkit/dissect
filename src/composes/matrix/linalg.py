@@ -40,13 +40,17 @@ class Linalg(object):
     _NMF_TOL_DECREASE_FACTOR = 0.5
     _NMF_TIME_LIMIT = 7000
 
+    _SVD_TOL = 1e-12
+
     @staticmethod
     def svd(matrix_, reduced_dimension):
         """
         Performs SVD decomposition.
         
         If the rank is smaller than the requested reduced dimension,
-        reduction to rank is performed.
+        reduction to rank is performed. Dense SVD uses Linalg._SVD_TOL to decide
+        the rank of the matrix.
+        
         
         Args:
            matrix_: input of type Matrix
@@ -72,7 +76,7 @@ class Linalg(object):
         else:
             raise TypeError("expected Matrix type, received %s" % type(matrix_))
         
-        log.print_matrix_info(logger, result[0], 5, "Resulted matrix U:")
+        log.print_matrix_info(logger, result[0], 5, "Resulting matrix U:")
         return result
         
     @staticmethod
@@ -83,18 +87,19 @@ class Linalg(object):
         """
         Performs Ridge Regression.
         
-        This method use the general formulae:
-            X = (A^T * A + P^T * P)^-1 * A^T * Y 
-        to solve simple ridge regression
+        This method use the general formula:
+            ...
+        to solve the problem:
+            :math:`X = argmin(||AX - B||_2 + \\lambda||X||_2)`
         
         Args:
-            a_matrix <Matrix>: A
-            b_matrix <Matrix>: B
+            matrix_a: input matrix A, of type Matrix
+            matrix_b: input matrix A, of type Matrix
             lambda_: scalar, lambda parameter
-            intercept: bool. If True intercept is used. Optional, False by default.
+            intercept: bool. If True intercept is used. Optional, default False.
                  
         Returns:
-            X <Matrix>: X matrix, A * X = B
+            solution X of type Matrix
                         
         """
         
@@ -124,13 +129,17 @@ class Linalg(object):
         """
         Performs Least Squares Regression.
         
+        Solves the problem:
+        
+        :math:`X = argmin(||AX - B||_2)`
+        
         Args:
-            a_matrix <Matrix>: A
-            b_matrix <Matrix>: B
+            matrix_a: input matrix A, of type Matrix
+            matrix_b: input matrix A, of type Matrix
             intercept: bool. If True intercept is used. Optional, False by default.
                  
         Returns:
-            X <Matrix>: X matrix, A * X = B
+            solution X of type Matrix
                         
         """
 
@@ -191,15 +200,9 @@ class Linalg(object):
     
     @staticmethod
     def _dense_svd(matrix_, reduced_dimension):
-        '''
-           - return three outputs
-            + u: u matrix
-            + s: flat version of s matrix
-            + vt: transpose of v matrix
-        '''
+
         u, s, vt = np.linalg.svd(matrix_.mat, False, True)
-        tol = 1e-12
-        rank = len(s[s > tol])
+        rank = len(s[s > Linalg._SVD_TOL])
         
         Linalg._check_svd_rank(matrix_.shape[1], rank, reduced_dimension)
                             
@@ -275,12 +278,15 @@ class Linalg(object):
         """
         Performs Non-negative Matrix Factorization.
         
+        It solves the problem:
+        :math:`W,H = argmin(||X - WH||_2)` such that W and H are non-negative matrices.
+    
         Args:
-            w_init <Matrix>: initial value for matrix W
-            h_init <Matrix>: initial value for matrix H
+            w_init: initial value for matrix W, type Matrix
+            h_init: initial value for matrix H, type Matrix
                  
         Returns:
-            W, H <Matrix>: where X = WH
+            W, H <Matrix>: where W, H solve the NMF problem stated above.
                         
         """
         
@@ -337,6 +343,18 @@ class Linalg(object):
     
     @staticmethod
     def pinv(matrix_):
+        """
+        Computes the pseudo-inverse of a matrix.
+        
+        Args:
+            matrix_: input matrix, of type Matrix
+            
+        Returns:
+            Pseudo-inverse of input matrix, of type Matrix
+            
+        Raises:
+            TypeError, if input is not of type Matrix
+        """
         if isinstance(matrix_, SparseMatrix):
             return Linalg._sparse_pinv(matrix_)
         elif isinstance(matrix_, DenseMatrix):

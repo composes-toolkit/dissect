@@ -16,7 +16,7 @@ class DenseMatrix(Matrix):
     '''
 
     def __init__(self, data, *args, **kwargs):
-        '''
+        """
         Constructor, creates a DenseMatrix from a numpy matrix-like
         object.
 
@@ -29,7 +29,7 @@ class DenseMatrix(Matrix):
         Raises:
             TypeError: if input data is not one of scipy.sparse/
                 numpy.ndarray/numpy.matrix/Matrix
-        '''
+        """
           
         if issparse(data):
             self.mat = data.todense()
