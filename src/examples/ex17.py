@@ -16,6 +16,7 @@ phrase_space = io_utils.load("data/out/PHRASE_SS.ex10.pkl")
 
 print "\nDefault LSTSQ regression"
 my_comp = LexicalFunction()
+my_comp._MIN_SAMPLES = 1
 my_comp.train(train_data, arg_space, phrase_space)
 
 #print its parameters
@@ -30,6 +31,7 @@ rr_learner=RidgeRegressionLearner(param = 1,
                                   intercept = False, 
                                   crossvalidation=False)
 my_comp = LexicalFunction(learner = rr_learner)
+my_comp._MIN_SAMPLES = 1
 my_comp.train(train_data, arg_space, phrase_space)
 
 #print its parameters

@@ -72,6 +72,7 @@ class ModelExportingTest(unittest.TestCase):
         self.space1 = Space(DenseMatrix(self.m12), self.row, self.ft)
         self.space2 = Space(DenseMatrix(self.ph2), ["a_a","a_b"], self.ft)
         m = LexicalFunction()
+        m._MIN_SAMPLES = 1
         self.assertRaises(IllegalStateError, m.export, self.prefix + ".lf1")
         m.train([("a","b","a_b"),("a","a","a_a")], self.space1, self.space2)
         m.export(self.prefix + ".lf2")

@@ -4,6 +4,7 @@ Created on Oct 19, 2012
 @author: thenghia.pham
 '''
 import unittest
+from pipelines import build_core_space as bcs
 from unitest import data_dir
 from unitest import toolkit_dir
 import numpy as np
@@ -33,6 +34,16 @@ class SimilarityPipelineTest(unittest.TestCase):
         self.euclidean = np.array([0.21089672206, 0.00148105508243, 1.0, 0.00148583482109])
         self.lin = np.array([1.0, 0.995623769303, 1.0, 0.991242564101])
         
+                #create the spaces required in the tests
+        bcs.main(["build_core_space.py", 
+          "-l", self.dir_ + "log1.txt",
+          "-i", self.dir_ + "mat3",
+          "-w", "raw",
+          "-s", "top_sum_3",
+          "-r", "svd_2", 
+          "-o", self.dir_,
+          "--input_format", "dm"
+          ])
 
     def test_compute_sim(self):
         sim_pipeline.main(["compute_similarities.py", 
@@ -43,12 +54,7 @@ class SimilarityPipelineTest(unittest.TestCase):
                            "-c", "1,2",
                            "-o", self.dir_
                            ])
-        for sim_measure in "cos,dot_prod,euclidean,lin".split(","):
-            result_array = np.array(read_number_list("%sSIMS.sim_input.txt.%s"
-                                               %(self.dir_,sim_measure), 3))
-            gold_array = eval("self.%s"%sim_measure)
-            #print result_array
-            np.testing.assert_array_almost_equal(result_array, gold_array, 5)
+        self.check_sims()
         
         sim_pipeline.main(["compute_similarities.py", 
                            "-i", self.dir_ + "sim_input.txt",
@@ -57,6 +63,7 @@ class SimilarityPipelineTest(unittest.TestCase):
                            "--columns", "1,2",
                            "-o", self.dir_
                            ])
+        self.check_sims()
         
         sim_pipeline.main(["compute_similarities.py", 
                            "--sim_measure", "cos,dot_prod,euclidean,lin", 
@@ -65,6 +72,7 @@ class SimilarityPipelineTest(unittest.TestCase):
                            "-o", self.dir_,
                            self.dir_ + "config/sim_config.cfg"
                            ])
+        self.check_sims()
         
         sim_pipeline.main(["compute_similarities.py", 
                            "--sim_measure", "cos,dot_prod,euclidean,lin", 
@@ -73,15 +81,25 @@ class SimilarityPipelineTest(unittest.TestCase):
                            "-o", self.dir_,
                            self.dir_ + "config/sim_config.cfg"
                            ])
+        self.check_sims()
+         
+        sim_pipeline.main(["compute_similarities.py", 
+                           "--sim_measure", "cos,dot_prod,euclidean,lin", 
+                           "--in_dir", "%s" % (self.dir_),
+                           "--columns", "1,2",
+                           "-o", self.dir_,
+                           self.dir_ + "config/sim_config.cfg"
+                           ])
+                
+        self.check_sims()     
         
+    def check_sims(self):
         for sim_measure in "cos,dot_prod,euclidean,lin".split(","):
-            result_array = np.array(read_number_list("%sSIMS.sim_input.txt.%s"
+            result_array = np.array(read_number_list("%sSIMS.sim_input.txt.CORE_SS.mat3.raw.top_sum_3.svd_2.%s"
                                                %(self.dir_,sim_measure), 3))
             gold_array = eval("self.%s"%sim_measure)
             #print result_array
-            np.testing.assert_array_almost_equal(result_array, gold_array, 5)        
-        
-
+            np.testing.assert_array_almost_equal(result_array, gold_array, 5) 
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

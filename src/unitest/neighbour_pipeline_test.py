@@ -6,7 +6,8 @@ Created on Oct 19, 2012
 import unittest
 from unitest import data_dir
 from unitest import toolkit_dir
-import pipelines.compute_neighbours as find_neighbours 
+import pipelines.compute_neighbours as find_neighbours
+from pipelines import build_core_space as bcs 
 
 def read_neighbours_list(file_name):
     result = []
@@ -34,8 +35,19 @@ class NeighboursPipelineTest(unittest.TestCase):
 
 
     def setUp(self):
-        self.dir_ = data_dir
+        self.dir_ = data_dir + "pipelines_test_resources/"
         self.log_dir = toolkit_dir + "/log/"
+        
+        #create the spaces required in the tests
+        bcs.main(["build_core_space.py", 
+          "-l", self.dir_ + "log1.txt",
+          "-i", self.dir_ + "mat3",
+          "-w", "raw",
+          "-s", "top_sum_3",
+          "-r", "svd_2", 
+          "-o", self.dir_,
+          "--input_format", "dm"
+          ])
 
     def test_find_neighbours(self):
         '''find_neighbours.main(["compute_neighbours.py", 
@@ -70,8 +82,8 @@ class NeighboursPipelineTest(unittest.TestCase):
                                "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
                                "%sconfig/neighbours_config.cfg" %self.dir_
                               ])
-        neighbours_list = read_neighbours_list(self.dir_ + "NEIGHBOURS.neighbours_input.txt.euclidean")
-        print len(neighbours_list)
+        #neighbours_list = read_neighbours_list(self.dir_ + "NEIGHBOURS.neighbours_input.txt.euclidean")
+        #print len(neighbours_list)
         
 
     def tearDown(self):

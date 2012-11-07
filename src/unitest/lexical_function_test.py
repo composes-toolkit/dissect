@@ -35,6 +35,7 @@ class LexicalFunctionTest(unittest.TestCase):
         #model with train and then compose
         learner_ = LstsqRegressionLearner(intercept=True)
         model = LexicalFunction(learner=learner_)
+        model._MIN_SAMPLES = 1
   
         model.train(train_data, self.n_space, self.an_space)
         
@@ -61,6 +62,7 @@ class LexicalFunctionTest(unittest.TestCase):
         
         #new model, without training 
         model2 = LexicalFunction(function_space=new_space, intercept=True)
+        model2._MIN_SAMPLES = 1
         comp_space = model2.compose(train_data, self.n_space)
         
         self.assertListEqual(comp_space.id2row, ["a1_car", "a1_man"])
@@ -82,7 +84,51 @@ class LexicalFunctionTest(unittest.TestCase):
         self.assertEqual(comp_space.element_shape, (2,))
         self.assertEqual(comp_space2.element_shape, (2,))
         
+
+    def test_min_samples1(self):
+        
+        #TODO test a1_car twice in the phrase list
+        train_data = [("bla3", "man", "a1_car"),
+                      ("a1", "car", "a1_car"),
+                      ("bla2", "man", "a1_car"),
+                      ("a1", "man", "a1_man"),
+                      ("bla1", "man", "a1_car")
+                      ]
+        #model with train and then compose
+        learner_ = LstsqRegressionLearner(intercept=True)
+        model = LexicalFunction(learner=learner_)
+        model._MIN_SAMPLES = 2
   
+        model.train(train_data, self.n_space, self.an_space)
+        
+        new_space = model.function_space
+        
+        np.testing.assert_array_almost_equal(new_space.cooccurrence_matrix.mat, 
+                                             np.mat([[0.66666667,0.33333333,
+                                                      -0.33333333,0.33333333,
+                                                      0.66666667,0.33333333]]),
+                                              7)
+        
+        self.assertTupleEqual(new_space.element_shape, (2,3))
+        self.assertListEqual(new_space.id2row, ["a1"])
+        self.assertListEqual(new_space.id2column, [])
+
+
+    def test_min_samples2(self):
+        train_data = [("a1", "man", "bla"),
+                      ("a1", "car", "a1_car"),
+                      ("a1", "man", "bla"),
+                      ("a1", "man", "a1_man"),
+                      ("a1", "bla", "a1_man"),
+                      ("a1", "man", "bla")
+                      ]
+
+        model = LexicalFunction()
+        model._MIN_SAMPLES = 5
+  
+        self.assertRaises(ValueError, model.train, train_data, self.n_space, self.an_space)
+        
+                  
     def test_simple_train_compose_with_non_valid_datapoints(self):
         
         #TODO test a1_car twice in the phrase list
@@ -103,6 +149,7 @@ class LexicalFunctionTest(unittest.TestCase):
         #model with train and then compose
         learner_ = LstsqRegressionLearner(intercept=True)
         model = LexicalFunction(learner=learner_)
+        model._MIN_SAMPLES = 1
   
         model.train(train_data, self.n_space, self.an_space)
         
@@ -129,6 +176,7 @@ class LexicalFunctionTest(unittest.TestCase):
         
         #new model, without training 
         model2 = LexicalFunction(function_space=new_space, intercept=True)
+        model2._MIN_SAMPLES = 1
         comp_space = model2.compose(test_data, self.n_space)
         
         self.assertListEqual(comp_space.id2row, ["a1_car", "a1_man"])
@@ -146,6 +194,7 @@ class LexicalFunctionTest(unittest.TestCase):
                       ]
         #model with train and then compose
         model = LexicalFunction(learner=LstsqRegressionLearner(intercept=False))
+        model._MIN_SAMPLES = 1
   
         model.train(train_data, self.n_space, self.an_space)
         
@@ -167,6 +216,7 @@ class LexicalFunctionTest(unittest.TestCase):
         
         #new model, without training 
         model2 = LexicalFunction(function_space=new_space)
+        model2._MIN_SAMPLES = 1
         comp_space = model2.compose(train_data, self.n_space)
         
         self.assertListEqual(comp_space.id2row, ["a1_car", "a1_man"])
@@ -213,6 +263,7 @@ class LexicalFunctionTest(unittest.TestCase):
         
         #test first stage train
         model = LexicalFunction(learner=LstsqRegressionLearner(intercept=False))
+        model._MIN_SAMPLES = 1
         model.train(train_data1, n_space, svo_space)
         vo_space = model.function_space
         
@@ -232,7 +283,8 @@ class LexicalFunctionTest(unittest.TestCase):
         self.assertListEqual(comp_space.id2column, ["f1","f2"])
         
         #test second stage train
-        model = LexicalFunction(learner=LstsqRegressionLearner(intercept=False))  
+        model = LexicalFunction(learner=LstsqRegressionLearner(intercept=False))
+        model._MIN_SAMPLES = 1  
         model.train(train_data2, n_space, vo_space)            
         v_space = model.function_space
         
@@ -255,6 +307,7 @@ class LexicalFunctionTest(unittest.TestCase):
    
         #test compose2
         model2 = LexicalFunction(function_space=comp_space)
+        model2._MIN_SAMPLES = 1
         comp_space2 = model2.compose([train_data1[0]], n_space)
         np.testing.assert_array_almost_equal(comp_space2.cooccurrence_matrix.mat, 
                                              np.mat([[1,2]]), 8)
@@ -296,6 +349,7 @@ class LexicalFunctionTest(unittest.TestCase):
         
         #test first stage train
         model = LexicalFunction(learner=LstsqRegressionLearner(intercept=True))
+        model._MIN_SAMPLES = 1
         model.train(train_data1, n_space, svo_space)
         vo_space = model.function_space
         
@@ -322,7 +376,8 @@ class LexicalFunctionTest(unittest.TestCase):
         self.assertListEqual(comp_space.id2column, ["f1","f2"])
         
         #test second stage train
-        model = LexicalFunction(learner=LstsqRegressionLearner(intercept=True))  
+        model = LexicalFunction(learner=LstsqRegressionLearner(intercept=True))
+        model._MIN_SAMPLES = 1  
         model.train(train_data2, n_space, vo_space)            
         v_space = model.function_space
         
@@ -352,6 +407,7 @@ class LexicalFunctionTest(unittest.TestCase):
    
         #test compose2
         model2 = LexicalFunction(function_space=comp_space, intercept=True)
+        model2._MIN_SAMPLES = 1
         comp_space2 = model2.compose([train_data1[0]], n_space)
         np.testing.assert_array_almost_equal(comp_space2.cooccurrence_matrix.mat, 
                                              np.mat([[1,2]]), 8)
@@ -416,6 +472,7 @@ class LexicalFunctionTest(unittest.TestCase):
 
         #test train 2d
         model = LexicalFunction(learner=LstsqRegressionLearner(intercept=True))
+        model._MIN_SAMPLES = 1
         model.train(train_vo_data, n_space, s_space)
         vo_space = model.function_space
         
@@ -424,6 +481,7 @@ class LexicalFunctionTest(unittest.TestCase):
         
         # test train 3d
         model2 = LexicalFunction(learner=LstsqRegressionLearner(intercept=True))
+        model2._MIN_SAMPLES = 1
         model2.train(train_v_data, n_space, vo_space)
         v_space = model2.function_space
 
@@ -492,6 +550,7 @@ class LexicalFunctionTest(unittest.TestCase):
 
         #test train 2d
         model = LexicalFunction(learner=LstsqRegressionLearner(intercept=False))
+        model._MIN_SAMPLES = 1
         model.train(train_vo_data, n_space, s_space)
         vo_space = model.function_space
         
@@ -512,6 +571,7 @@ class LexicalFunctionTest(unittest.TestCase):
         
         # test train 3d
         model2 = LexicalFunction()
+        model2._MIN_SAMPLES = 1
         model2.train(train_v_data, n_space, vo_space)
         v_space = model2.function_space
         np.testing.assert_array_almost_equal(v_mat.mat,
@@ -554,6 +614,7 @@ class LexicalFunctionTest(unittest.TestCase):
 
         #test train
         model = LexicalFunction(learner=LstsqRegressionLearner(intercept=False))
+        model._MIN_SAMPLES = 1
         model.train(train_data, n_space, an_space)
         a_space = model.function_space
         
@@ -575,6 +636,7 @@ class LexicalFunctionTest(unittest.TestCase):
         
         a_space = Space(a_mat, ["a1", "a2"], [], element_shape=(2,2))
         model = LexicalFunction(function_space=a_space)
+        model._MIN_SAMPLES = 1
         comp_space = model.compose(train_data, n_space)
         
         self.assertListEqual(comp_space.id2row, ["a1_man", "a2_car", "a1_boy", "a2_boy"])
@@ -607,6 +669,7 @@ class LexicalFunctionTest(unittest.TestCase):
 
         #test train
         model = LexicalFunction(learner=LstsqRegressionLearner(intercept=True))
+        model._MIN_SAMPLES = 1
         model.train(train_data, n_space, an_space)
         a_space = model.function_space
         
@@ -628,6 +691,7 @@ class LexicalFunctionTest(unittest.TestCase):
         
         a_space = Space(a_mat, ["a1", "a2"], [], element_shape=(2,3))
         model = LexicalFunction(function_space=a_space, intercept=True)
+        model._MIN_SAMPLES = 1
         comp_space = model.compose(train_data, n_space)
         
         self.assertListEqual(comp_space.id2row, ["a1_man", "a2_car", "a1_boy", "a2_boy"])

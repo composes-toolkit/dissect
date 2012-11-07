@@ -12,7 +12,7 @@ export CORE_IN_FILE_PREFIX=CORE_SS.verbnoun.core
 export CORE_OUT_DIR=$OUT_DIR/core
 
 # run build core space pipeline
-/opt/python/bin/python2.7 /home/thenghia.pham/alt_tk/nndsvd/toolkit/src/pipelines/build_core_space.py -i $DATA_DIR/$CORE_IN_FILE_PREFIX --input_format=pkl -o $CORE_OUT_DIR -w ppmi -s top_sum_2000 -r svd_100 --output_format=dm -l $LOG_FILE
+/opt/python/bin/python2.7 $TOOLKIT_DIR/src/pipelines/build_core_space.py -i $DATA_DIR/$CORE_IN_FILE_PREFIX --input_format=pkl -o $CORE_OUT_DIR -w ppmi -s top_sum_2000 -r svd_100 --output_format=dm -l $LOG_FILE
 
 echo FINISHED BUILDING CORE
 
