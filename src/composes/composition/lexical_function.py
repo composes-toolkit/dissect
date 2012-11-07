@@ -91,8 +91,8 @@ class LexicalFunction(CompositionModel):
             
             idx_beg, idx_end = key_ranges[i]
             
-            print ("Training lexical function...%s with %d samples" 
-                    % (keys[i], idx_end - idx_beg))
+            #print ("Training lexical function...%s with %d samples" 
+            #        % (keys[i], idx_end - idx_beg))
                             
             arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end]) 
             phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
