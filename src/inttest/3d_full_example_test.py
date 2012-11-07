@@ -24,8 +24,8 @@ import composes.utils.scoring_utils as scoring_utils
 class IntegrationTest3D(unittest.TestCase):
 
 
-    #data_path = "/home/georgiana.dinu/work/localtoolkit/toolkit/resource/tutorial/"
-    data_path = "/home/georgiana.dinu/tutorial/"
+    data_path = "/home/georgianadinu/work/localtoolkit/toolkit/resource/tutorial/"
+    #data_path = "/home/georgiana.dinu/tutorial/"
 
     def setUp(self):
         #load a core space
@@ -95,12 +95,12 @@ class IntegrationTest3D(unittest.TestCase):
         #use this composed space to assign similarities
         print "\nScoring lexical function..."
         print "Learner:", type(learner_).__name__
-        print "Dim CORE space:", self.space.shape[1]
-        print "Dim PER space:", self.per_space.shape[1]
+        print "Dim CORE space:", self.space.cooccurrence_matrix.shape[1]
+        print "Dim PER space:", self.per_space.cooccurrence_matrix.shape[1]
         print scoring_utils.score(gold, pred, "spearman")
         print scoring_utils.score(gold, pred, "pearson")
 
-    def test_exercise_sparse_sparse_svd50(self):
+    def ttest_exercise_sparse_sparse_svd50(self):
         
         self.apply_trans(50)
     
@@ -124,12 +124,13 @@ class IntegrationTest3D(unittest.TestCase):
                                           )
         
         self.apply_trans(50)
+        self.space.to_sparse()
         
         self.exercise(LstsqRegressionLearner())
         self.exercise(RidgeRegressionLearner(2))
-        self.exercise(RidgeRegressionLearner())
+        #self.exercise(RidgeRegressionLearner())
          
-    def test_exercise_sparse_sparse_svd100(self):   
+    def ttest_exercise_sparse_sparse_svd100(self):   
         
         self.apply_trans(100)
     
@@ -143,7 +144,7 @@ class IntegrationTest3D(unittest.TestCase):
         self.exercise(RidgeRegressionLearner(2))
         self.exercise(RidgeRegressionLearner())
 
-    def test_exercise_sparse_sparse_svd150(self):   
+    def ttest_exercise_sparse_sparse_svd150(self):   
         
         self.apply_trans(150)
     
