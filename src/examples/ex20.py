@@ -19,7 +19,6 @@ print pair_list
 elem_list = io_utils.read_tuple_list(fname)
 print elem_list
 
-
 #reads a specific column of a file as a list
 sim_column = io_utils.read_list(fname, field=2)
 print sim_column

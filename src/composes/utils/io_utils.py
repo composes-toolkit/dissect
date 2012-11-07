@@ -82,7 +82,7 @@ def read_tuple_list(data_file, **kwargs):
     with open(data_file) as f:
         for line in f:
             line = line.strip()
-            if (line != ""):
+            if line != "":
                 elements = line.split()
                 if field_list:
                     try:

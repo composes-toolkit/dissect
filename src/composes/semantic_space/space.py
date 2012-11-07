@@ -206,7 +206,7 @@ class Space(object):
         try:
             v1 = self.get_row(word1)
         except KeyError:
-            warn("Row string %s not found, returning 0.0" % (word1))
+            print "Row string %s not found, returning 0.0" % (word1)
             return 0.0
         try:
             if space2 is None:
@@ -214,7 +214,7 @@ class Space(object):
             else:
                 v2 = space2.get_row(word2)
         except KeyError:
-            warn("Row string %s not found, returning 0.0" % (word2))
+            print "Row string %s not found, returning 0.0" % (word2)
             return 0.0
                 
         [v1, v2] = resolve_type_conflict([v1, v2], DenseMatrix)
@@ -238,6 +238,7 @@ class Space(object):
             
         """
         sims = []
+        
         for word1, word2 in word_pair_list:
             sims.append(self.get_sim(word1, word2, similarity, space2))
         

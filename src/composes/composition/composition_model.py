@@ -33,9 +33,9 @@ class CompositionModel(object):
         
         arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
         arg1_list, arg2_list, phrase_list = self.valid_data_to_lists(train_data,
-                                                                     (arg1_space.id2row,
-                                                                      arg2_space.id2row,
-                                                                      phrase_space.id2row)
+                                                                     (arg1_space.row2id,
+                                                                      arg2_space.row2id,
+                                                                      phrase_space.row2id)
                                                                      )
 
         arg1_mat = arg1_space.get_rows(arg1_list)
@@ -65,8 +65,8 @@ class CompositionModel(object):
          
         arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
         arg1_list, arg2_list, phrase_list = self.valid_data_to_lists(data,
-                                                                     (arg1_space.id2row,
-                                                                      arg2_space.id2row,
+                                                                     (arg1_space.row2id,
+                                                                      arg2_space.row2id,
                                                                       None))
                                                                      
         arg1_mat = arg1_space.get_rows(arg1_list)
@@ -119,37 +119,36 @@ class CompositionModel(object):
         return arg1_space.id2column
         
  
-    def valid_data_to_lists(self, data, (id2row1, id2row2, id2row3)):
+    def valid_data_to_lists(self, data, (row2id1, row2id2, row2id3)):
         
         list1 = []
         list2 = []
-        list3 = [] 
-        no_not_found = 0
+        list3 = []
+         
+        j = 0
         for i in xrange(len(data)):
             sample = data[i]
             
             cond = True
             
-            if not id2row1 is None:
-                cond = cond and sample[0] in id2row1
+            if not row2id1 is None:
+                cond = cond and sample[0] in row2id1
             
-            if not id2row2 is None:
-                cond = cond and sample[1] in id2row2
+            if not row2id2 is None:
+                cond = cond and sample[1] in row2id2
             
-            if not id2row3 is None:
-                cond = cond and sample[2] in id2row3
+            if not row2id3 is None:
+                cond = cond and sample[2] in row2id3
 
             if cond:
                 list1.append(sample[0]) 
                 list2.append(sample[1])
                 list3.append(sample[2])
-                
-            else:
-                no_not_found += 1    
-        
-        if no_not_found > 0:
+                j += 1
+    
+        if i + 1 != j:
             warn("%d (out of %d) lines are ignored because one of the elements is not found in its semantic space"
-                 % (no_not_found, len(data)))
+                 % ((i + 1) - j, (i + 1)))
             
         if not list1:
             raise ValueError("No valid training data found!")

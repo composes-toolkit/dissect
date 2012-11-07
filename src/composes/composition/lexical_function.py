@@ -79,11 +79,11 @@ class LexicalFunction(CompositionModel):
         train_data = sorted(train_data, key=lambda tup: tup[0])
         function_word_list, arg_list, phrase_list = self.valid_data_to_lists(train_data,
                                                                              (None,
-                                                                              arg_space.id2row,
-                                                                              phrase_space.id2row))
-
+                                                                              arg_space.row2id,
+                                                                              phrase_space.row2id))
         #partitions the sorted input data
         keys, key_ranges = get_partitions(function_word_list, self._MIN_SAMPLES)
+        
         if not keys:
             raise ValueError("No valid training data found!")
         
@@ -139,8 +139,8 @@ class LexicalFunction(CompositionModel):
         
         assert_is_instance(arg_space, Space)
         arg1_list, arg2_list, phrase_list = self.valid_data_to_lists(data,
-                                                                     (self._function_space.id2row,
-                                                                      arg_space.id2row,
+                                                                     (self._function_space.row2id,
+                                                                      arg_space.row2id,
                                                                       None))
 
         arg1_mat = self._function_space.get_rows(arg1_list)
@@ -169,6 +169,7 @@ class LexicalFunction(CompositionModel):
     def _compose(self, function_arg_mat, arg_mat, function_arg_element_shape):
         
         result = []
+
         new_shape = (np.prod(function_arg_element_shape[0:-1]), 
                             function_arg_element_shape[-1])
                  
@@ -178,7 +179,7 @@ class LexicalFunction(CompositionModel):
             function_arg_mat_row.reshape(new_shape)
             if self._has_intercept:
                 comp_el = function_arg_mat_row * padd_matrix(arg_mat[i].transpose(), 0)
-            else:    
+            else:
                 comp_el = function_arg_mat_row * arg_mat[i].transpose()
             result.append(comp_el.transpose())
             

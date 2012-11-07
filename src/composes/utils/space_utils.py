@@ -19,16 +19,11 @@ def get_partitions(sorted_list, min_samples):
         if sorted_list[i] != sorted_list[i-1]:
             if i - prev_idx >= min_samples:
                 range_list.append((prev_idx, i))
-            else:
-                warn("Ignoring: %s, only %d samples found." 
-                     % (sorted_list[prev_idx], i - prev_idx))    
+
             prev_idx = i 
 
     if len(sorted_list) - prev_idx >= min_samples:            
         range_list.append((prev_idx, len(sorted_list)))
-    else:
-        warn("Ignoring: %s, only %d samples found." 
-                     % (sorted_list[prev_idx], len(sorted_list) - prev_idx)) 
         
     keys = [sorted_list[range_list[i][0]] for i in xrange(len(range_list))]
     
