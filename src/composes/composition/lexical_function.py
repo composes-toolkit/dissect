@@ -92,7 +92,7 @@ class LexicalFunction(CompositionModel):
             idx_beg, idx_end = key_ranges[i]
             
             #print ("Training lexical function...%s with %d samples" 
-            #        % (keys[i], idx_end - idx_beg))
+            #         % (keys[i], idx_end - idx_beg))
                             
             arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end]) 
             phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
@@ -114,7 +114,7 @@ class LexicalFunction(CompositionModel):
             new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0] + 1,)
         else:
             new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0],)
-                    
+         
         new_space_mat.reshape((len(keys), np.prod(new_element_shape)))
 
         self.composed_id2column = phrase_space.id2column
@@ -143,50 +143,48 @@ class LexicalFunction(CompositionModel):
                                                                       arg_space.row2id,
                                                                       None))
 
-        arg1_mat = self._function_space.get_rows(arg1_list)
-        arg2_mat = arg_space.get_rows(arg2_list)
+        composed_vec_list = []
+        for i in xrange(len(arg1_list)):
+            arg1_vec = self._function_space.get_row(arg1_list[i])
+            arg2_vec = arg_space.get_row(arg2_list[i])
         
-        matrix_type = get_type_of_largest([arg1_mat, arg2_mat])
-        [arg1_mat, arg2_mat] = resolve_type_conflict([arg1_mat, arg2_mat],
-                                                          matrix_type)
-            
-        composed_ph_mat, composed_elem_shape = self._compose(arg1_mat,
-                                                             arg2_mat,
-                                                             self._function_space.element_shape)
+            matrix_type = get_type_of_largest([arg1_vec, arg2_vec])
+            [arg1_vec, arg2_vec] = resolve_type_conflict([arg1_vec, arg2_vec],
+                                                              matrix_type)
+                
+            composed_ph_vec = self._compose(arg1_vec, arg2_vec,
+                                            self._function_space.element_shape)
 
+            composed_vec_list.append(composed_ph_vec)
+        
+        result_element_shape = self._function_space.element_shape[0:-1]
+        composed_ph_mat = composed_ph_vec.nary_vstack(composed_vec_list)
+        
         log.print_name(logger, self, 1, "\nComposed with composition model:")
-        log.print_info(logger, 3, "Composed total data points:%s" % arg1_mat.shape[0])
+        log.print_info(logger, 3, "Composed total data points:%s" % len(arg1_list))
         log.print_info(logger, 3, "Functional shape of the resulted (composed) elements:%s" 
-                       % (composed_elem_shape,))
+                       % (result_element_shape,))
         log.print_matrix_info(logger, composed_ph_mat, 4, 
                               "Resulted (composed) semantic space:")
         log.print_time_info(logger, time.time(), start, 2)
         
         return Space(composed_ph_mat, phrase_list, self.composed_id2column, 
-                     element_shape = composed_elem_shape)
+                     element_shape = result_element_shape)
     
         
-    def _compose(self, function_arg_mat, arg_mat, function_arg_element_shape):
-        
-        result = []
+    def _compose(self, function_arg_vec, arg_vec, function_arg_element_shape):
 
         new_shape = (np.prod(function_arg_element_shape[0:-1]), 
                             function_arg_element_shape[-1])
-                 
-        for i in range(arg_mat.shape[0]):
+
+        function_arg_vec.reshape(new_shape)
+
+        if self._has_intercept:
+            comp_el = function_arg_vec * padd_matrix(arg_vec.transpose(), 0)
+        else:
+            comp_el = function_arg_vec * arg_vec.transpose()
             
-            function_arg_mat_row = function_arg_mat[i]
-            function_arg_mat_row.reshape(new_shape)
-            if self._has_intercept:
-                comp_el = function_arg_mat_row * padd_matrix(arg_mat[i].transpose(), 0)
-            else:
-                comp_el = function_arg_mat_row * arg_mat[i].transpose()
-            result.append(comp_el.transpose())
-            
-        result = function_arg_mat.nary_vstack(result)
-        result_element_shape = function_arg_element_shape[0:-1]
-        
-        return result, result_element_shape    
+        return comp_el.transpose()
             
     @classmethod
     def _assert_space_match(cls, arg1_space, arg2_space, phrase_space=None):
