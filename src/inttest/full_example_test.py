@@ -175,14 +175,22 @@ class IntegrationTest(unittest.TestCase):
         self.exercise()        
 
     def test_exercise_red_full(self):
-   
+
+        print "Applying PPMI..."
+        self.space = self.space.apply(PpmiWeighting())
+        
         print "Creating peripheral space.."
         self.per_space = PeripheralSpace.build(self.space,
                                           data = self.data_path + "per.raw.SV.sm",
                                           cols = self.data_path + "per.raw.SV.cols",
                                           format = "sm"                                
                                           )
-        self.apply_trans()
+      
+        print "Applying feature selection..."
+        self.space = self.space.apply(TopFeatureSelection(2000))
+          
+        print "Applying SVD..."
+        self.space = self.space.apply(Svd(100))
         
         #reading in train data
         train_data_file = self.data_path + "ML08_SV_train.txt"
@@ -211,7 +219,8 @@ class IntegrationTest(unittest.TestCase):
         print scoring_utils.score(gold, pred, "pearson")
         
         #reduced to FULL
-        self.assertAlmostEqual(scoring_utils.score(gold, pred, "spearman"), 0.2881, 3)
+        print "Element shape of the function space:", comp_model.function_space._element_shape
+        self.assertAlmostEqual(scoring_utils.score(gold, pred, "spearman"), 0.2933, 3)
 
           
     def ttest_exercise_full_red(self):
