@@ -81,6 +81,9 @@ class DenseMatrix(Matrix):
                              % (str(self.mat.shape), str(matrix_.mat.shape) ))
         return DenseMatrix(np.multiply(self.mat, matrix_.mat))
     
+    
+    def trace(self):
+        return np.trace(self.mat) 
                 
     def transpose(self):
         """

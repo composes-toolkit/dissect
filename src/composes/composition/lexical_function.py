@@ -86,13 +86,20 @@ class LexicalFunction(CompositionModel):
         
         if not keys:
             raise ValueError("No valid training data found!")
+                
+        assert(len(arg_space.element_shape) == 1)
         
+        if self._has_intercept:
+            new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0] + 1,)
+        else:
+            new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0],)
+            
         for i in xrange(len(key_ranges)):
             
             idx_beg, idx_end = key_ranges[i]
             
-            #print ("Training lexical function...%s with %d samples" 
-            #         % (keys[i], idx_end - idx_beg))
+            print ("Training lexical function...%s with %d samples" 
+                     % (keys[i], idx_end - idx_beg))
                             
             arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end]) 
             phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
@@ -102,21 +109,14 @@ class LexicalFunction(CompositionModel):
             [arg_mat, phrase_mat] = resolve_type_conflict([arg_mat, phrase_mat],
                                                           matrix_type)
 
-            result_mat = self._regression_learner.train(arg_mat, phrase_mat)
-            result_mats.append(result_mat.transpose())
+            result_mat = self._regression_learner.train(arg_mat, phrase_mat).transpose()
+            
+            result_mat.reshape((1, np.prod(new_element_shape)))
+            
+            result_mats.append(result_mat)
 
-        
         new_space_mat = arg_mat.nary_vstack(result_mats)
         
-        assert(len(arg_space.element_shape) == 1)
-        
-        if self._has_intercept:
-            new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0] + 1,)
-        else:
-            new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0],)
-         
-        new_space_mat.reshape((len(keys), np.prod(new_element_shape)))
-
         self.composed_id2column = phrase_space.id2column
             
         self._function_space = Space(new_space_mat, keys, [], 
@@ -124,7 +124,7 @@ class LexicalFunction(CompositionModel):
         
         log.print_composition_model_info(logger, self, 1, "\nTrained composition model:")
         log.print_info(logger, 3, "Trained: %s lexical functions" % len(keys))
-        log.print_info(logger, 3, "With total data points:%s" % len(train_data))
+        log.print_info(logger, 3, "With total data points:%s" % len(function_word_list))
         log.print_matrix_info(logger, arg_space.cooccurrence_matrix, 3, 
                               "Semantic space of arguments:")
         log.print_info(logger, 3, "Shape of lexical functions learned:%s" 

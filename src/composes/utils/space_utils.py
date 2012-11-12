@@ -135,6 +135,7 @@ def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
     m = SparseMatrix(csr_matrix( (data,(row,col)), shape = (len(row2id), len(column2id))))
     if m.mat.nnz != i:
         warn("Found 0-counts or duplicate row,column pairs. (Duplicate entries are summed up.)")
+            
     return m
 
 """

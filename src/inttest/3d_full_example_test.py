@@ -6,6 +6,7 @@ Created on Nov 5, 2012
 import unittest
 from composes.similarity.cos import CosSimilarity
 from composes.semantic_space.peripheral_space import PeripheralSpace
+from composes.semantic_space.space import Space
 from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
 from composes.transformation.dim_reduction.svd import Svd
 from composes.transformation.dim_reduction.nmf import Nmf 
@@ -21,7 +22,10 @@ from composes.transformation.scaling.row_normalization import RowNormalization
 
 import composes.utils.io_utils as io_utils
 import composes.utils.scoring_utils as scoring_utils
+import composes.utils.log_utils as log_utils
 
+import logging
+logger = logging.getLogger("test vector space construction pipeline")
 
 class IntegrationTest3D(unittest.TestCase):
 
@@ -30,6 +34,10 @@ class IntegrationTest3D(unittest.TestCase):
     #data_path = "/home/georgiana.dinu/tutorial/"
 
     def setUp(self):
+        
+        log_file = self.data_path + "tmp_log.txt"
+        log_utils.config_logging(log_file)
+            
         #load a core space
         print "Loading the data..."
         data_path = self.data_path 
@@ -37,6 +45,15 @@ class IntegrationTest3D(unittest.TestCase):
         space_file = data_path + "CORE_SS.verbnoun.core.pkl"
         self.space = io_utils.load(space_file)
 
+        #space_file = data_path + "GS11data.train_n_vectors_freq10_svd_100_pmi"
+        #self.space = Space.build(data = space_file,
+        #                            format = "dm"                                
+        #                            )
+        #space_file = data_path + "GS11data.train_nvn_vectors_freq10_svd_100_pmi"
+        #self.per_space = Space.build(data = space_file,
+        #                            format = "dm"                                
+        #                            )
+        
     def tearDown(self):
         self.space = None
         self.per_space = None
@@ -100,24 +117,35 @@ class IntegrationTest3D(unittest.TestCase):
         print scoring_utils.score(gold, pred, "spearman")
         print scoring_utils.score(gold, pred, "pearson")
 
-    def ttest_exercise_sparse_sparse_svd50(self):
+    def test_exercise_sparse_sparse_svd50(self):
         
-        self.apply_trans(50)
-    
+        self.apply_trans(100)
+        self.space = self.space.apply(RowNormalization())  
+        
         print "Creating peripheral space.."
         self.per_space = PeripheralSpace.build(self.space,
                                           data = self.data_path + "per.raw.SVO.sm",
                                           cols = self.data_path + "per.raw.SVO.cols",
                                           format = "sm"                                
                                           )
-        self.exercise(LstsqRegressionLearner())
-        self.exercise(RidgeRegressionLearner(param=2))
+        #self.exercise(LstsqRegressionLearner())
         self.exercise(RidgeRegressionLearner())
+        #self.exercise(RidgeRegressionLearner())
  
-    def ttest_exercise_sparse_sparse_svd20_full_per(self):
-    
-        self.apply_trans(20)
-            
+ 
+    def tttest_exercise_sparse_sparse_svd50(self):
+ 
+        print "The right one!"
+        self.space = self.space.apply(RowNormalization())
+        self.per_space = self.per_space.apply(RowNormalization())
+               
+        self.exercise(RidgeRegressionLearner(param=2))
+        
+        
+    def tttest_exercise_sparse_sparse_svd20_full_per(self):
+
+        self.apply_trans(100)
+        self.space = self.space.apply(RowNormalization())    
         print "Creating peripheral space.."
         self.per_space = PeripheralSpace.build(self.space,
                                           data = self.data_path + "per.raw.SVO.sm",
@@ -125,19 +153,17 @@ class IntegrationTest3D(unittest.TestCase):
                                           format = "sm"                                
                                           )
         
-
-        self.space.to_sparse()
-        
-        self.exercise(LstsqRegressionLearner())
-        #self.exercise(RidgeRegressionLearner(param=2))
+             
+        #self.exercise(LstsqRegressionLearner())
+        self.exercise(RidgeRegressionLearner(param=2))
         #self.exercise(RidgeRegressionLearner())
          
-    def test_exercise_sparse_sparse_svd100(self):   
+    def ttest_exercise_sparse_sparse_svd100(self):   
         
         print "Applying PPMI..."
         self.space = self.space.apply(PpmiWeighting())
-        print "Applying NMF..."
-        self.space = self.space.apply(Nmf(100))
+        print "Applying SVD..."
+        self.space = self.space.apply(Svd(100))
         
         print "Creating peripheral space.."
         self.per_space = PeripheralSpace.build(self.space,
@@ -145,10 +171,81 @@ class IntegrationTest3D(unittest.TestCase):
                                           cols = self.data_path + "per.raw.SVO.cols",
                                           format = "sm"                                
                                           )
-        self.exercise(LstsqRegressionLearner())
-        #self.exercise(RidgeRegressionLearner(param=2))
+        #self.exercise(LstsqRegressionLearner())
+        self.exercise(RidgeRegressionLearner(param=1))
         #self.exercise(RidgeRegressionLearner())
 
+    def ttest_create_new_train_data(self):
+        
+        print "Creating peripheral space.."
+        self.per_space = PeripheralSpace.build(self.space,
+                                          data = self.data_path + "per.raw.SVO.sm",
+                                          cols = self.data_path + "per.raw.SVO.cols",
+                                          format = "sm"                                
+                                          )
+        
+        train_data_file = self.data_path + "GS11_SVO_train.txt"
+        train_data_vo = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
+        list1, list2, list3 = self.valid_train_data_to_lists(train_data_vo,
+                                                             (self.space.row2id,
+                                                              self.per_space.row2id), 
+                                                             self.space.cooccurrence_matrix, 
+                                                             self.per_space.cooccurrence_matrix) 
+        
+        print len(list1)
+        f = open(train_data_file + ".pruned", "w")
+        for i in xrange(len(list1)):
+            print >>f, list1[i], list2[i], list3[i]
+        f.close()    
+        
+        train_data_file = self.data_path + "GS11_V_train.txt"
+        train_data_v = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
+        list1, list2, list3 = self.valid_train_data_to_lists(train_data_v,
+                                                             (self.space.row2id,
+                                                              None), 
+                                                             self.space.cooccurrence_matrix, 
+                                                             self.per_space.cooccurrence_matrix) 
+        
+        f = open(train_data_file + ".pruned", "w")
+        print len(list1)
+        for i in xrange(len(list1)):
+            print >>f, list1[i], list2[i], list3[i]
+        f.close()      
+        
+    def valid_train_data_to_lists(self, data, (row2id2, row2id3), arg_mat, phrase_mat):
+
+        list1 = []
+        list2 = []
+        list3 = []
+         
+        j = 0
+        for i in xrange(len(data)):
+            sample = data[i]
+            
+            cond = True
+            
+            if not row2id2 is None:
+                cond = cond and sample[1] in row2id2
+            
+            if not row2id3 is None:
+                cond = cond and sample[2] in row2id3
+                cond = cond and phrase_mat[row2id3[sample[2]]].mat.nnz >= 10
+
+            if cond:
+                list1.append(sample[0]) 
+                list2.append(sample[1])
+                list3.append(sample[2])
+                j += 1
+    
+        if i + 1 != j:
+            print ("%d (out of %d) lines are ignored because one of the elements is not found in its semantic space"
+                 % ((i + 1) - j, (i + 1)))
+            
+        if not list1:
+            raise ValueError("No valid training data found!")
+        
+        return list1, list2, list3
+    
     def ttest_exercise_dense_dense_svd100(self):   
         
         self.space.to_dense()

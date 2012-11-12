@@ -8,7 +8,6 @@ import time
 import logging
 from numpy import array
 from numpy import prod
-from warnings import warn
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent

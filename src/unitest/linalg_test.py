@@ -140,7 +140,7 @@ class Test(unittest.TestCase):
             res1 = Linalg.lstsq_regression(m1, id_)      
             np.testing.assert_array_almost_equal(res1.mat, m_inv, 7)
             
-            res2 = Linalg.ridge_regression(m1, id_, 1)
+            res2 = Linalg.ridge_regression(m1, id_, 1)[0]
             
             error1 = (m1 * res1 - DenseMatrix(m_inv)).norm()
             error2 = (m1 * res2 - DenseMatrix(m_inv)).norm()
@@ -163,10 +163,10 @@ class Test(unittest.TestCase):
             m1 = SparseMatrix(m)
             id_ = SparseMatrix.identity(m1.shape[0])
             
-            res1 = Linalg.lstsq_regression(m1, id_)      
+            res1 = Linalg.lstsq_regression(m1, id_)
             np.testing.assert_array_almost_equal(res1.mat.todense(), m_inv, 7)
             
-            res2 = Linalg.ridge_regression(m1, id_, 1)
+            res2 = Linalg.ridge_regression(m1, id_, 1)[0]
              
             error1 = (m1 * res1 - SparseMatrix(m_inv)).norm()
             error2 = (m1 * res2 - SparseMatrix(m_inv)).norm()

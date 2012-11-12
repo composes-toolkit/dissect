@@ -113,16 +113,31 @@ class Linalg(object):
         if intercept:
             matrix_a = matrix_a.hstack(matrix_type(np.ones((matrix_a.shape[0],
                                                              1))))
-        lambda_diag = (lambda_ * lambda_) * matrix_type.identity(dim)
+        lambda_diag = (lambda_ ) * matrix_type.identity(dim)
         
         if intercept:
             lambda_diag = padd_matrix(padd_matrix(lambda_diag, 0, 0.0), 1, 0.0)
         
-        tmp_mat = Linalg.pinv(((matrix_a.transpose() * matrix_a) + lambda_diag))
+        matrix_a_t = matrix_a.transpose()
+        try:
+            tmp_mat = Linalg.pinv(((matrix_a_t * matrix_a) + lambda_diag))
+        except np.linalg.LinAlgError:
+            print "Warning! LinAlgError"
+            tmp_mat = matrix_type.identity(lambda_diag.shape[0])
+                
+        tmp_res = tmp_mat * matrix_a_t
+        result = tmp_res * matrix_b
         
-        result = (tmp_mat * matrix_a.transpose()) * matrix_b
-        
-        return result
+        #S: used in generalized cross validation, page 244 7.52 (YZ also used it)
+        # S is defined in 7.31, page 232 
+        # instead of computing the matrix and then its trace, we can compute 
+        # its trace directly
+        # NOTE when lambda = 0 we get out trace(S) = rank(matrix_a)
+
+        dist = (matrix_a * result - matrix_b).norm()
+        S_trace = matrix_a_t.multiply(tmp_res).sum()
+
+        return result, S_trace, dist
     
     @classmethod
     def lstsq_regression(cls, matrix_a, matrix_b, intercept=False):
@@ -164,7 +179,7 @@ class Linalg(object):
     
     @staticmethod
     def _sparse_lstsq_regression(matrix_a , matrix_b, intercept=False):
-        return Linalg.ridge_regression(matrix_a, matrix_b, 0.0)
+        return Linalg.ridge_regression(matrix_a, matrix_b, 0.0)[0]
         #return SparseMatrix(Linalg._dense_lstsq_regression(DenseMatrix(matrix_a), 
         #                                      DenseMatrix(matrix_b)))
         
@@ -201,6 +216,7 @@ class Linalg(object):
     @staticmethod
     def _dense_svd(matrix_, reduced_dimension):
 
+        print "Running dense svd"
         u, s, vt = np.linalg.svd(matrix_.mat, False, True)
         rank = len(s[s > Linalg._SVD_TOL])
         

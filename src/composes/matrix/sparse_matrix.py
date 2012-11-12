@@ -92,6 +92,9 @@ class SparseMatrix(Matrix):
         else:
             return SparseMatrix(result)
     
+    def trace(self):
+        raise NotImplementedError("Sparse trace not implemented yet") 
+    
     def reshape(self, new_shape):
         """
         Reshapes current matrix.
@@ -121,9 +124,15 @@ class SparseMatrix(Matrix):
         
         #TODO: change here if we want a copy!!
         mat = self.mat.tocoo(copy=False)
-        liniar_pos = mat.row * no_cols + mat.col
-        mat.row = liniar_pos // new_no_cols
-        mat.col = liniar_pos - (mat.row * new_no_cols)
+        
+        #upcast mat.row and mat.col
+        if no_rows * no_cols >=  2**31-1:
+            linear_pos = np.array(mat.row, dtype=np.int64) * no_cols + mat.col
+        else:
+            linear_pos = mat.row * no_cols + mat.col
+
+        mat.row = linear_pos // new_no_cols
+        mat.col = linear_pos - (mat.row * new_no_cols)
         
         #NOTE: change here if we want a copy!!
         self.mat = csr_matrix((mat.data, (mat.row, mat.col)), shape=new_shape)
