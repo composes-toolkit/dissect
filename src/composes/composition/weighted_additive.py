@@ -23,20 +23,29 @@ class WeightedAdditive(CompositionModel):
     _name = "weighted_additive"
     
     def __init__(self, alpha=None, beta=None):
-        '''
-        Constructor
-        '''
+        """
+        Constructor.
+        
+        Args:
+            alpha: alpha parameter, numeric type. Optional, can be set through
+            training
+            beta: beta parameter, numeric type. Optional, can be set through 
+            training.
+        
+        Raises:
+            TypeError if alpha or beta are not numeric.
+        """
         self._alpha = 0.5
         self._beta = 0.5
         if not alpha is None:
             if not is_numeric(alpha):
-                raise ValueError("Parameter not numeric: %s " % (type(alpha)))
+                raise TypeError("Parameter not numeric: %s " % (type(alpha)))
             else:
                 self._alpha = alpha
                 
         if not beta is None:
             if not is_numeric(beta):
-                raise ValueError("Parameter not numeric: %s " % (type(beta)))
+                raise TypeError("Parameter not numeric: %s " % (type(beta)))
             else:
                 self._beta = beta
                 
@@ -70,9 +79,14 @@ class WeightedAdditive(CompositionModel):
     def get_alpha(self):
         return self._alpha
     alpha = property(get_alpha)
+    """
+    Alpha parameter, default 0.5.
+    """
     
     def get_beta(self):
         return self._beta
     beta = property(get_beta)
-        
+    """
+    Beta parameter, default 0.5.
+    """    
         

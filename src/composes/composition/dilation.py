@@ -24,9 +24,7 @@ class Dilation(CompositionModel):
     _name = "dilation"
     
     _lambda = 2
-    """
-    Lambda parameter. Default, set to lambda=2.
-    """
+
             
     def __init__(self, lambda_=None):
         """
@@ -81,7 +79,11 @@ class Dilation(CompositionModel):
     
     def get_lambda(self):
         return self._lambda
-    
+    """
+    Lambda parameter. Default, set to lambda=2.
+    """
+        
+
     def _export(self, filename):
         with open(filename, "w") as output_stream:
             output_stream.write("lambda\t%f" % self._lambda)

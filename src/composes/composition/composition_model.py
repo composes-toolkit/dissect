@@ -22,9 +22,6 @@ class CompositionModel(object):
     """
     
     _name = "no name"
-    """
-    String, name of the composition model.
-    """
     
     composed_id2column = None
     """
@@ -137,7 +134,9 @@ class CompositionModel(object):
     
     @classmethod
     def extract_arg_spaces(cls, arg_space):
-    
+        """
+        TO BE MOVED TO A UTILS MODULE!
+        """
         if not isinstance(arg_space, tuple):
             arg1_space = arg_space
             arg2_space = arg_space
@@ -207,12 +206,25 @@ class CompositionModel(object):
         return list1, list2, list3
 
     def export(self, filename):
+        """
+        Prints the parameters of the composition model to file.
+        
+        Args:
+            filename: output filename, string
+            
+        Prints the parameters of the compositional model in an appropriate
+        format, specific to each model.    
+        """
         create_parent_directories(filename)
         self._export(filename)
     
     def get_name(self):
         return self._name
+    
     name = property(get_name)    
-        
+    """
+    String, name of the composition model.
+    """
+            
         
         

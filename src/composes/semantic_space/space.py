@@ -355,7 +355,7 @@ class Space(object):
                 
     def get_row(self, word):
         """
-        Returns the row of a word.
+        Returns the row vector of a word.
         
         Args:
             word: string
@@ -397,36 +397,67 @@ class Space(object):
         return self._cooccurrence_matrix
         
     cooccurrence_matrix = property(get_cooccurrence_matrix)
-        
+    """
+    Co-occurrence matrix associated to the semantic space, of type Matrix.
+    
+    """    
     def get_row2id(self):
         return self._row2id
             
     row2id = property(get_row2id)
+    """
+    Dictionary, maps row strings to integer ids.
+    """
 
     def get_id2row(self):
         return self._id2row
             
     id2row = property(get_id2row)
-
+    """
+    List of strings, the row elements.
+    """
     def get_column2id(self):
         return self._column2id
             
     column2id = property(get_column2id)
+    """
+    Dictionary, maps column strings to integer ids.
+    """
 
     def get_id2column(self):
         return self._id2column
             
     id2column = property(get_id2column)
-   
+    """
+    List of strings, the column elements.
+    """
+       
     def get_element_shape(self):
         return self._element_shape
             
     element_shape = property(get_element_shape)
-     
+    """
+    Shape of row elements, of type tuple. By default, in standard spaces, 
+    element_shape=(no_cols,). 
+    
+    Used in composition models which build 
+    word representations which are matrices or higher order tensors, instead
+    of simple vectors. If the representation of a word is a matrix of shape
+    (2,2) for example, then element_shape=(2,2). The actual space matrix
+    stores each element as a linearized vector, just as in standard spaces.
+    """ 
+    
     def get_operations(self):
         return self._operations
             
     operations = property(get_operations)
+    """
+    List of operations which have been applied on the semantic space. List of
+    Operation type objects.
+    
+    The operations, together with their associated side information, are stored
+    because they may need to be projected on peripheral data.
+    """
     
     def assert_1dim_element(self):
         """

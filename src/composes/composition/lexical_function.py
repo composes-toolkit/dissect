@@ -14,6 +14,7 @@ from composes.utils.regression_learner import RegressionLearner
 from composes.utils.matrix_utils import resolve_type_conflict
 from composes.utils.matrix_utils import get_type_of_largest
 from composes.utils.matrix_utils import padd_matrix
+from composes.utils.num_utils import is_integer
 from composes.utils.space_utils import assert_is_instance
 from composes.exception.illegal_state_error import IllegalStateError
 
@@ -36,14 +37,24 @@ class LexicalFunction(CompositionModel):
          
     _name = "lexical_function"
     _MIN_SAMPLES = 3
-    """
-    Minimal number of samples for each training instance.
-    """
 
     def __init__(self, **kwargs):
-        '''
-        Constructor
-        '''
+        """
+        Constructor.
+        
+        Args:
+            function_space= : function space parameter, containing
+            the lexical functions, of type Space. Optional, can be set through
+            training.
+            
+            intercept= : True/False, True if the function space has intercept.
+            Optional, default False. When training is used, intercept is set 
+            to the intercept value of the regression learner used.
+        
+            learner= : regression method of type RegressionLearner. Optional,
+            default RidgeRegressionLearner(param=1).
+            
+        """
         self._regression_learner = RidgeRegressionLearner(param=1)
         self.composed_id2column = []
         self._function_space = None
@@ -70,6 +81,30 @@ class LexicalFunction(CompositionModel):
             self._regression_learner = kwargs["learner"] 
         
     def train(self, train_data, arg_space, phrase_space):
+        """
+        Trains a lexical function composition model to learn a function
+        space and sets the function_space parameter. 
+                
+        Args:
+            train_data: list of string tuples. Each tuple contains 3 
+            string elements: (function_word, arg, phrase).
+            
+            arg_space: argument space, of type Space. arg elements of 
+            train data are interpreted in this space.
+        
+            phrase space: phrase space, of type Space. phrase elements of 
+            the train data are interpreted in this space.
+            
+        Training tuples which contain strings not found in their 
+        respective spaces are ignored. Function words containing less than
+        _MIN_SAMPLES training instances are ignored. For example, if
+        _MIN_SAMPLES=2 and function word "red" occurs in only one phrase, "red"
+        is ignored.
+        
+        The id2column attribute of the resulted composed space is set to
+        be equal to that of the phrase space given as an input.
+        """
+        
         start = time.time()
 
         self._has_intercept = self._regression_learner.has_intercept()
@@ -137,7 +172,24 @@ class LexicalFunction(CompositionModel):
         log.print_time_info(logger, time.time(), start, 2)
         
     def compose(self, data, arg_space):
+        """
+        Uses a lexical function composition model to compose elements.
         
+        Args:
+            data: data to be composed. List of tuples, each containing 3
+            strings: (function_word, arg, composed_phrase). function_word and 
+            arg are the elements to be composed and composed_phrase is the 
+            string associated to their composition. function_word elements
+            are interpreted in self.function_space. 
+            
+            arg_space: argument space, of type Space. arg elements of data are 
+            interpreted in this space. 
+        
+        Returns:
+            composed space: a new object of type Space, containing the 
+            phrases obtained through composition.
+            
+        """
         start = time.time()
         
         assert_is_instance(arg_space, Space)
@@ -199,13 +251,46 @@ class LexicalFunction(CompositionModel):
         
     def get_regression_learner(self):
         return self._regression_learner
+    
     regression_learner = property(get_regression_learner, set_regression_learner)  
+    """
+    Regression method to be used in training, of type RegressionLearner.
+    Default is RidgeRegressionLearner(param=1).
+    """
        
     def get_function_space(self):
         return self._function_space
     
     function_space = property(get_function_space)
+    """
+    Function space parameter, containing the lexical functions, of type Space. 
+    Can be set through training or through initialization, default None.
+    """        
+
+    def get_has_intercept(self):
+        return self._has_intercept
     
+    has_intercept = property(get_has_intercept)
+    """
+    Has intercept parameter, boolean. If True, then the function_space is 
+    assumed to contain intercept. Can be set through training or through 
+    initialization, default is assumed to be False.
+    """   
+    
+    def set_min_samples(self, min_samples):
+        if not is_integer(min_samples):
+            raise ValueError("expected %s min_samples value, received %s"
+                             % ("integer", type(min_samples)))
+        self._MIN_SAMPLES = min_samples
+        
+    def get_min_samples(self):
+        return self._MIN_SAMPLES
+    
+    MIN_SAMPLES = property(get_min_samples, set_min_samples)
+    """
+    Minimal number of samples for each training instance. Default 3.
+    """
+            
     def _export(self, filename):
         if self._function_space is None:
             raise IllegalStateError("cannot export an untrained LexicalFunction model.")

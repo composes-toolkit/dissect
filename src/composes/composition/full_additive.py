@@ -28,13 +28,8 @@ class FullAdditive(CompositionModel):
     """
     _name = "full_additive"
     _mat_a_t = None
-    """
-    Transpose of matrix A parameter, of type Matrix.
-    """
     _mat_b_t = None
-    """
-    Transpose of matrix B parameter, of type Matrix.
-    """
+
     
     def __init__(self, **kwargs):
         #TODO here; very important, should be able to set the intercept
@@ -103,8 +98,13 @@ class FullAdditive(CompositionModel):
         
     def get_regression_learner(self):
         return self._regression_learner
+    
     regression_learner = property(get_regression_learner, set_regression_learner)    
-
+    """
+    Regression method to be used in training, of type RegressionLearner.
+    Default is RidgeRegressionLearner(param=1).
+    """
+    
     def _build_id2column(self, arg1_space, arg2_space):
         return []
 
@@ -124,4 +124,18 @@ class FullAdditive(CompositionModel):
             else:
                 output_stream.write(str(DenseMatrix(self._mat_b_t).mat.T))
            
+    
+    def get_mat_a_t(self):
+        return self._mat_a_t
+    mat_a_t = property(get_mat_a_t) 
+    """
+    Transpose of matrix A parameter, of type Matrix.
+    """
+            
+    def get_mat_b_t(self):
+        return self._mat_b_t
+    mat_b_t = property(get_mat_b_t)
+    """
+    Transpose of matrix B parameter, of type Matrix.
+    """
     

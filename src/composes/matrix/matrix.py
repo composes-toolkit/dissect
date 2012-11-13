@@ -127,15 +127,26 @@ class Matrix(object):
     
     def set_mat(self, mat_):
         self._mat = mat_
-    
-    def get_shape(self):
-        return self.mat.shape
-        
-    def copy(self):
-        return type(self)(self.mat.copy())
         
     mat = property(get_mat, set_mat)
+    """
+    Stores the actual matrix structure of the Matrix object.
+    Of type numpy.matrix for DenseMatrix, and scipy.sparse.csr_matrix
+    for SparseMatrix.
+    """
+        
+    def get_shape(self):
+        return self.mat.shape
+    
     shape = property(get_shape)
+    """
+    Shape of the matrix, tuple with two elements.
+    """
+            
+    def copy(self):
+        return type(self)(self.mat.copy())
+
+
     
     
     

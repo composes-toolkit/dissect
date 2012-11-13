@@ -92,9 +92,6 @@ class SparseMatrix(Matrix):
         else:
             return SparseMatrix(result)
     
-    def trace(self):
-        raise NotImplementedError("Sparse trace not implemented yet") 
-    
     def reshape(self, new_shape):
         """
         Reshapes current matrix.

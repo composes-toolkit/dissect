@@ -165,7 +165,7 @@ class IntegrationTest(unittest.TestCase):
         
 
 
-    def Ttest_exercise_red_full(self):
+    def test_exercise_red_full(self):
 
         print "Applying PPMI..."
         self.space = self.space.apply(PpmiWeighting())

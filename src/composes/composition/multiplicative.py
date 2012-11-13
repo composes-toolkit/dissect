@@ -22,17 +22,22 @@ class Multiplicative(CompositionModel):
     _name = "multiplicative"
 
     def __init__(self):
-        '''
+        """
         Constructor
-        '''
+        """
         
-        
-    def train(self):    
-        raise NotImplementedError("Cannot train multiplicative model!")
+    def train(self):
+        """
+        Current multiplicative model cannot be trained, it has no parameters.
+        """    
+        raise IllegalOperationError("Cannot train multiplicative model!")
     
     def _compose(self, arg1_mat, arg2_mat):
         return arg1_mat.multiply(arg2_mat)
     
     def export(self, filename):
+        """
+        Current multiplicative model cannot be exported, it has no parameters.
+        """   
         raise IllegalOperationError("cannot export a Multiplicative model.")
             

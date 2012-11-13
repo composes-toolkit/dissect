@@ -26,9 +26,11 @@ class Linalg(object):
     with dense matrices as an input (i.e. with objects of type SparseMatrix/DenseMatrix).
     
     Implements:
-        svd
-        nmf
-        pinv
+        svd,
+        nmf (LIN algorithm, add citation here!),
+        pinv,
+        ordinary least squares regression,
+        ridge regression
     """
 
     _NMF_ALPHA = 1.0
