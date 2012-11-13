@@ -17,18 +17,48 @@ from composes.utils import log_utils as log
 logger = logging.getLogger(__name__)
 
 class CompositionModel(object):
-    '''
-    classdocs
-    '''
+    """
+    Parent class of the composition models.
+    """
+    
     _name = "no name"
+    """
+    String, name of the composition model.
+    """
+    
     composed_id2column = None
-
+    """
+    List of strings, the column strings of the resulted composed space.
+    """
+    
     def __init__(self):
-        '''
+        """
         Constructor
-        '''
+        """
             
-    def train(self, train_data, arg_space, phrase_space):    
+    def train(self, train_data, arg_space, phrase_space):
+        """
+        Trains a composition model and sets its learned parameters.
+        
+        Args:
+            train_data: list of string tuples. Each tuple contains 3 
+            string elements: (arg1, arg2, phrase).
+            
+            arg_space: argument space(s). Space object or a tuple of two 
+            Space objects (e.g. my_space, or (my_space1, my_space2)). 
+            If two spaces are provided, arg1 elements of train data are 
+            interpreted in space1, and arg2 in space2.
+        
+            phrase space: phrase space, of type Space.
+            
+        Calls the specific training routine of the current composition
+        model. Training tuples which contain strings not found in their 
+        respective spaces are ignored.
+        
+        The id2column attribute of the resulted composed space is set to
+        be equal to that of the phrase space given as an input.
+        """
+            
         start = time.time()
         
         arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
@@ -61,6 +91,25 @@ class CompositionModel(object):
     
     
     def compose(self, data, arg_space):
+        """
+        Uses a composition model to compose elements.
+        
+        Args:
+            data: data to be composed. List of tuples, each containing 3
+            strings: (arg1, arg2, composed_phrase). arg1 and arg2 are the 
+            elements to be composed and composed_phrase is the string associated
+            to their composition.
+            
+            arg_space: argument space(s). Space object or a tuple of two 
+            Space objects (e.g. my_space, or (my_space1, my_space2)). 
+            If two spaces are provided, arg1 elements of data are 
+            interpreted in space1, and arg2 in space2.
+        
+        Returns:
+            composed space: a new object of type Space, containing the 
+            phrases obtained through composition.
+            
+        """
         start = time.time()
          
         arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
@@ -120,7 +169,9 @@ class CompositionModel(object):
         
  
     def valid_data_to_lists(self, data, (row2id1, row2id2, row2id3)):
-        
+        """
+        TO BE MOVED TO A UTILS MODULE!
+        """
         list1 = []
         list2 = []
         list3 = []

@@ -1,4 +1,7 @@
 
+ sphinx-apidoc -f -o ./source /home/georgianadinu/work/localtoolkit/toolkit/src/composes/ 
+ 
+ 
 1. TEST BUILD CORE:
 	1.1 MEN + (25K X 10K) NOUNS + VERBS CORE MATRIX
 		INPUT CORE DATA:

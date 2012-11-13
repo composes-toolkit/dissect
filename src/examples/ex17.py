@@ -14,8 +14,9 @@ train_data = [("book_function", "car", "my_car_book"),
 arg_space = io_utils.load("./data/out/ex01.pkl")
 phrase_space = io_utils.load("data/out/PHRASE_SS.ex10.pkl")
 
-print "\nDefault LSTSQ regression"
+print "\nDefault regression:"
 my_comp = LexicalFunction()
+print type(my_comp.regression_learner).__name__
 my_comp._MIN_SAMPLES = 1
 my_comp.train(train_data, arg_space, phrase_space)
 
@@ -26,8 +27,8 @@ cooc_mat = my_comp.function_space.cooccurrence_matrix
 cooc_mat.reshape(my_comp.function_space.element_shape)
 print cooc_mat
 
-print "\nRidge Regression with lambda = 1"
-rr_learner=RidgeRegressionLearner(param = 1,
+print "\nRidge Regression with lambda = 2"
+rr_learner=RidgeRegressionLearner(param = 2,
                                   intercept = False, 
                                   crossvalidation=False)
 my_comp = LexicalFunction(learner = rr_learner)

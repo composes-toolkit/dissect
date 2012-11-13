@@ -6,18 +6,10 @@ Created on Nov 5, 2012
 import unittest
 from composes.similarity.cos import CosSimilarity
 from composes.semantic_space.peripheral_space import PeripheralSpace
-from composes.semantic_space.space import Space
 from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
 from composes.transformation.dim_reduction.svd import Svd
-from composes.transformation.dim_reduction.nmf import Nmf 
-from composes.transformation.feature_selection.top_feature_selection import TopFeatureSelection 
 from composes.composition.lexical_function import LexicalFunction
-from composes.composition.full_additive import FullAdditive
-from composes.composition.weighted_additive import WeightedAdditive
-from composes.composition.multiplicative import Multiplicative
-from composes.composition.dilation import Dilation 
 from composes.utils.regression_learner import RidgeRegressionLearner
-from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.transformation.scaling.row_normalization import RowNormalization
 
 import composes.utils.io_utils as io_utils
@@ -44,15 +36,6 @@ class IntegrationTest3D(unittest.TestCase):
         
         space_file = data_path + "CORE_SS.verbnoun.core.pkl"
         self.space = io_utils.load(space_file)
-
-        #space_file = data_path + "GS11data.train_n_vectors_freq10_svd_100_pmi"
-        #self.space = Space.build(data = space_file,
-        #                            format = "dm"                                
-        #                            )
-        #space_file = data_path + "GS11data.train_nvn_vectors_freq10_svd_100_pmi"
-        #self.per_space = Space.build(data = space_file,
-        #                            format = "dm"                                
-        #                            )
         
     def tearDown(self):
         self.space = None
@@ -62,11 +45,11 @@ class IntegrationTest3D(unittest.TestCase):
         print "Applying PPMI..."
         self.space = self.space.apply(PpmiWeighting())
         
-        #print "Applying feature selection..."
-        #self.space = self.space.apply(TopFeatureSelection(2000))
-        
         print "Applying SVD..."
         self.space = self.space.apply(Svd(dim))
+        
+        print "Row-normalizing..."
+        self.space = self.space.apply(RowNormalization())
         
     def exercise(self, learner_):
         
@@ -76,6 +59,7 @@ class IntegrationTest3D(unittest.TestCase):
                 
         print "Training Lexical Function composition model STEP1..."
         vo_model = LexicalFunction(learner = learner_)
+        vo_model._MIN_SAMPLES = 5
         vo_model.train(train_data_vo, self.space, self.per_space)
         print "Trained %d distinct VO phrases!" % len(vo_model.function_space.id2row)
         
@@ -114,13 +98,13 @@ class IntegrationTest3D(unittest.TestCase):
         print "Learner:", type(learner_).__name__
         print "Dim CORE space:", self.space.cooccurrence_matrix.shape[1]
         print "Dim PER space:", self.per_space.cooccurrence_matrix.shape[1]
-        print scoring_utils.score(gold, pred, "spearman")
-        print scoring_utils.score(gold, pred, "pearson")
+        sp = scoring_utils.score(gold, pred, "spearman")
+        prs =  scoring_utils.score(gold, pred, "pearson")
+        return sp, prs 
 
-    def test_exercise_sparse_sparse_svd50(self):
+    def test_exercise_dense_dense_svd100(self):
         
         self.apply_trans(100)
-        self.space = self.space.apply(RowNormalization())  
         
         print "Creating peripheral space.."
         self.per_space = PeripheralSpace.build(self.space,
@@ -128,42 +112,67 @@ class IntegrationTest3D(unittest.TestCase):
                                           cols = self.data_path + "per.raw.SVO.cols",
                                           format = "sm"                                
                                           )
-        #self.exercise(LstsqRegressionLearner())
-        self.exercise(RidgeRegressionLearner())
-        #self.exercise(RidgeRegressionLearner())
  
- 
-    def tttest_exercise_sparse_sparse_svd50(self):
- 
-        print "The right one!"
-        self.space = self.space.apply(RowNormalization())
-        self.per_space = self.per_space.apply(RowNormalization())
-               
-        self.exercise(RidgeRegressionLearner(param=2))
+        res = self.exercise(RidgeRegressionLearner(param=2))
+        print "SVD 100, row-norm, RidgeRegression-lambda=2, MIN_SAMPLES=5:", res 
+        self.assertAlmostEqual(res[0], 0.3404, 3)
+        self.assertAlmostEqual(res[1], 0.3122, 3)
         
+        #print self.exercise(RidgeRegressionLearner())
+        #(0.32258989594699261, 0.29441216345028631)
+ 
+    def test_exercise_dense_dense_svd10(self):
         
-    def tttest_exercise_sparse_sparse_svd20_full_per(self):
-
-        self.apply_trans(100)
-        self.space = self.space.apply(RowNormalization())    
+        self.apply_trans(10)
+        
         print "Creating peripheral space.."
         self.per_space = PeripheralSpace.build(self.space,
                                           data = self.data_path + "per.raw.SVO.sm",
                                           cols = self.data_path + "per.raw.SVO.cols",
                                           format = "sm"                                
                                           )
+ 
+        res = self.exercise(RidgeRegressionLearner())
+        self.assertAlmostEqual(res[0], 0.2977, 3)
+        self.assertAlmostEqual(res[1], 0.2175, 3)
         
-             
-        #self.exercise(LstsqRegressionLearner())
-        self.exercise(RidgeRegressionLearner(param=2))
-        #self.exercise(RidgeRegressionLearner())
+    def test_exercise_sparse_sparse_svd100(self):
+        
+        self.apply_trans(10)
+        
+        print "Creating peripheral space.."
+        self.per_space = PeripheralSpace.build(self.space,
+                                          data = self.data_path + "per.raw.SVO.sm",
+                                          cols = self.data_path + "per.raw.SVO.cols",
+                                          format = "sm"                                
+                                          )
+        self.space.to_sparse()
+        self.per_space.to_sparse()
+        
+        res = self.exercise(RidgeRegressionLearner(param=2))
+        print "SVD 100, row-norm, RidgeRegression-lambda=2, MIN_SAMPLES=5:", res 
+        self.assertAlmostEqual(res[0], 0.3053, 3)
+        
+ 
+    def test_exercise_sparse_dense_svd100(self):
+        
+        self.apply_trans(10)
+        
+        print "Creating peripheral space.."
+        self.per_space = PeripheralSpace.build(self.space,
+                                          data = self.data_path + "per.raw.SVO.sm",
+                                          cols = self.data_path + "per.raw.SVO.cols",
+                                          format = "sm"                                
+                                          )
+        self.space.to_sparse()
+        
+        res = self.exercise(RidgeRegressionLearner(param=2))
+        print "SVD 100, row-norm, RidgeRegression-lambda=2, MIN_SAMPLES=5:", res 
+        self.assertAlmostEqual(res[0], 0.3053, 3)
          
-    def ttest_exercise_sparse_sparse_svd100(self):   
+    def test_exercise_dense_sparse_svd100(self):
         
-        print "Applying PPMI..."
-        self.space = self.space.apply(PpmiWeighting())
-        print "Applying SVD..."
-        self.space = self.space.apply(Svd(100))
+        self.apply_trans(10)
         
         print "Creating peripheral space.."
         self.per_space = PeripheralSpace.build(self.space,
@@ -171,115 +180,13 @@ class IntegrationTest3D(unittest.TestCase):
                                           cols = self.data_path + "per.raw.SVO.cols",
                                           format = "sm"                                
                                           )
-        #self.exercise(LstsqRegressionLearner())
-        self.exercise(RidgeRegressionLearner(param=1))
-        #self.exercise(RidgeRegressionLearner())
-
-    def ttest_create_new_train_data(self):
+        self.per_space.to_sparse()
         
-        print "Creating peripheral space.."
-        self.per_space = PeripheralSpace.build(self.space,
-                                          data = self.data_path + "per.raw.SVO.sm",
-                                          cols = self.data_path + "per.raw.SVO.cols",
-                                          format = "sm"                                
-                                          )
+        res = self.exercise(RidgeRegressionLearner(param=2))
+        print "SVD 100, row-norm, RidgeRegression-lambda=2, MIN_SAMPLES=5:", res 
+        self.assertAlmostEqual(res[0], 0.3053, 3)
         
-        train_data_file = self.data_path + "GS11_SVO_train.txt"
-        train_data_vo = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
-        list1, list2, list3 = self.valid_train_data_to_lists(train_data_vo,
-                                                             (self.space.row2id,
-                                                              self.per_space.row2id), 
-                                                             self.space.cooccurrence_matrix, 
-                                                             self.per_space.cooccurrence_matrix) 
         
-        print len(list1)
-        f = open(train_data_file + ".pruned", "w")
-        for i in xrange(len(list1)):
-            print >>f, list1[i], list2[i], list3[i]
-        f.close()    
-        
-        train_data_file = self.data_path + "GS11_V_train.txt"
-        train_data_v = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
-        list1, list2, list3 = self.valid_train_data_to_lists(train_data_v,
-                                                             (self.space.row2id,
-                                                              None), 
-                                                             self.space.cooccurrence_matrix, 
-                                                             self.per_space.cooccurrence_matrix) 
-        
-        f = open(train_data_file + ".pruned", "w")
-        print len(list1)
-        for i in xrange(len(list1)):
-            print >>f, list1[i], list2[i], list3[i]
-        f.close()      
-        
-    def valid_train_data_to_lists(self, data, (row2id2, row2id3), arg_mat, phrase_mat):
-
-        list1 = []
-        list2 = []
-        list3 = []
-         
-        j = 0
-        for i in xrange(len(data)):
-            sample = data[i]
-            
-            cond = True
-            
-            if not row2id2 is None:
-                cond = cond and sample[1] in row2id2
-            
-            if not row2id3 is None:
-                cond = cond and sample[2] in row2id3
-                cond = cond and phrase_mat[row2id3[sample[2]]].mat.nnz >= 10
-
-            if cond:
-                list1.append(sample[0]) 
-                list2.append(sample[1])
-                list3.append(sample[2])
-                j += 1
-    
-        if i + 1 != j:
-            print ("%d (out of %d) lines are ignored because one of the elements is not found in its semantic space"
-                 % ((i + 1) - j, (i + 1)))
-            
-        if not list1:
-            raise ValueError("No valid training data found!")
-        
-        return list1, list2, list3
-    
-    def ttest_exercise_dense_dense_svd100(self):   
-        
-        self.space.to_dense()
-        
-        print "Applying PPMI..."
-        self.space = self.space.apply(PpmiWeighting())
-        print "Applying SVD..."
-        self.space = self.space.apply(Svd(100))
-        
-        print "Creating peripheral space.."
-        self.per_space = PeripheralSpace.build(self.space,
-                                          data = self.data_path + "per.raw.SVO.sm",
-                                          cols = self.data_path + "per.raw.SVO.cols",
-                                          format = "sm"                                
-                                          )
-        
-        self.exercise(LstsqRegressionLearner())
-        #self.exercise(RidgeRegressionLearner(param=2))
-        #self.exercise(RidgeRegressionLearner())
-        
-    def ttest_exercise_sparse_sparse_svd150(self):   
-        
-        self.apply_trans(150)
-    
-        print "Creating peripheral space.."
-        self.per_space = PeripheralSpace.build(self.space,
-                                          data = self.data_path + "per.raw.SVO.sm",
-                                          cols = self.data_path + "per.raw.SVO.cols",
-                                          format = "sm"                                
-                                          )
-        
-        self.exercise(LstsqRegressionLearner())
-        self.exercise(RidgeRegressionLearner(param=2))
-        self.exercise(RidgeRegressionLearner())
              
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

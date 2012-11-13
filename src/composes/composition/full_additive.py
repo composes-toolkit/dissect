@@ -26,13 +26,33 @@ class FullAdditive(CompositionModel):
     and :math:`A`, :math:`B` are two matrices.
           
     """
-    
     _name = "full_additive"
+    _mat_a_t = None
+    """
+    Transpose of matrix A parameter, of type Matrix.
+    """
+    _mat_b_t = None
+    """
+    Transpose of matrix B parameter, of type Matrix.
+    """
     
     def __init__(self, **kwargs):
-        '''
-        Constructor
-        '''
+        #TODO here; very important, should be able to set the intercept
+        #when mat a and mat b are given , to true or false. now by default is
+        #is false
+        """
+        Constructor.
+        
+        Args:
+            A= : matrix A, of matrix-like type (Matrix, ndarray, 
+            numpy matrix, scipy matrix). Optional (parameters can be set
+            through training.)
+            
+            B= : matrix B, matrix-like type. Optional.
+        
+            learner= : regression learner object, of type RegressionLearner.
+            Optional, default RidgeRegressionLearner(lambda=1). 
+        """
         if "A" in kwargs and "B" in kwargs:
             mat_a = kwargs["A"]
             mat_b = kwargs["B"]
@@ -50,12 +70,10 @@ class FullAdditive(CompositionModel):
             self._has_intercept = False
             
         else:
-            self._regression_learner = RidgeRegressionLearner()
+            self._regression_learner = RidgeRegressionLearner(param=1)
             if "learner" in kwargs:
                 self._regression_learner = kwargs["learner"] 
             self._has_intercept = self._regression_learner.has_intercept()
-            self._mat_a_t = None
-            self._mat_b_t = None
         
         
     def _train(self, arg1_mat, arg2_mat, phrase_mat):

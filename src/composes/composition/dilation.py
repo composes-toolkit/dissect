@@ -23,11 +23,19 @@ class Dilation(CompositionModel):
 
     _name = "dilation"
     
+    _lambda = 2
+    """
+    Lambda parameter. Default, set to lambda=2.
+    """
+            
     def __init__(self, lambda_=None):
-        '''
-        Constructor
-        '''
-        self._lambda = 2
+        """
+        Constructor.
+        
+        Args:
+            lambda_ : numeric, value of the lambda parameter. Optional.
+        """
+
         if not lambda_ is None:
             if not is_numeric(lambda_):
                 raise ValueError("Parameter not numeric: %s " %(type(lambda_)))

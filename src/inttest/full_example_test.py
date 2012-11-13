@@ -38,44 +38,25 @@ class IntegrationTest(unittest.TestCase):
         space_file = data_path + "CORE_SS.verbnoun.core.pkl"
         self.space = io_utils.load(space_file)
 
-        #space_file = data_path + "ML08data.train_n_vectors_freq10_svd_100_pmi"
-        #self.space = Space.build(data = space_file,
-        #                            format = "dm"                                
-        #                            )
-        #self.space = self.space.apply(RowNormalization())
-        
-        #space_file = data_path + "ML08data.train_nvn_vectors_freq10_svd_100_pmi"
-        #self.per_space = Space.build(data = space_file,
-        #                            format = "dm"                                
-        #                            )
-        #self.per_space = self.per_space.apply(RowNormalization())
-
         
     def tearDown(self):
         self.space = None
         self.per_space = None
             
-    def apply_trans(self):
+    def apply_trans(self, trans):
         print "Applying PPMI..."
         self.space = self.space.apply(PpmiWeighting())
         
-        print "Applying feature selection..."
-        #self.space = self.space.apply(TopFeatureSelection(2000))
-        
         print "Applying SVD..."
-        self.space = self.space.apply(Nmf(200))
+        self.space = self.space.apply(trans)
         
     def exercise(self):
-        
-        #reading in train data
-        
        
         train_data_file = self.data_path + "ML08_SV_train.txt"
         train_data = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
         
         print "Training Lexical Function composition model..."
         comp_model = LexicalFunction(learner = RidgeRegressionLearner())
-        #comp_model = LexicalFunction(learner = LstsqRegressionLearner())
         comp_model.train(train_data, self.space, self.per_space)
 
         print "Composing phrases..."
@@ -93,39 +74,47 @@ class IntegrationTest(unittest.TestCase):
 
         #use this composed space to assign similarities
         print "Scoring lexical function..."
-        #self.assertAlmostEqual(scoring_utils.score(gold, pred, "spearman"), 0.22605, 3)
-        print scoring_utils.score(gold, pred, "spearman")
+        lex_func_res = (scoring_utils.score(gold, pred, "spearman"), 
+                        scoring_utils.score(gold, pred, "pearson"))
+        print lex_func_res
         
-        #sys.exit()
-        #print "Training Full Additive composition model..."
-        #comp_model = FullAdditive(learner = RidgeRegressionLearner())
-        #comp_model.train(train_data, self.space, self.per_space)
+        print "Training Full Additive composition model..."
+        comp_model = FullAdditive()
+        comp_model.train(train_data, self.space, self.per_space)
 
-        #composed_space = comp_model.compose(test_phrases, self.space)
-        #pred = composed_space.get_sims(test_pairs, CosSimilarity())
-        #self.assertAlmostEqual(scoring_utils.score(gold, pred, "spearman"), -0.0924, 3)
-        #print scoring_utils.score(gold, pred, "spearman")
+        composed_space = comp_model.compose(test_phrases, self.space)
+        pred = composed_space.get_sims(test_pairs, CosSimilarity())
+        
+        fadd_res = (scoring_utils.score(gold, pred, "spearman"), 
+                         scoring_utils.score(gold, pred, "pearson"))
+        print fadd_res
                 
         print "Multiplicative composition model..."
         comp_model = Multiplicative()
         composed_space = comp_model.compose(test_phrases, self.space)
         pred = composed_space.get_sims(test_pairs, CosSimilarity())
-        #self.assertAlmostEqual(scoring_utils.score(gold, pred, "spearman"), 0.02501, 3)
-        print scoring_utils.score(gold, pred, "spearman")
+        
+        mult_res = (scoring_utils.score(gold, pred, "spearman"), 
+                         scoring_utils.score(gold, pred, "pearson"))
+        print mult_res
         
         print "Simple additive composition model..."
         comp_model = WeightedAdditive(1, 1)
         composed_space = comp_model.compose(test_phrases, self.space.apply(RowNormalization()))
         pred = composed_space.get_sims(test_pairs, CosSimilarity())
-        #self.assertAlmostEqual(scoring_utils.score(gold, pred, "spearman"), 0.03076, 3)
-        print scoring_utils.score(gold, pred, "spearman")
+        
+        add_res = (scoring_utils.score(gold, pred, "spearman"), 
+                   scoring_utils.score(gold, pred, "pearson"))
+        print add_res
                 
         print "Simple dilation composition model..."
         comp_model = Dilation()
         composed_space = comp_model.compose(test_phrases, self.space)
         pred = composed_space.get_sims(test_pairs, CosSimilarity())
-        #self.assertAlmostEqual(scoring_utils.score(gold, pred, "spearman"), 0.01670, 3)
-        print scoring_utils.score(gold, pred, "spearman")
+
+        dil_res = (scoring_utils.score(gold, pred, "spearman"), 
+                   scoring_utils.score(gold, pred, "pearson"))
+        print dil_res
         
         print "Training Weighted Additive composition model..."
         comp_model = WeightedAdditive()
@@ -133,84 +122,50 @@ class IntegrationTest(unittest.TestCase):
         composed_space = comp_model.compose(test_phrases,  self.space.apply(RowNormalization()))
         pred = composed_space.get_sims(test_pairs, CosSimilarity())
         
-        #self.assertAlmostEqual(comp_model.alpha, 0.01334, 3)
-        #self.assertAlmostEqual(comp_model.beta, 0.02019, 3)
-        #self.assertAlmostEqual(scoring_utils.score(gold, pred, "spearman"), 0.01814, 3)
-        print scoring_utils.score(gold, pred, "spearman")
+        print "alpha", comp_model.alpha
+        print "beta", comp_model.beta
+        
+        t_add_res = (scoring_utils.score(gold, pred, "spearman"), 
+                     scoring_utils.score(gold, pred, "pearson"))
+        print t_add_res
                 
         print "Training Dilation composition model..."
         comp_model = Dilation()
-        comp_model.train(train_data, self.space, self.per_space)
+        comp_model.train(train_data, self.space,  self.per_space)
         composed_space = comp_model.compose(test_phrases, self.space)
         pred = composed_space.get_sims(test_pairs, CosSimilarity())
         
-        #self.assertAlmostEqual(comp_model._lambda, 0.05064, 3)
-        #self.assertAlmostEqual(scoring_utils.score(gold, pred, "spearman"), 0.02357, 3)
-        
-        print scoring_utils.score(gold, pred, "spearman")        
+        print "lambda", comp_model._lambda
+        t_dil_res = (scoring_utils.score(gold, pred, "spearman"), 
+                     scoring_utils.score(gold, pred, "pearson"))
+        print t_dil_res      
                 
-    def ttest_exercise_sparse_sparse_svd50(self):
- 
-        print "The right one!"       
-        self.exercise()
-        
-    
-    def test_exercise_sparse_sparse(self):
-        
-        self.apply_trans()
-    
-        print "Creating peripheral space.."
-        self.per_space = PeripheralSpace.build(self.space,
-                                          data = self.data_path + "per.raw.SV.sm",
-                                          cols = self.data_path + "per.raw.SV.cols",
-                                          format = "sm"                                
-                                          )
-        self.exercise()
-
-    def ttest_exercise_dense_sparse(self):
-
-        self.space.to_dense()
-        self.apply_trans()
-        
-        print "Creating peripheral space.."
-        self.per_space = PeripheralSpace.build(self.space,
-                                          data = self.data_path + "per.raw.SV.sm",
-                                          cols = self.data_path + "per.raw.SV.cols",
-                                          format = "sm"                                
-                                          )
-        
-        self.exercise()
-        
-    def ttest_exercise_dense_dense(self):
-        
-        self.space.to_dense()
-        self.apply_trans()
-        print "Creating peripheral space.."
-        
-        self.per_space = PeripheralSpace.build(self.space,
-                                          data = self.data_path + "per.raw.SV.sm",
-                                          cols = self.data_path + "per.raw.SV.cols",
-                                          format = "sm"                                
-                                          )
-        self.per_space.to_dense()
-        
-        self.exercise()
-
-    def ttttest_exercise_sparse_dense(self):
-        
-        #self.apply_trans()
+        return lex_func_res, fadd_res, mult_res, add_res, dil_res, t_add_res, t_dil_res
             
-        #print "Creating peripheral space.."
-        #self.per_space = PeripheralSpace.build(self.space,
-        #                                  data = self.data_path + "per.raw.SV.sm",
-        #                                  cols = self.data_path + "per.raw.SV.cols",
-        #                                  format = "sm"                                
-        #                                  )
-        #self.per_space.to_dense()
-        
-        self.exercise()        
 
-    def ttest_exercise_red_full(self):
+    
+    def test_exercise_svd200(self):
+        
+        self.apply_trans(Svd(200))
+    
+        print "Creating peripheral space.."
+        self.per_space = PeripheralSpace.build(self.space,
+                                          data = self.data_path + "per.raw.SV.sm",
+                                          cols = self.data_path + "per.raw.SV.cols",
+                                          format = "sm"                                
+                                          )
+        res = self.exercise()
+        self.assertAlmostEqual(res[0][0], 0.2420, 3)
+        #self.assertAlmostEqual(res[1][0], 0.2420, 3)
+        self.assertAlmostEqual(res[2][0], 0.0350, 3)
+        self.assertAlmostEqual(res[3][0], 0.1081, 3)
+        self.assertAlmostEqual(res[4][0], -0.0505, 3)
+        self.assertAlmostEqual(res[5][0], 0.1038, 3)
+        self.assertAlmostEqual(res[6][0], -0.0475, 3)
+        
+
+
+    def Ttest_exercise_red_full(self):
 
         print "Applying PPMI..."
         self.space = self.space.apply(PpmiWeighting())
@@ -250,88 +205,16 @@ class IntegrationTest(unittest.TestCase):
         pred = composed_space.get_sims(test_pairs, CosSimilarity())
 
         #use this composed space to assign similarities
-        print "Scoring lexical function..."
-        print scoring_utils.score(gold, pred, "spearman")     
-        print scoring_utils.score(gold, pred, "pearson")
+        print "Scoring lexical function...Spearman, Pearson:"
+        sp = scoring_utils.score(gold, pred, "spearman")
+        prs = scoring_utils.score(gold, pred, "pearson") 
+        print sp, prs     
         
         #reduced to FULL
         print "Element shape of the function space:", comp_model.function_space._element_shape
-        self.assertAlmostEqual(scoring_utils.score(gold, pred, "spearman"), 0.2933, 3)
-
+        self.assertAlmostEqual(sp, 0.2961, 3)
+        self.assertAlmostEqual(prs, 0.2942, 3)
           
-    def ttest_exercise_full_red(self):
-   
-        full_space = self.space
-        
-        self.apply_trans()
-            
-        print "Creating peripheral space.."
-        self.per_space = PeripheralSpace.build(self.space,
-                                          data = self.data_path + "per.raw.SV.sm",
-                                          cols = self.data_path + "per.raw.SV.cols",
-                                          format = "sm"                                
-                                          )
-        self.per_space.to_sparse()
-        #reading in train data
-        train_data_file = self.data_path + "ML08_SV_train.txt"
-        train_data = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
-        
-        print "Training Lexical Function composition model..."
-        comp_model = LexicalFunction(learner = RidgeRegressionLearner(param=2))
-        comp_model.train(train_data, full_space, self.per_space)
-
-        print "Composing phrases..."
-        test_phrases_file = self.data_path + "ML08nvs_test.txt" 
-        test_phrases = io_utils.read_tuple_list(test_phrases_file, fields=[0,1,2])
-        composed_space = comp_model.compose(test_phrases, full_space)
-        
-        print "Reading similarity test data..."
-        test_similarity_file = self.data_path + "ML08data_new.txt"
-        test_pairs = io_utils.read_tuple_list(test_similarity_file, fields=[0,1])
-        gold = io_utils.read_list(test_similarity_file, field=2)
-        
-        print "Computing similarity with lexical function..."
-        pred = composed_space.get_sims(test_pairs, CosSimilarity())
-
-        #use this composed space to assign similarities
-        print "Scoring lexical function..."
-        print scoring_utils.score(gold, pred, "spearman")
-        print scoring_utils.score(gold, pred, "pearson")
-        
-    def ttest_exercise_full_full(self):
-
-        print "Creating peripheral space.."
-        self.per_space = PeripheralSpace.build(self.space,
-                                          data = self.data_path + "per.raw.SV.sm",
-                                          cols = self.data_path + "per.raw.SV.cols",
-                                          format = "sm"                                
-                                          )
-        
-        #reading in train data
-        train_data_file = self.data_path + "ML08_SV_train.txt"
-        train_data = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
-        
-        print "Training Lexical Function composition model..."
-        comp_model = LexicalFunction(learner = RidgeRegressionLearner(param=2))
-        comp_model.train(train_data, self.space, self.per_space)
-
-        print "Composing phrases..."
-        test_phrases_file = self.data_path + "ML08nvs_test.txt" 
-        test_phrases = io_utils.read_tuple_list(test_phrases_file, fields=[0,1,2])
-        composed_space = comp_model.compose(test_phrases, self.space)
-        
-        print "Reading similarity test data..."
-        test_similarity_file = self.data_path + "ML08data_new.txt"
-        test_pairs = io_utils.read_tuple_list(test_similarity_file, fields=[0,1])
-        gold = io_utils.read_list(test_similarity_file, field=2)
-        
-        print "Computing similarity with lexical function..."
-        pred = composed_space.get_sims(test_pairs, CosSimilarity())
-
-        #use this composed space to assign similarities
-        print "Scoring lexical function..."
-        print scoring_utils.score(gold, pred, "spearman")     
-        print scoring_utils.score(gold, pred, "pearson")
                  
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

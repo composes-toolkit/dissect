@@ -570,7 +570,7 @@ class LexicalFunctionTest(unittest.TestCase):
                                              vo_space.cooccurrence_matrix.mat[3])
         
         # test train 3d
-        model2 = LexicalFunction()
+        model2 = LexicalFunction(learner=LstsqRegressionLearner(intercept=False))
         model2._MIN_SAMPLES = 1
         model2.train(train_v_data, n_space, vo_space)
         v_space = model2.function_space
