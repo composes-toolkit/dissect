@@ -115,13 +115,13 @@ class FullAdditive(CompositionModel):
         with open(filename, "w") as output_stream:
             output_stream.write("A\n")
             output_stream.write(str(DenseMatrix(self._mat_a_t).mat.T))
+            output_stream.write("\nB\n")           
             
-            #TODO: bug here, only if it has intercept!!! do this!
-            output_stream.write("\nB\n")
-            output_stream.write(str(DenseMatrix(self._mat_b_t[:-1,]).mat.T))
-            
-            output_stream.write("\nIntercept\n")
-            intercept = DenseMatrix(self._mat_b_t[-1:,]).mat.T
-            output_stream.write(str(intercept))
+            if self._has_intercept:
+                output_stream.write(str(DenseMatrix(self._mat_b_t[:-1,]).mat.T))
+                output_stream.write("\nIntercept\n")
+                output_stream.write(str(DenseMatrix(self._mat_b_t[-1,]).mat.T))
+            else:
+                output_stream.write(str(DenseMatrix(self._mat_b_t).mat.T))
            
     
