@@ -109,6 +109,7 @@ def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
         
         sim = sim_dict[sim_measure]
         out_file = '%s/%s.%s' % (out_dir, descr, sim_measure)
+        io_utils.create_parent_directories(out_file)
         
         with open(in_file) as in_stream, open(out_file,"w") as out_stream:
             for line in in_stream:

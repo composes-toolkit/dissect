@@ -64,19 +64,22 @@ def compute_neighbours(in_file, no_neighbours, out_dir, sim_measure, space_files
                 "dot_prod": DotProdSimilarity(),
                 "euclidean": EuclideanSimilarity()}
     
-    in_descr = "NEIGHBOURS." + in_file.split("/")[-1] 
-    
     if not sim_measure in sim_dict:
         raise ValueError("Similarity measure:%s not defined" % sim_measure)
     
     space = io_utils.load(space_files[0], Space)
     space2 = None
+    space_descr = ".".join(space_files[0].split("/")[-1].split(".")[0:-1])
     if len(space_files) == 2:
         space2 = io_utils.load(space_files[1], Space)
-    
+        space_descr = ".".join([space_descr] + space_files[1].split("/")[-1].split(".")[0:-1])
+        
     sim = sim_dict[sim_measure]
-    out_file = '%s/%s.%s' % (out_dir, in_descr, sim_measure)
     
+    descr = ".".join(["NEIGHBOURS", in_file.split("/")[-1], space_descr])
+    out_file = '%s/%s.%s' % (out_dir, descr, sim_measure)
+    io_utils.create_parent_directories(out_file)
+        
     data = io_utils.read_list(in_file)
 
     print "Computing neighbours: %s" % sim_measure 

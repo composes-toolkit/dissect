@@ -17,7 +17,6 @@ import os
 from warnings import warn
 from ConfigParser import ConfigParser
 from composes.semantic_space.space import Space
-from composes.transformation.scaling.raw_weighting import RawWeighting
 from composes.transformation.scaling.epmi_weighting import EpmiWeighting
 from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
 from composes.transformation.scaling.plmi_weighting import PlmiWeighting
@@ -76,8 +75,7 @@ def usage(errno=0):
 
 def apply_weighting(space, w):
     
-    weightings_dict = {"raw":RawWeighting(),
-                      "plog":PlogWeighting(),
+    weightings_dict = {"plog":PlogWeighting(),
                       "ppmi":PpmiWeighting(),
                       "epmi":EpmiWeighting(), 
                       "plmi":PlmiWeighting()}
@@ -170,6 +168,7 @@ def print_space(space, out_dir, op_list, out_format):
     ops = [op for op in op_list if (op and (not op == "none"))]     
     space_descr = ".".join(ops)
     out_file = out_dir + "/" + space_descr
+    
     io_utils.save(space, out_file + ".pkl")
     if not out_format is None:
         space.export(out_file, format=out_format)
