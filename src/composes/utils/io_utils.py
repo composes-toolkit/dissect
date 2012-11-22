@@ -12,11 +12,16 @@ from warnings import warn
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
 from composes.utils.space_utils import assert_is_instance
+import struct
 
 def save(object_, file_name):
     create_parent_directories(file_name)
-    with open(file_name,'w') as f:
-        pickle.dump(object_, f, 2)
+    try:
+        with open(file_name,'w') as f:
+            pickle.dump(object_, f, 2)
+    except struct.error:
+        with open(file_name,'w') as f:
+            pickle.dump(object_, f, 0)
 
 def load(file_name, data_type=None):
     with open(file_name) as f:
