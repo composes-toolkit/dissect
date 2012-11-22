@@ -11,7 +11,6 @@ from composes.matrix.dense_matrix import DenseMatrix
 from composes.transformation.scaling.epmi_weighting import EpmiWeighting
 from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
 from composes.transformation.scaling.plog_weighting import PlogWeighting
-from composes.transformation.scaling.raw_weighting import RawWeighting
 from composes.transformation.dim_reduction.svd import Svd
 
 class PeripheralSpaceTest(unittest.TestCase):
@@ -87,7 +86,6 @@ class PeripheralSpaceTest(unittest.TestCase):
         
         w1 = EpmiWeighting()
         w2 = PlogWeighting()
-        w3 = RawWeighting()
         
         for core_s, per_mat, per_row, per_mat_out1, per_mat_out2 in test_cases:
             tmp_mat = per_mat.copy()
@@ -121,14 +119,14 @@ class PeripheralSpaceTest(unittest.TestCase):
             np.testing.assert_array_equal(tmp_core_mat, 
                                           core_s.cooccurrence_matrix.mat)
             
-            core_s3 = core_s2.apply(w3)
+            core_s3 = core_s2
             per_s4 = PeripheralSpace(core_s3, DenseMatrix(per_mat), per_row)
             np.testing.assert_array_almost_equal(per_s4.cooccurrence_matrix.mat, 
                                           per_mat_out2)
             self.assert_column_identical(per_s4, core_s2)
             self.assertListEqual(per_s4.id2row, per_row)
             self.assertListEqual(per_s4.operations, core_s3.operations)
-            self.assertEqual(len(per_s4.operations), 3)
+            self.assertEqual(len(per_s4.operations), 2)
 
             np.testing.assert_array_equal(tmp_core_mat, 
                                           core_s.cooccurrence_matrix.mat)
@@ -139,7 +137,6 @@ class PeripheralSpaceTest(unittest.TestCase):
         test_cases = [(self.space2, self.us, self.us2, self.x, self.row3)]
         red1 = Svd(2)
         red2 = Svd(1)
-        w = RawWeighting()
         
         for in_s, expected_mat, expected_mat2, data, rows in test_cases:
             in_s = in_s.apply(red1)
@@ -166,17 +163,6 @@ class PeripheralSpaceTest(unittest.TestCase):
             self.assertDictEqual(per_s.column2id, {})
             self.assertEqual(2, len(per_s.operations))
             
-            in_s = in_s.apply(w)
-            per_s = PeripheralSpace(in_s, DenseMatrix(data), rows)
-
-            np.testing.assert_array_almost_equal(expected_mat2, 
-                                                 per_s.cooccurrence_matrix.mat,
-                                                 2)
-            self.assertListEqual(per_s.id2row, in_s.id2row)
-            self.assertListEqual(per_s.id2column, [])
-            self.assertDictEqual(per_s.row2id, in_s.row2id)
-            self.assertDictEqual(per_s.column2id, {})
-            self.assertEqual(3, len(per_s.operations))
             
     def test_add_rows_svd(self):
         test_cases = [(self.space2, np.vstack([self.us2[0], self.us2[0]]), 

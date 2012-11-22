@@ -4,6 +4,7 @@ Created on Nov 5, 2012
 @author: georgianadinu
 '''
 import unittest
+import numpy as np
 from composes.similarity.cos import CosSimilarity
 from composes.semantic_space.peripheral_space import PeripheralSpace
 from composes.semantic_space.space import Space
@@ -38,6 +39,16 @@ class IntegrationTest(unittest.TestCase):
         space_file = data_path + "CORE_SS.verbnoun.core.pkl"
         self.space = io_utils.load(space_file)
 
+        train_data_file = self.data_path + "ML08_SV_train.txt"
+        self.train_data = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
+
+        test_phrases_file = self.data_path + "ML08nvs_test.txt" 
+        self.test_phrases = io_utils.read_tuple_list(test_phrases_file, fields=[0,1,2])
+        
+        print "Reading similarity test data..."
+        test_similarity_file = self.data_path + "ML08data_new.txt"
+        self.test_pairs = io_utils.read_tuple_list(test_similarity_file, fields=[0,1])
+        self.gold = io_utils.read_list(test_similarity_file, field=2)        
         
     def tearDown(self):
         self.space = None
@@ -49,102 +60,100 @@ class IntegrationTest(unittest.TestCase):
         
         print "Applying SVD..."
         self.space = self.space.apply(trans)
+    
+    def lex_ful_exercise(self, learner_=None):
         
-    def exercise(self):
-       
-        train_data_file = self.data_path + "ML08_SV_train.txt"
-        train_data = io_utils.read_tuple_list(train_data_file, fields=[0,1,2])
-        
+        if learner_ is None:
+            learner_ = RidgeRegressionLearner(param=1)
+            
         print "Training Lexical Function composition model..."
-        comp_model = LexicalFunction(learner = RidgeRegressionLearner())
-        comp_model.train(train_data, self.space, self.per_space)
+        comp_model = LexicalFunction(learner = learner_)
+        comp_model.train(self.train_data, self.space, self.per_space)
 
         print "Composing phrases..."
-        test_phrases_file = self.data_path + "ML08nvs_test.txt" 
-        test_phrases = io_utils.read_tuple_list(test_phrases_file, fields=[0,1,2])
-        composed_space = comp_model.compose(test_phrases, self.space)
-        
-        print "Reading similarity test data..."
-        test_similarity_file = self.data_path + "ML08data_new.txt"
-        test_pairs = io_utils.read_tuple_list(test_similarity_file, fields=[0,1])
-        gold = io_utils.read_list(test_similarity_file, field=2)
+        composed_space = comp_model.compose(self.test_phrases, self.space)
         
         print "Computing similarity with lexical function..."
-        pred = composed_space.get_sims(test_pairs, CosSimilarity())
+        pred = composed_space.get_sims(self.test_pairs, CosSimilarity())
 
         #use this composed space to assign similarities
         print "Scoring lexical function..."
-        lex_func_res = (scoring_utils.score(gold, pred, "spearman"), 
-                        scoring_utils.score(gold, pred, "pearson"))
+        lex_func_res = (scoring_utils.score(self.gold, pred, "spearman"), 
+                        scoring_utils.score(self.gold, pred, "pearson"))
+        return lex_func_res        
+            
+    def exercise(self):
+        
+        lex_func_res = self.lex_ful_exercise()
         print lex_func_res
         
         print "Training Full Additive composition model..."
         comp_model = FullAdditive()
-        comp_model.train(train_data, self.space, self.per_space)
+        comp_model.train(self.train_data, self.space, self.per_space)
 
-        composed_space = comp_model.compose(test_phrases, self.space)
-        pred = composed_space.get_sims(test_pairs, CosSimilarity())
+        composed_space = comp_model.compose(self.test_phrases, self.space)
+        pred = composed_space.get_sims(self.test_pairs, CosSimilarity())
         
-        fadd_res = (scoring_utils.score(gold, pred, "spearman"), 
-                         scoring_utils.score(gold, pred, "pearson"))
+        fadd_res = (scoring_utils.score(self.gold, pred, "spearman"), 
+                         scoring_utils.score(self.gold, pred, "pearson"))
         print fadd_res
                 
         print "Multiplicative composition model..."
         comp_model = Multiplicative()
-        composed_space = comp_model.compose(test_phrases, self.space)
-        pred = composed_space.get_sims(test_pairs, CosSimilarity())
+        composed_space = comp_model.compose(self.test_phrases, self.space)
+        pred = composed_space.get_sims(self.test_pairs, CosSimilarity())
         
-        mult_res = (scoring_utils.score(gold, pred, "spearman"), 
-                         scoring_utils.score(gold, pred, "pearson"))
+        mult_res = (scoring_utils.score(self.gold, pred, "spearman"), 
+                         scoring_utils.score(self.gold, pred, "pearson"))
         print mult_res
         
         print "Simple additive composition model..."
         comp_model = WeightedAdditive(1, 1)
-        composed_space = comp_model.compose(test_phrases, self.space.apply(RowNormalization()))
-        pred = composed_space.get_sims(test_pairs, CosSimilarity())
+        composed_space = comp_model.compose(self.test_phrases, self.space.apply(RowNormalization()))
+        pred = composed_space.get_sims(self.test_pairs, CosSimilarity())
         
-        add_res = (scoring_utils.score(gold, pred, "spearman"), 
-                   scoring_utils.score(gold, pred, "pearson"))
+        add_res = (scoring_utils.score(self.gold, pred, "spearman"), 
+                   scoring_utils.score(self.gold, pred, "pearson"))
         print add_res
                 
         print "Simple dilation composition model..."
         comp_model = Dilation()
-        composed_space = comp_model.compose(test_phrases, self.space)
-        pred = composed_space.get_sims(test_pairs, CosSimilarity())
+        composed_space = comp_model.compose(self.test_phrases, self.space)
+        pred = composed_space.get_sims(self.test_pairs, CosSimilarity())
 
-        dil_res = (scoring_utils.score(gold, pred, "spearman"), 
-                   scoring_utils.score(gold, pred, "pearson"))
+        dil_res = (scoring_utils.score(self.gold, pred, "spearman"), 
+                   scoring_utils.score(self.gold, pred, "pearson"))
         print dil_res
         
         print "Training Weighted Additive composition model..."
         comp_model = WeightedAdditive()
-        comp_model.train(train_data,  self.space.apply(RowNormalization()),  self.per_space.apply(RowNormalization()))
-        composed_space = comp_model.compose(test_phrases,  self.space.apply(RowNormalization()))
-        pred = composed_space.get_sims(test_pairs, CosSimilarity())
+        comp_model.train(self.train_data,  self.space.apply(RowNormalization()),  self.per_space.apply(RowNormalization()))
+        composed_space = comp_model.compose(self.test_phrases,  self.space.apply(RowNormalization()))
+        pred = composed_space.get_sims(self.test_pairs, CosSimilarity())
         
         print "alpha", comp_model.alpha
         print "beta", comp_model.beta
         
-        t_add_res = (scoring_utils.score(gold, pred, "spearman"), 
-                     scoring_utils.score(gold, pred, "pearson"))
+        t_add_res = (scoring_utils.score(self.gold, pred, "spearman"), 
+                     scoring_utils.score(self.gold, pred, "pearson"))
         print t_add_res
                 
         print "Training Dilation composition model..."
         comp_model = Dilation()
-        comp_model.train(train_data, self.space,  self.per_space)
-        composed_space = comp_model.compose(test_phrases, self.space)
-        pred = composed_space.get_sims(test_pairs, CosSimilarity())
+        comp_model.train(self.train_data, self.space,  self.per_space)
+        composed_space = comp_model.compose(self.test_phrases, self.space)
+        pred = composed_space.get_sims(self.test_pairs, CosSimilarity())
         
         print "lambda", comp_model._lambda
-        t_dil_res = (scoring_utils.score(gold, pred, "spearman"), 
-                     scoring_utils.score(gold, pred, "pearson"))
+        t_dil_res = (scoring_utils.score(self.gold, pred, "spearman"), 
+                     scoring_utils.score(self.gold, pred, "pearson"))
         print t_dil_res      
                 
         return lex_func_res, fadd_res, mult_res, add_res, dil_res, t_add_res, t_dil_res
             
 
     
-    def test_exercise_svd200(self):
+    def ttest_exercise_svd200(self):
         
         self.apply_trans(Svd(200))
     
@@ -155,17 +164,37 @@ class IntegrationTest(unittest.TestCase):
                                           format = "sm"                                
                                           )
         res = self.exercise()
-        self.assertAlmostEqual(res[0][0], 0.2420, 3)
-        #self.assertAlmostEqual(res[1][0], 0.2420, 3)
+        self.assertAlmostEqual(res[0][0], 0.2386, 3)
         self.assertAlmostEqual(res[2][0], 0.0350, 3)
         self.assertAlmostEqual(res[3][0], 0.1081, 3)
         self.assertAlmostEqual(res[4][0], -0.0505, 3)
         self.assertAlmostEqual(res[5][0], 0.1038, 3)
         self.assertAlmostEqual(res[6][0], -0.0475, 3)
         
+    def test_lex_res_lambdas(self):
+        self.apply_trans(Svd(200))
+    
+        print "Creating peripheral space.."
+        self.per_space = PeripheralSpace.build(self.space,
+                                          data = self.data_path + "per.raw.SV.sm",
+                                          cols = self.data_path + "per.raw.SV.cols",
+                                          format = "sm"                                
+                                          )        
+        param_range = np.linspace(0,20,41)
+        res = []
+        for p in param_range:
+            print "\nLambda=%.2f" % p
+            res.append(self.lex_ful_exercise(RidgeRegressionLearner(param=p)))
+            
+        #print "\nCV:"
+        #res = self.lex_ful_exercise(RidgeRegressionLearner())    
+        #self.assertAlmostEqual(res[0], 0.2420, 3)
+        #self.assertAlmostEqual(res[1], 0.2537, 3)
+                
+        for idx,p in enumerate(list(param_range)):
+            print "Lambda=%.2f: %.4f %.4f " % (p, res[idx][0], res[idx][1])
 
-
-    def test_exercise_red_full(self):
+    def ttest_exercise_red_full(self):
 
         print "Applying PPMI..."
         self.space = self.space.apply(PpmiWeighting())

@@ -50,7 +50,8 @@ class NeighboursPipelineTest(unittest.TestCase):
           ])
 
     def test_find_neighbours(self):
-        '''find_neighbours.main(["compute_neighbours.py", 
+        """
+        find_neighbours.main(["compute_neighbours.py", 
                            "-l", self.log_dir + "neighbours_log.txt",
                            "-i", self.dir_ + "neighbours_input.txt",
                            "-m", "dot_prod",
@@ -67,21 +68,31 @@ class NeighboursPipelineTest(unittest.TestCase):
                                "-m", "lin",
                                "%sconfig/neighbours_config.cfg" %self.dir_
                               ])
+        
         find_neighbours.main(["compute_neighbours.py",
                                "-m", "euclidean",
                                "%sconfig/neighbours_config.cfg" %self.dir_
                               ])
+        
         find_neighbours.main(["compute_neighbours.py",
                                "-m", "euclidean",
                                "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
                                "%sconfig/neighbours_config.cfg" %self.dir_
-                              ])'''
+                              ])
+        """
         find_neighbours.main(["compute_neighbours.py",
                                "-m", "euclidean",
                                "-n", "2",
                                "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
                                "%sconfig/neighbours_config.cfg" %self.dir_
                               ])
+        find_neighbours.main(["compute_neighbours.py",
+                       "-m", "euclidean",
+                       "-i", self.dir_ + "neighbours_input.txt",
+                       "-n", "2",
+                       "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
+                       "-o" "/home/georgianadinu/work/FAKE_PATH"
+                      ])
         #neighbours_list = read_neighbours_list(self.dir_ + "NEIGHBOURS.neighbours_input.txt.euclidean")
         #print len(neighbours_list)
         
