@@ -20,6 +20,7 @@ def save(object_, file_name):
         with open(file_name,'w') as f:
             pickle.dump(object_, f, 2)
     except struct.error:
+        warn("object is too big, using pickle with protocol 0")
         with open(file_name,'w') as f:
             pickle.dump(object_, f, 0)
 
