@@ -114,6 +114,6 @@ class RidgeRegressionLearner(RegressionLearner):
                     min_err = gcv_err
                     min_err_param = param
             
-            print "lambda:", min_err_param    
+            #print "lambda:", min_err_param    
             return Linalg.ridge_regression(matrix_a, matrix_b, min_err_param, 
                                      self._intercept)[0]
