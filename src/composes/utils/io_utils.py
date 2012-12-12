@@ -15,8 +15,13 @@ from composes.utils.space_utils import assert_is_instance
 
 def save(object_, file_name):
     create_parent_directories(file_name)
-    with open(file_name,'w') as f:
-        pickle.dump(object_, f, 2)
+    try:
+        with open(file_name,'w') as f:
+            pickle.dump(object_, f, 2)
+    except struct.error:
+        warn("object is too big, using pickle with protocol 0")
+        with open(file_name,'w') as f:
+            pickle.dump(object_, f, 0)
 
 def load(file_name, data_type=None):
     with open(file_name) as f:
@@ -124,11 +129,12 @@ def print_list(list_, file_name):
             
 def print_cooc_mat_sparse_format(matrix_, id2row, id2column, file_prefix):
     matrix_file = "%s.%s" %(file_prefix, "sm")
-    
+    if not id2column:
+        raise ValueError("Cannot print matrix with no column info in sparse format!")
+                
     with open(matrix_file, 'w') as f: 
         if isinstance(matrix_, SparseMatrix):
-            if not id2column:
-                raise ValueError("Cannot print matrix with no column info in sparse format!")
+
             mat = matrix_.mat
 
             data = mat.data
