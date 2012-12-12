@@ -12,6 +12,7 @@ from warnings import warn
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
 from composes.utils.space_utils import assert_is_instance
+import struct
 
 def save(object_, file_name):
     create_parent_directories(file_name)
