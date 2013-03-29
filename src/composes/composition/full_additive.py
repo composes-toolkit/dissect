@@ -9,7 +9,7 @@ from composes.utils.space_utils import assert_is_instance
 from composes.utils.matrix_utils import is_array_or_matrix
 from composes.utils.matrix_utils import padd_matrix
 from composes.utils.matrix_utils import to_compatible_matrix_types
-from composes.utils.regression_learner import RidgeRegressionLearner
+from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.utils.regression_learner import RegressionLearner
 from composes.utils.matrix_utils import resolve_type_conflict
 from composes.matrix.dense_matrix import DenseMatrix
@@ -65,7 +65,7 @@ class FullAdditive(CompositionModel):
             self._has_intercept = False
             
         else:
-            self._regression_learner = RidgeRegressionLearner(param=1)
+            self._regression_learner = LstsqRegressionLearner()
             if "learner" in kwargs:
                 self._regression_learner = kwargs["learner"] 
             self._has_intercept = self._regression_learner.has_intercept()
@@ -102,7 +102,7 @@ class FullAdditive(CompositionModel):
     regression_learner = property(get_regression_learner, set_regression_learner)    
     """
     Regression method to be used in training, of type RegressionLearner.
-    Default is RidgeRegressionLearner(param=1).
+    Default is LstsqRegressionLearner.
     """
     
     def _build_id2column(self, arg1_space, arg2_space):

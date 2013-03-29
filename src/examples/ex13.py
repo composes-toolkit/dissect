@@ -19,7 +19,7 @@ phrase_space = io_utils.load("data/out/PHRASE_SS.ex10.pkl")
 print phrase_space.id2row
 print phrase_space.cooccurrence_matrix
 
-#train an weighted additive model on the data
+#train a weighted additive model on the data
 my_comp = WeightedAdditive()
 my_comp.train(train_data, arg_space, phrase_space)
 

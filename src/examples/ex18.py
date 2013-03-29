@@ -13,7 +13,7 @@ train_data = [("book_function", "car", "my_car_book"),
 arg_space = io_utils.load("./data/out/ex01.pkl")
 phrase_space = io_utils.load("data/out/PHRASE_SS.ex10.pkl")
 
-#train an lexical function model on the data
+#train a lexical function model on the data
 my_comp = LexicalFunction()
 my_comp._MIN_SAMPLES = 1
 my_comp.train(train_data, arg_space, phrase_space)

@@ -9,7 +9,7 @@ import time
 from composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from composes.utils.space_utils import get_partitions
-from composes.utils.regression_learner import RidgeRegressionLearner
+from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.utils.regression_learner import RegressionLearner
 from composes.utils.matrix_utils import resolve_type_conflict
 from composes.utils.matrix_utils import get_type_of_largest
@@ -36,7 +36,7 @@ class LexicalFunction(CompositionModel):
     """ 
          
     _name = "lexical_function"
-    _MIN_SAMPLES = 3
+    _MIN_SAMPLES = 1
 
     def __init__(self, **kwargs):
         """
@@ -52,10 +52,10 @@ class LexicalFunction(CompositionModel):
             to the intercept value of the regression learner used.
         
             learner= : regression method of type RegressionLearner. Optional,
-            default RidgeRegressionLearner(param=1).
+            default LstsqRegressionLearner.
             
         """
-        self._regression_learner = RidgeRegressionLearner(param=1)
+        self._regression_learner = LstsqRegressionLearner()
         self.composed_id2column = []
         self._function_space = None
         self._has_intercept = False
