@@ -46,7 +46,7 @@ class FullAdditive(CompositionModel):
             B= : matrix B, matrix-like type. Optional.
         
             learner= : regression learner object, of type RegressionLearner.
-            Optional, default RidgeRegressionLearner(lambda=1). 
+            Optional, default LstsqRegressionLearner. 
         """
         if "A" in kwargs and "B" in kwargs:
             mat_a = kwargs["A"]
