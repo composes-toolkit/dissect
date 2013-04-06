@@ -5,13 +5,13 @@ from composes.composition.lexical_function import LexicalFunction
 from composes.utils.regression_learner import RidgeRegressionLearner
 
 #training data 
-#trying to learn a "book" function
-train_data = [("book_function", "car", "my_car_book"),
-              ("book_function", "book", "2x_book")
+#trying to learn a "good" function
+train_data = [("good_function", "car", "good_car"),
+              ("good_function", "book", "good_book")
               ]
 
 #load argument and phrase space
-arg_space = io_utils.load("./data/out/ex01.pkl")
+arg_space = io_utils.load("./data/out/ex10.pkl")
 phrase_space = io_utils.load("data/out/PHRASE_SS.ex10.pkl")
 
 print "\nDefault regression:"

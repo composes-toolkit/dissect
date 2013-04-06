@@ -5,12 +5,12 @@ from composes.composition.weighted_additive import WeightedAdditive
 
 
 #training data
-train_data = [("car", "book", "my_car_book"),
-              ("book", "book", "2x_book")
+train_data = [("good", "car", "good_car"),
+              ("good", "book", "good_book")
               ]
 
 #load an argument space
-arg_space = io_utils.load("./data/out/ex01.pkl")
+arg_space = io_utils.load("./data/out/ex10.pkl")
 print arg_space.id2row
 print arg_space.cooccurrence_matrix
 

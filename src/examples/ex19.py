@@ -32,7 +32,6 @@ print svo_space.cooccurrence_matrix
 #1. train a model to learn VO functions on train data: VO N -> SVO
 print "\nStep 1 training"
 vo_model = LexicalFunction(learner=LstsqRegressionLearner())
-vo_model._MIN_SAMPLES = 1
 vo_model.train(train_vo_data, n_space, svo_space)
 
 #2. train a model to learn V functions on train data: V N -> VO
@@ -40,7 +39,6 @@ vo_model.train(train_vo_data, n_space, svo_space)
 print "\nStep 2 training"
 vo_space = vo_model.function_space
 v_model = LexicalFunction(learner=LstsqRegressionLearner())
-v_model._MIN_SAMPLES = 1
 v_model.train(train_v_data, n_space, vo_space)
 
 #print the learned model

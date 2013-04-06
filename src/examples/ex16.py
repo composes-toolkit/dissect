@@ -5,13 +5,13 @@ from composes.composition.lexical_function import LexicalFunction
 from composes.similarity.cos import CosSimilarity
 
 #training data 
-#trying to learn a "book" function
-train_data = [("book_function", "car", "my_car_book"),
-              ("book_function", "book", "2x_book")
+#trying to learn a "good" function
+train_data = [("good_function", "car", "good_car"),
+              ("good_function", "book", "good_book")
               ]
 
 #load argument and phrase space
-arg_space = io_utils.load("./data/out/ex01.pkl")
+arg_space = io_utils.load("./data/out/ex10.pkl")
 phrase_space = io_utils.load("data/out/PHRASE_SS.ex10.pkl")
 
 #train a lexical function model on the data
@@ -27,6 +27,6 @@ cooc_mat.reshape(my_comp.function_space.element_shape)
 print cooc_mat
 
 #similarity within the learned functional space
-print "\nSimilarity between book and book in the function space:" 
-print my_comp.function_space.get_sim("book_function", "book_function", 
+print "\nSimilarity between good and good in the function space:" 
+print my_comp.function_space.get_sim("good_function", "good_function", 
                                      CosSimilarity())
