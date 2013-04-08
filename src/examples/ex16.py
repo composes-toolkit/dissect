@@ -16,7 +16,6 @@ phrase_space = io_utils.load("data/out/PHRASE_SS.ex10.pkl")
 
 #train a lexical function model on the data
 my_comp = LexicalFunction()
-my_comp._MIN_SAMPLES = 1
 my_comp.train(train_data, arg_space, phrase_space)
 
 #print its parameters

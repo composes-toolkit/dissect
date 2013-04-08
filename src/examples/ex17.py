@@ -17,7 +17,6 @@ phrase_space = io_utils.load("data/out/PHRASE_SS.ex10.pkl")
 print "\nDefault regression:"
 my_comp = LexicalFunction()
 print type(my_comp.regression_learner).__name__
-my_comp._MIN_SAMPLES = 1
 my_comp.train(train_data, arg_space, phrase_space)
 
 #print its parameters
