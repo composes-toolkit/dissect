@@ -36,58 +36,58 @@ class SimilarityPipelineTest(unittest.TestCase):
         
                 #create the spaces required in the tests
         bcs.main(["build_core_space.py", 
-          "-l", self.dir_ + "log1.txt",
-          "-i", self.dir_ + "mat3",
+          "-l", self.dir_ + "pipelines_test_resources/log1.txt",
+          "-i", self.dir_ + "pipelines_test_resources/mat3",
           "-w", "raw",
           "-s", "top_sum_3",
           "-r", "svd_2", 
-          "-o", self.dir_,
+          "-o", self.dir_  + "pipelines_test_resources/",
           "--input_format", "dm"
           ])
 
     def test_compute_sim(self):
         sim_pipeline.main(["compute_similarities.py", 
                            "-l", self.log_dir + "sim_log.txt",
-                           "-i", self.dir_ + "sim_input.txt",
+                           "-i", self.dir_ + "pipelines_test_resources/sim_input.txt",
                            "-m", "cos,dot_prod,euclidean,lin", 
-                           "-s", self.dir_ + "CORE_SS.mat3.raw.top_sum_3.svd_2.pkl",
+                           "-s", self.dir_ + "pipelines_test_resources/CORE_SS.mat3.raw.top_sum_3.svd_2.pkl",
                            "-c", "1,2",
-                           "-o", self.dir_
+                           "-o", self.dir_ + "pipelines_test_resources/"
                            ])
         self.check_sims()
         
         sim_pipeline.main(["compute_similarities.py", 
-                           "-i", self.dir_ + "sim_input.txt",
+                           "-i", self.dir_ + "pipelines_test_resources/sim_input.txt",
                            "--sim_measure", "cos,dot_prod,euclidean,lin", 
-                           "--space", self.dir_ + "CORE_SS.mat3.raw.top_sum_3.svd_2.pkl",
+                           "--space", self.dir_ + "pipelines_test_resources/CORE_SS.mat3.raw.top_sum_3.svd_2.pkl",
                            "--columns", "1,2",
-                           "-o", self.dir_
+                           "-o", self.dir_ + "pipelines_test_resources/"
                            ])
         self.check_sims()
         
         sim_pipeline.main(["compute_similarities.py", 
                            "--sim_measure", "cos,dot_prod,euclidean,lin", 
-                           "--space", self.dir_ + "CORE_SS.mat3.raw.top_sum_3.svd_2.pkl",
+                           "--space", self.dir_ + "pipelines_test_resources/CORE_SS.mat3.raw.top_sum_3.svd_2.pkl",
                            "--columns", "1,2",
-                           "-o", self.dir_,
+                           "-o", self.dir_ + "pipelines_test_resources/",
                            self.dir_ + "config/sim_config.cfg"
                            ])
         self.check_sims()
         
         sim_pipeline.main(["compute_similarities.py", 
                            "--sim_measure", "cos,dot_prod,euclidean,lin", 
-                           "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
+                           "--space", "%spipelines_test_resources/CORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%spipelines_test_resources/CORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
                            "--columns", "1,2",
-                           "-o", self.dir_,
+                           "-o", self.dir_ + "pipelines_test_resources/",
                            self.dir_ + "config/sim_config.cfg"
                            ])
         self.check_sims()
          
         sim_pipeline.main(["compute_similarities.py", 
                            "--sim_measure", "cos,dot_prod,euclidean,lin", 
-                           "--in_dir", "%s" % (self.dir_),
+                           "--in_dir", "%spipelines_test_resources/" % (self.dir_),
                            "--columns", "1,2",
-                           "-o", self.dir_,
+                           "-o", self.dir_ + "pipelines_test_resources/",
                            self.dir_ + "config/sim_config.cfg"
                            ])
                 
@@ -95,7 +95,7 @@ class SimilarityPipelineTest(unittest.TestCase):
         
     def check_sims(self):
         for sim_measure in "cos,dot_prod,euclidean,lin".split(","):
-            result_array = np.array(read_number_list("%sSIMS.sim_input.txt.CORE_SS.mat3.raw.top_sum_3.svd_2.%s"
+            result_array = np.array(read_number_list("%spipelines_test_resources/SIMS.sim_input.txt.CORE_SS.mat3.raw.top_sum_3.svd_2.%s"
                                                %(self.dir_,sim_measure), 3))
             gold_array = eval("self.%s"%sim_measure)
             #print result_array

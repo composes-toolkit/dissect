@@ -35,17 +35,17 @@ class NeighboursPipelineTest(unittest.TestCase):
 
 
     def setUp(self):
-        self.dir_ = data_dir + "pipelines_test_resources/"
+        self.dir_ = data_dir
         self.log_dir = toolkit_dir + "/log/"
         
         #create the spaces required in the tests
         bcs.main(["build_core_space.py", 
-          "-l", self.dir_ + "log1.txt",
-          "-i", self.dir_ + "mat3",
+          "-l", self.dir_ + "pipelines_test_resources/log1.txt",
+          "-i", self.dir_ + "pipelines_test_resources/mat3",
           "-w", "raw",
           "-s", "top_sum_3",
           "-r", "svd_2", 
-          "-o", self.dir_,
+          "-o", self.dir_ + "pipelines_test_resources/",
           "--input_format", "dm"
           ])
 
@@ -83,7 +83,7 @@ class NeighboursPipelineTest(unittest.TestCase):
         find_neighbours.main(["compute_neighbours.py",
                                "-m", "euclidean",
                                "-n", "2",
-                               "--space", "%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%sCORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
+                               "--space", "%spipelines_test_resources/CORE_SS.mat3.raw.top_sum_3.svd_2.pkl,%spipelines_test_resources/CORE_SS.mat3.raw.top_sum_3.svd_2.pkl" %(self.dir_,self.dir_),
                                "%sconfig/neighbours_config.cfg" %self.dir_
                               ])
         find_neighbours.main(["compute_neighbours.py",
