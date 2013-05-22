@@ -1,13 +1,13 @@
 '''
 Created on Oct 5, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 import time
 from warnings import warn
 from composes.semantic_space.space import Space
 from composes.matrix.dense_matrix import DenseMatrix
-from composes.utils.space_utils import assert_is_instance
+from composes.utils.gen_utils import assert_is_instance
 from composes.utils.matrix_utils import resolve_type_conflict
 from composes.utils.io_utils import create_parent_directories
 
@@ -64,6 +64,25 @@ class CompositionModel(object):
                                                                       arg2_space.row2id,
                                                                       phrase_space.row2id)
                                                                      )
+        
+        
+        self.xxx(arg1_space, arg2_space, phrase_space,
+                 arg1_list, arg2_list, phrase_list)
+        
+        self.composed_id2column = phrase_space.id2column
+        
+        log.print_composition_model_info(logger, self, 1, "\nTrained composition model:")
+        log.print_info(logger, 2, "With total data points:%s" % len(arg1_list))
+        log.print_matrix_info(logger, arg1_space.cooccurrence_matrix, 3, 
+                              "Semantic space of argument 1:")
+        log.print_matrix_info(logger, arg2_space.cooccurrence_matrix, 3, 
+                              "Semantic space of argument 2:")
+        log.print_matrix_info(logger, phrase_space.cooccurrence_matrix, 3, 
+                              "Semantic space of phrases:")
+        log.print_time_info(logger, time.time(), start, 2)
+    
+
+    def xxx(self, arg1_space, arg2_space, phrase_space, arg1_list, arg2_list, phrase_list):
 
         arg1_mat = arg1_space.get_rows(arg1_list)
         arg2_mat = arg2_space.get_rows(arg2_list)
@@ -73,20 +92,9 @@ class CompositionModel(object):
                                                                   arg2_mat,
                                                                   phrase_mat],
                                                                   DenseMatrix) 
-        self._train(arg1_mat, arg2_mat, phrase_mat)
-        self.composed_id2column = phrase_space.id2column
         
-        log.print_composition_model_info(logger, self, 1, "\nTrained composition model:")
-        log.print_info(logger, 2, "With total data points:%s" % arg1_mat.shape[0])
-        log.print_matrix_info(logger, arg1_space.cooccurrence_matrix, 3, 
-                              "Semantic space of argument 1:")
-        log.print_matrix_info(logger, arg2_space.cooccurrence_matrix, 3, 
-                              "Semantic space of argument 2:")
-        log.print_matrix_info(logger, phrase_space.cooccurrence_matrix, 3, 
-                              "Semantic space of phrases:")
-        log.print_time_info(logger, time.time(), start, 2)
-    
-    
+        self._train(arg1_mat, arg2_mat, phrase_mat)
+
     def compose(self, data, arg_space):
         """
         Uses a composition model to compose elements.
@@ -201,7 +209,7 @@ class CompositionModel(object):
                  % ((i + 1) - j, (i + 1)))
             
         if not list1:
-            raise ValueError("No valid training data found!")
+            raise ValueError("No valid data found for training/composition!")
         
         return list1, list2, list3
 

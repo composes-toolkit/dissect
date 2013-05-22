@@ -1,7 +1,7 @@
 '''
 Created on Sep 26, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 from space import Space
@@ -12,7 +12,7 @@ from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.space_utils import add_items_to_dict
 from composes.semantic_space.operation import FeatureSelectionOperation
 from composes.semantic_space.operation import DimensionalityReductionOperation
-from composes.utils.space_utils import assert_is_instance
+from composes.utils.gen_utils import assert_is_instance
 from composes.matrix.matrix import Matrix
 
 class PeripheralSpace(Space):
@@ -46,6 +46,7 @@ class PeripheralSpace(Space):
         """
         assert_is_instance(matrix_, Matrix)
         assert_is_instance(core_space, Space)
+        assert_is_instance(id2row, list)
         # TODO: assert it is not a peripheral space here!
         
         if row2id is None:

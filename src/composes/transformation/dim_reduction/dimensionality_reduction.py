@@ -1,7 +1,7 @@
 '''
 Created on Sep 28, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 from composes.semantic_space.operation import DimensionalityReductionOperation
 

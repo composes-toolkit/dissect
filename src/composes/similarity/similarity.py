@@ -1,7 +1,7 @@
 '''
 Created on Oct 2, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 import numpy as np
 from composes.utils.py_matrix_utils import is_array

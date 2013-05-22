@@ -1,21 +1,22 @@
 '''
 Created on Oct 11, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 import numpy as np
 import time
 from composition_model import CompositionModel
 from composes.semantic_space.space import Space
-from composes.utils.space_utils import get_partitions
+from composes.utils.gen_utils import get_partitions
+from composes.utils.gen_utils import assert_valid_kwargs
 from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.utils.regression_learner import RegressionLearner
 from composes.utils.matrix_utils import resolve_type_conflict
 from composes.utils.matrix_utils import get_type_of_largest
 from composes.utils.matrix_utils import padd_matrix
 from composes.utils.num_utils import is_integer
-from composes.utils.space_utils import assert_is_instance
+from composes.utils.gen_utils import assert_is_instance
 from composes.exception.illegal_state_error import IllegalStateError
 
 import logging
@@ -55,6 +56,8 @@ class LexicalFunction(CompositionModel):
             default LstsqRegressionLearner.
             
         """
+        assert_valid_kwargs(kwargs, ["function_space", "intercept", "learner"])
+        
         self._regression_learner = LstsqRegressionLearner()
         self.composed_id2column = []
         self._function_space = None

@@ -1,7 +1,7 @@
 '''
 Created on Oct 17, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 import numpy as np

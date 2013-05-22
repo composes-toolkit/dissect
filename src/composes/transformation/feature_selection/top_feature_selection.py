@@ -1,9 +1,10 @@
 '''
 Created on Oct 5, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 from warnings import warn
+from composes.utils.gen_utils import assert_valid_kwargs
 from feature_selection import FeatureSelection
 
 class TopFeatureSelection(FeatureSelection):
@@ -28,6 +29,7 @@ class TopFeatureSelection(FeatureSelection):
         Constructor
         '''
         super(TopFeatureSelection, self).__init__(reduced_dimension)
+        assert_valid_kwargs(kwargs, ["criterion"])
         
         if kwargs:
             if "criterion" in kwargs:

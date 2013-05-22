@@ -1,7 +1,7 @@
 '''
 Created on Oct 4, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 import numpy as np
@@ -195,19 +195,40 @@ class Linalg(object):
     
     @staticmethod
     def _sparse_svd(matrix_, reduced_dimension):
-                #svds from scipy.sparse.linalg
+        #svds from scipy.sparse.linalg
         #RAISES ValueError if the rank is smaller than reduced_dimension + 1
         #TODO : fix this or replace with svdsparse
         #??? eIGENVALUES ARE NOT SORTED!!!!!!
         #IF EVER USE THIS; FIX THE PROBLEMS
         #u, s, vt = svds(matrix_.mat, False, True)
+        """
+        Patch
         
-        ut, s, vt = sparsesvd(matrix_.mat.tocsc(), reduced_dimension)
-        rank = ut.shape[0]
+        Problem: sparsesvd sometimes returns fewer dimensions that requested.
+        It will be no longer needs when sparsesvd will allow
+        SVDLIBC parameters as an input (kappa parameter of SVDLIBC has to be
+        larger than the default. e.g. 1E-05 instead of 1E-06)
+        
+        Current fix: ask for more dimensions and remove the unnecessary ones.
+        """
+        
+        extra_dims = int(reduced_dimension/10)
+        
+        ut, s, vt = sparsesvd(matrix_.mat.tocsc(), reduced_dimension + extra_dims)
+        print "sparsesvd"
+        print ut
+        print s
+        print vt
+        print "sparsesvd"
+
         u = SparseMatrix(ut.transpose())
         v = SparseMatrix(vt.transpose())
         
-        Linalg._check_svd_rank(matrix_.shape[1], rank, reduced_dimension) 
+        no_cols = min(u.shape[1], reduced_dimension)
+        u = u[:, 0:no_cols] 
+        v = v[:, 0:no_cols]
+        
+        Linalg._check_reduced_dim(matrix_.shape[1], u.shape[1], reduced_dimension) 
         
         if not u.is_mostly_positive():
             u = -u
@@ -222,12 +243,12 @@ class Linalg(object):
         u, s, vt = np.linalg.svd(matrix_.mat, False, True)
         rank = len(s[s > Linalg._SVD_TOL])
         
-        Linalg._check_svd_rank(matrix_.shape[1], rank, reduced_dimension)
-                            
-        no_cols = min(rank, reduced_dimension)
+        no_cols = min(u.shape[1], reduced_dimension, rank)
         u = DenseMatrix(u[:,0:no_cols])
         s = s[0:no_cols]
         v = DenseMatrix(vt[0:no_cols,:].transpose())
+        
+        Linalg._check_reduced_dim(matrix_.shape[1], u.shape[1], reduced_dimension)
         
         if not u.is_mostly_positive():
             u = -u
@@ -236,11 +257,11 @@ class Linalg(object):
         return u, s, v
     
     @staticmethod
-    def _check_svd_rank(no_columns, rank, reduced_dimension):
-        if reduced_dimension > no_columns:
-            warn("Number of columns smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions (rank)." % (no_columns, reduced_dimension, rank))
-        elif reduced_dimension > rank:
-            warn("Rank of matrix smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions." % (rank, reduced_dimension, rank))
+    def _check_reduced_dim(no_columns, reduced_dim, requested_reduced_dim):
+        if requested_reduced_dim > no_columns:
+            warn("Number of columns smaller than the reduced dimensionality requested: %d < %d. Truncating to %d dimensions (rank)." % (no_columns, requested_reduced_dim, reduced_dim))
+        elif reduced_dim != requested_reduced_dim:
+            warn("Returning %d dimensions instead of %d." % (reduced_dim, requested_reduced_dim))
     
     @staticmethod
     def _nmf_nlssubprob(v, w, w_t, h_init, tol, maxiter):

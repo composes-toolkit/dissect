@@ -1,7 +1,7 @@
 '''
 Created on Sep 17, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 import numpy as np
@@ -15,7 +15,7 @@ class DenseMatrix(Matrix):
     classdocs
     '''
 
-    def __init__(self, data, *args, **kwargs):
+    def __init__(self, data):
         """
         Constructor, creates a DenseMatrix from a numpy matrix-like
         object.
@@ -43,7 +43,7 @@ class DenseMatrix(Matrix):
             self.mat = np.matrix(data)
         elif isinstance(data, Matrix):
             # TODO: remove warning or remove import somehow fix this!!
-            from composes.matrix.sparse_matrix import SparseMatrix
+            # from composes.matrix.sparse_matrix import SparseMatrix
             self.mat = data.to_dense_matrix().mat
         else:
             # TODO: raise suitable message

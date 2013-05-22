@@ -1,7 +1,7 @@
 '''
 Created on Oct 9, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 from random import shuffle

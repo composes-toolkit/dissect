@@ -1,14 +1,16 @@
 '''
 Created on Oct 15, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 from numpy import double
 import logging
+from composes.utils.io_utils import create_parent_directories
 
 def config_logging(file_name, level = logging.INFO, format_ =""):
     if not file_name is None:
+        create_parent_directories(file_name)
         logging.basicConfig(filename=file_name, level=level, format=format_)
         logging.debug("start logging")
 

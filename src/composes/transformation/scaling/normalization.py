@@ -1,11 +1,12 @@
 '''
 Created on Oct 4, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 from numpy import double
 from warnings import warn
 from scaling import Scaling
+from composes.utils.gen_utils import assert_valid_kwargs
 
 class Normalization(Scaling):
     """
@@ -27,6 +28,7 @@ class Normalization(Scaling):
         '''
         Constructor
         '''
+        assert_valid_kwargs(kwargs, ["criterion"])
         if kwargs:
             if "criterion" in kwargs:
                 criterion = kwargs["criterion"]

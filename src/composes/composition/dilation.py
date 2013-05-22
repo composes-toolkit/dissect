@@ -1,7 +1,7 @@
 '''
 Created on Oct 15, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 import numpy as np
 from composition_model import CompositionModel
@@ -41,24 +41,24 @@ class Dilation(CompositionModel):
                 self._lambda = lambda_
 
     def _train(self, arg1_mat, arg2_mat, phrase_mat):
-        
-        v2_minus_p = arg2_mat - phrase_mat
-        
+
         v1_row_norms = arg1_mat.norm(1)
         v1_row_sqr_norms = np.multiply(v1_row_norms, v1_row_norms)
-        inv_v1_row_sqr_norms = nonzero_invert(v1_row_sqr_norms)
-        
-        C = np.multiply(inv_v1_row_sqr_norms,
-                        arg1_mat.multiply(arg2_mat).sum(1))
-        nom = np.multiply(v1_row_sqr_norms, np.multiply(C,C)).sum()
-        
+
+        v2_minus_p = arg2_mat.scale_rows(v1_row_sqr_norms) - phrase_mat
         v1_dot_prod_v2_minus_p = arg1_mat.multiply(v2_minus_p).sum(1)
-        denom = np.multiply(C, v1_dot_prod_v2_minus_p).sum()
+        
+        v1_v2 = arg1_mat.multiply(arg2_mat).sum(1)
+        v1_v2_sqr = np.multiply(v1_v2, v1_v2)
+        
+        nom = np.multiply(v1_v2_sqr, v1_row_sqr_norms).sum()
+        denom = np.multiply(v1_v2, v1_dot_prod_v2_minus_p).sum()
  
         if nom != 0:
             self._lambda = 1 - denom/nom
         else:
-            self._lambda = 2    
+            self._lambda = 2
+                   
 
     def _compose(self, arg1_mat, arg2_mat):
         # TO DO: this is inefficient here, we do 2 for s instead of one
@@ -66,14 +66,16 @@ class Dilation(CompositionModel):
         # comp = ((self._lambda -1) * v1.multiply(v2).sum()/pow(v1.norm(),2)) * v1 + v2
             
         v1_row_norms = arg1_mat.norm(1)    
-        inv_v1_row_sqr_norms = nonzero_invert(np.multiply(v1_row_norms,
-                                                          v1_row_norms))
+        scale_factors1 = arg1_mat.multiply(arg2_mat).sum(1)
+        scale_factors2 = np.multiply(v1_row_norms, v1_row_norms)
+                         
+        arg1_mat_scaled = arg1_mat.scale_rows(scale_factors1)
+        arg2_mat_scaled = arg2_mat.scale_rows(scale_factors2)
         
-        scale_factors = np.multiply(arg1_mat.multiply(arg2_mat).sum(1),
-                                    inv_v1_row_sqr_norms)
-        arg1_mat_scaled = arg1_mat.scale_rows(scale_factors)
+        #print "FACTORS u:", ((self._lambda -1)*scale_factors1).sum()/float(len(scale_factors1))
+        #print "FACTORS v:", (scale_factors2).sum()/float(len(scale_factors2))
             
-        result = (self._lambda -1) * arg1_mat_scaled + arg2_mat
+        result = (self._lambda - 1) * arg1_mat_scaled + arg2_mat_scaled
             
         return result
     

@@ -1,4 +1,5 @@
 import numpy as np
+from composes.utils.gen_utils import assert_valid_kwargs
 from composes.matrix.linalg import Linalg
 
 class RegressionLearner(object):
@@ -34,6 +35,8 @@ class LstsqRegressionLearner(RegressionLearner):
     """    
     def __init__(self, **kwargs):
         
+        assert_valid_kwargs(kwargs, ["intercept"])
+        
         self._intercept = True
         if "intercept" in kwargs:
             self._intercept = kwargs["intercept"]
@@ -60,6 +63,8 @@ class RidgeRegressionLearner(RegressionLearner):
         
     def __init__(self, **kwargs):
 
+        assert_valid_kwargs(kwargs, ["intercept", "param_range", "crossvalidation", "param"])
+        
         self._intercept = True
         if "intercept" in kwargs:
             self._intercept = kwargs["intercept"]

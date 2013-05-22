@@ -1,11 +1,12 @@
 '''
 Created on Oct 5, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 from composition_model import CompositionModel
-from composes.utils.space_utils import assert_is_instance
+from composes.utils.gen_utils import assert_is_instance
+from composes.utils.gen_utils import assert_valid_kwargs
 from composes.utils.matrix_utils import is_array_or_matrix
 from composes.utils.matrix_utils import padd_matrix
 from composes.utils.matrix_utils import to_compatible_matrix_types
@@ -14,6 +15,7 @@ from composes.utils.regression_learner import RegressionLearner
 from composes.utils.matrix_utils import resolve_type_conflict
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.exception.illegal_state_error import IllegalStateError
+
 
 class FullAdditive(CompositionModel):
     """
@@ -48,6 +50,8 @@ class FullAdditive(CompositionModel):
             learner= : regression learner object, of type RegressionLearner.
             Optional, default LstsqRegressionLearner. 
         """
+        assert_valid_kwargs(kwargs, ["A", "B", "learner"])
+        
         if "A" in kwargs and "B" in kwargs:
             mat_a = kwargs["A"]
             mat_b = kwargs["B"]

@@ -1,7 +1,7 @@
 '''
 Created on Sep 21, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 """

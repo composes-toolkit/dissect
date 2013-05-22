@@ -1,7 +1,7 @@
 '''
 Created on Sep 21, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 import time
@@ -11,7 +11,8 @@ from numpy import prod
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
-from composes.utils.space_utils import assert_is_instance 
+from composes.utils.gen_utils import assert_is_instance
+from composes.utils.gen_utils import assert_valid_kwargs 
 from composes.utils.space_utils import add_items_to_dict
 from composes.utils.matrix_utils import resolve_type_conflict
 from composes.utils.matrix_utils import get_type_of_largest
@@ -26,9 +27,9 @@ from composes.transformation.dim_reduction.dimensionality_reduction import Dimen
 from composes.transformation.feature_selection.feature_selection import FeatureSelection
 from composes.exception.illegal_state_error import IllegalOperationError
 from composes.utils import log_utils as log
-from composes.utils.space_utils import read_sparse_space_data
+from composes.utils.io_utils import read_sparse_space_data
 from composes.utils.io_utils import extract_indexing_structs
-from composes.utils.space_utils import read_dense_space_data
+from composes.utils.io_utils import read_dense_space_data
 from composes.utils.io_utils import create_parent_directories
 from composes.utils.io_utils import print_list
 from composes.utils.io_utils import print_cooc_mat_dense_format
@@ -88,6 +89,9 @@ class Space(object):
                  
         """
         assert_is_instance(matrix_, Matrix)
+        assert_valid_kwargs(kwargs, ["operations", "element_shape"])
+        assert_is_instance(id2row, list)
+        assert_is_instance(id2column, list)
         
         if row2id is None:
             row2id = list2dict(id2row)
@@ -380,7 +384,7 @@ class Space(object):
         Raises:
             KeyError: if one of words is not found in the space
         """
-        
+        assert_is_instance(words, list)
         row_ids = []
         for word in words:
             row_ids.append(self.row2id[word])
