@@ -1,7 +1,7 @@
 '''
 Created on Oct 17, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 '''
@@ -56,13 +56,8 @@ def usage(errno=0):
     sys.exit(errno)
 
 
-def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file,
-                is_gz):
-
-    core_space = io_utils.load(core_space_file, Space)
-    in_file_descr = "PER_SS." + in_file_prefix.split("/")[-1]
-    core_descr = ".".join(core_space_file.split("/")[-1].split(".")[0:-1])
-     
+def build_raw_per_space(in_file_prefix, in_format, is_gz):
+    
     if not in_format in ("sm", "dm", "pkl"):
         raise ValueError("Invalid input format:%s" % in_format) 
     
@@ -70,6 +65,7 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file,
         
     if in_format == "pkl":
         space = io_utils.load(data_file, Space)
+       
     else:
         if is_gz:
             data_file = '%s.gz' % data_file
@@ -82,9 +78,25 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file,
                 raise ValueError("Column file: %s needs to be provided!" % column_file)
             column_file = None
         print "Building matrix..."
-        space = PeripheralSpace.build(core_space, data=data_file, rows=row_file, 
-                                      cols=column_file, format=in_format)
+        space = Space.build(data=data_file, rows=row_file, cols=column_file, format=in_format)
+     
+    return space
+
+
+def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file,
+                is_gz):
+    raw_per_space = build_raw_per_space(in_file_prefix, in_format, is_gz)
+    transform_raw_per_space(raw_per_space, in_file_prefix, out_dir, out_format, core_space_file)
+
+def transform_raw_per_space(raw_per_space, in_file_prefix, out_dir, out_format, core_space_file):
+
+    in_file_descr = "PER_SS." + in_file_prefix.split("/")[-1]
+    core_space = io_utils.load(core_space_file, Space)
+    core_descr = ".".join(core_space_file.split("/")[-1].split(".")[0:-1])
     
+    space = PeripheralSpace(core_space, raw_per_space.cooccurrence_matrix, 
+                            raw_per_space.id2row, raw_per_space.row2id)
+     
     print "Printing..."
     out_file_prefix = "%s/%s.%s" % (out_dir, in_file_descr, core_descr)
     io_utils.save(space, out_file_prefix + ".pkl")
@@ -93,7 +105,9 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file,
 
 def build_space_batch(in_file_prefix, in_format, out_dir, out_format, 
                       core_in_dir, core_filter, is_gz):
-
+    
+    raw_per_space = build_raw_per_space(in_file_prefix, in_format, is_gz)
+    
     if not os.path.exists(core_in_dir):
         raise ValueError("Input directory not found: %s" % core_in_dir)
     
@@ -104,8 +118,7 @@ def build_space_batch(in_file_prefix, in_format, out_dir, out_format,
         if file_.find(core_filter) != -1 and file_.endswith(".pkl"):
             print file_
             core_space_file = core_in_dir + file_ 
-            build_space(in_file_prefix, in_format, out_dir, out_format, 
-                        core_space_file, is_gz)
+            transform_raw_per_space(raw_per_space, in_file_prefix, out_dir, out_format, core_space_file)
     
     
 def main(sys_argv):

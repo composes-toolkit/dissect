@@ -1,12 +1,12 @@
 '''
 Created on Oct 17, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 '''
 Created on Oct 17, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 '''
@@ -100,12 +100,16 @@ def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, reg
     if model_cls in (WeightedAdditive, Dilation):
         model_obj = model_cls()
     else:
-        if regression in learner_dict:
+        if regression == "ridge":
             regression_obj = learner_dict[regression](crossvalidation=crossvalid,
                                                        intercept=intercept,
                                                        param=param,
                                                        param_range=param_range)
             model_obj = model_cls(learner=regression_obj)
+        elif regression == "lstsq":
+            regression_obj = learner_dict[regression](intercept=intercept)
+            model_obj = model_cls(learner=regression_obj)
+
         else:
             model_obj = model_cls()    
             

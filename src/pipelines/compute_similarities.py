@@ -1,12 +1,12 @@
 '''
 Created on Oct 17, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 '''
 Created on Oct 17, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 
 '''
@@ -75,6 +75,7 @@ def compute_sim_batch(in_file, columns, out_dir, sim_measures, in_dir):
     for file_ in os.listdir(in_dir):
         if file_.endswith(".pkl"):
             space_file = in_dir + file_
+            
             print space_file 
             compute_sim(in_file, columns, out_dir, sim_measures, [space_file])
     
@@ -91,7 +92,12 @@ def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
     col0 = int(columns[0]) - 1
     col1 = int(columns[1]) - 1
     
-    space = io_utils.load(space_files[0], Space)
+    try:
+        space = io_utils.load(space_files[0], Space)
+    except TypeError:
+        warn("Not a Space instance in file: %s" % space_files[0])
+        return
+        
     space2 = None
     space_descr = ".".join(space_files[0].split("/")[-1].split(".")[0:-1])
     
