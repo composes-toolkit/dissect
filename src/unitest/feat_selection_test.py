@@ -1,7 +1,7 @@
 '''
 Created on Oct 5, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 import unittest
 import numpy as np

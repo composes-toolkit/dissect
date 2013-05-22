@@ -1,7 +1,7 @@
 '''
 Created on Sep 28, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 import unittest
 import numpy as np
@@ -53,11 +53,12 @@ class DimReductionTest(unittest.TestCase):
            
     def test_svd(self):
         test_cases = [(DenseMatrix(np.mat([[1,2,3],[2,4,6],[4,675,43]])), 
-                       np.mat([[  2.19272110e+00,   3.03174768e+00],
-                               [  4.38544220e+00,   6.06349536e+00],
-                               [  6.76369708e+02,  -4.91431927e-02]]),
+                       np.mat([[  2.19272110e+00,   3.03174768e+00, 0],
+                               [  4.38544220e+00,   6.06349536e+00, 0],
+                               [  6.76369708e+02,  -4.91431927e-02, 0]]),
                        np.mat([[0.0059,0.9979,0.0636],
-                               [0.3255,-0.0621,0.9434]]).transpose())]
+                               [0.3255,-0.0621,0.9434],
+                               [0.945,0.015,-0.325]]).transpose())]
                              
         
          
@@ -65,18 +66,18 @@ class DimReductionTest(unittest.TestCase):
             
             svd_red = Svd(2)
             us, transmat = svd_red.apply(x)
-            np.testing.assert_array_almost_equal(us.mat, us_expected, 2)
-            np.testing.assert_array_almost_equal(transmat.mat, v_expected, 2)
+            np.testing.assert_array_almost_equal(us.mat, us_expected[:,0:2], 2)
+            np.testing.assert_array_almost_equal(transmat.mat, v_expected[:,0:2], 2)
 
             svd_red = Svd(3)
             us, transmat = svd_red.apply(x)
-            np.testing.assert_array_almost_equal(us.mat, us_expected, 2)
-            np.testing.assert_array_almost_equal(transmat.mat, v_expected, 2)
+            np.testing.assert_array_almost_equal(us.mat, us_expected[:,0:2], 2)
+            np.testing.assert_array_almost_equal(transmat.mat, v_expected[:,0:2], 2)
        
             svd_red = Svd(6)
             us, transmat = svd_red.apply(x)
-            np.testing.assert_array_almost_equal(us.mat, us_expected, 2)
-            np.testing.assert_array_almost_equal(transmat.mat, v_expected, 2)
+            np.testing.assert_array_almost_equal(us.mat, us_expected[:,0:2], 2)
+            np.testing.assert_array_almost_equal(transmat.mat, v_expected[:,0:2], 2)
             
             svd_red = Svd(1)
             us, transmat = svd_red.apply(x)
@@ -85,11 +86,13 @@ class DimReductionTest(unittest.TestCase):
 
 
         test_cases = [(SparseMatrix(np.mat([[1,2,3],[2,4,6],[4,675,43]])), 
-                       np.mat([[  2.19272110e+00,   3.03174768e+00],
-                               [  4.38544220e+00,   6.06349536e+00],
-                               [  6.76369708e+02,  -4.91431927e-02]]),
+                       np.mat([[  2.19272110e+00,   3.03174768e+00, 0],
+                               [  4.38544220e+00,   6.06349536e+00, 0],
+                               [  6.76369708e+02,  -4.91431927e-02, 0]]),
                        np.mat([[0.0059,0.9979,0.0636],
-                               [0.3255,-0.0621,0.9434]]).transpose())]
+                               [0.3255,-0.0621,0.9434],
+                               [0.945,0.015,-0.325]]).transpose())]
+                             
         
         for x, us_expected, v_expected in test_cases:
             us_expected = np.abs(us_expected)
@@ -97,18 +100,18 @@ class DimReductionTest(unittest.TestCase):
 
             svd_red = Svd(2)
             us, transmat = svd_red.apply(x)
-            np.testing.assert_array_almost_equal(np.abs(us.mat.todense()), us_expected, 2)
-            np.testing.assert_array_almost_equal(np.abs(transmat.mat.todense()), v_expected, 2)
-
+            np.testing.assert_array_almost_equal(np.abs(us.mat.todense()), us_expected[:,0:2], 2)
+            np.testing.assert_array_almost_equal(np.abs(transmat.mat.todense()), v_expected[:,0:2], 2)
+            
             svd_red = Svd(3)
             us, transmat = svd_red.apply(x)
-            np.testing.assert_array_almost_equal(np.abs(us.mat.todense()), us_expected, 2)
-            np.testing.assert_array_almost_equal(np.abs(transmat.mat.todense()), v_expected, 2)
+            np.testing.assert_array_almost_equal(np.abs(us.mat.todense()), us_expected[:,0:2], 2)
+            np.testing.assert_array_almost_equal(np.abs(transmat.mat.todense()), v_expected[:,0:2], 2)
        
             svd_red = Svd(6)
             us, transmat = svd_red.apply(x)
-            np.testing.assert_array_almost_equal(np.abs(us.mat.todense()), us_expected, 2)
-            np.testing.assert_array_almost_equal(np.abs(transmat.mat.todense()), v_expected, 2)
+            np.testing.assert_array_almost_equal(np.abs(us.mat.todense()), us_expected[:,0:2], 2)
+            np.testing.assert_array_almost_equal(np.abs(transmat.mat.todense()), v_expected[:,0:2], 2)
             
             svd_red = Svd(1)
             us, transmat = svd_red.apply(x)

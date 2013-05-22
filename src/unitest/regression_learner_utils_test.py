@@ -1,7 +1,7 @@
 '''
 Created on Oct 9, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 import unittest
 import numpy as np
@@ -31,7 +31,7 @@ class Test(unittest.TestCase):
             np.testing.assert_array_equal(tmp_b, m_b.mat)
             np.testing.assert_array_equal(solution.mat, solution2.mat)
 
-            learner = RidgeRegressionLearner(param_range=[3], intercept=False, folds=6)
+            learner = RidgeRegressionLearner(param_range=[3], intercept=False)
             solution = learner.train(m_a, m_b)
 
             np.testing.assert_array_equal(tmp_a, m_a.mat)

@@ -1,7 +1,7 @@
 '''
 Created on Sep 26, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 import numpy as np
 import unittest
@@ -409,7 +409,14 @@ class Test(unittest.TestCase):
                                  rows=out_file + ".rows",
                                  cols=out_file + ".cols", format="dm")
             self._test_equal_spaces_dense(sp_d, new_sp)
-            
+
+            self.reset_export_files(out_file)
+            sp_d.export(out_file, format="sm")
+            new_sp = Space.build(data=out_file + ".sm",
+                                 rows=out_file + ".rows",
+                                 cols=out_file + ".cols", format="sm")
+            self._test_equal_spaces_sparse(sp_s, new_sp)
+                        
             self.reset_export_files(out_file)
             sp_s.export(out_file, format="sm")
             new_sp = Space.build(data=out_file + ".sm",

@@ -1,7 +1,7 @@
 '''
 Created on Sep 26, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 import unittest
 from composes.utils.space_utils import list2dict 

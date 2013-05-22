@@ -1,7 +1,7 @@
 '''
 Created on Oct 5, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 import unittest
 import numpy as np
@@ -48,9 +48,21 @@ class WeightedAdditiveTest(unittest.TestCase):
                        DenseMatrix(np.mat([[0],[0]])), 
                        DenseMatrix(np.mat([[0],[0]])), 0.0, 0.0)
                       ]
+        
+        id2row_dict = {1:["a"],2:["a", "b"]}
+        train_dict = {1:[("a", "a", "a")],2:[("a", "a", "a"), ("b", "b", "b")]}
+        
         for m1, m2, ph, expected_alpha, expected_beta in test_cases:
             model = WeightedAdditive()
-            model._train(m1, m2, ph)
+            
+            arg_space1 = Space(m1, id2row_dict[m1.shape[0]],[])
+            arg_space2 = Space(m2, id2row_dict[m1.shape[0]],[])
+            ph_space = Space(ph, id2row_dict[m1.shape[0]],[])
+            train_data = train_dict[m1.shape[0]]
+            
+            #model._train(m1, m2, ph)
+            model.train(train_data, (arg_space1, arg_space2), ph_space)
+            
             self.assertAlmostEqual(model.alpha, expected_alpha, 8) 
             self.assertAlmostEqual(model.beta, expected_beta, 8) 
 

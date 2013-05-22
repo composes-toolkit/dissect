@@ -1,7 +1,7 @@
 '''
 Created on Oct 19, 2012
 
-@author: georgianadinu
+@author: Georgiana Dinu, Pham The Nghia
 '''
 import unittest
 import numpy as np
@@ -162,7 +162,7 @@ class Test(unittest.TestCase):
         n_space = io_utils.load(self.dir_ + "CORE_SS.N_mat.pkl")
         sp1.to_dense()
         n_space.to_dense()
-        np.testing.assert_array_almost_equal(sp1.cooccurrence_matrix.mat, n_space.cooccurrence_matrix.mat)
+        np.testing.assert_array_almost_equal(sp1.cooccurrence_matrix.mat, n_space.cooccurrence_matrix.mat*25)
         self._test_equal_spaces_structs(sp1, sp2)
         
         #compose with dilation, change the order of the arguments
@@ -181,7 +181,7 @@ class Test(unittest.TestCase):
                          format="dm")
 
         sp1.to_dense()
-        np.testing.assert_array_almost_equal(sp1.cooccurrence_matrix.mat, np.mat([[3,4],[3,4]]),5)
+        np.testing.assert_array_almost_equal(sp1.cooccurrence_matrix.mat, np.mat([[75,100],[183,244]]),5)
         self._test_equal_spaces_structs(sp1, sp2)
  
         #compose with multiplicative
