@@ -234,7 +234,7 @@ class Linalg(object):
             u = -u
             v = -v
             
-        return u, s, v
+        return u, s[0:no_cols], v
     
     @staticmethod
     def _dense_svd(matrix_, reduced_dimension):
