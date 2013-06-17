@@ -312,7 +312,7 @@ class SparseMatrix(Matrix):
         Modifies the current matrix: all negative entries are set to 0.
             
         """
-        self.mat.data = np.where(self.mat.data > 0, self.mat.data, 0)
+        self.mat.data.clip(0, out=self.mat.data)
         self.mat.eliminate_zeros()
 
     def to_ones(self):
