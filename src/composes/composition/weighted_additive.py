@@ -98,6 +98,7 @@ class WeightedAdditive(CompositionModel):
     def _train1(self, arg1_mat, arg2_mat, phrase_mat):    
         
         # debug here
+        # remove when done
         # print "Using %s MB " % (get_mem_usage())
         
         arg1_arg2_dot = arg1_mat.multiply(arg2_mat).sum()
