@@ -7,7 +7,7 @@ Created on Oct 5, 2012
 from composition_model import CompositionModel
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.utils.num_utils import is_numeric
-from composes.utils.mem_utils import get_mem_usage
+# from composes.utils.mem_utils import get_mem_usage
 from composes.utils.matrix_utils import resolve_type_conflict
 import numpy as np
 
@@ -97,7 +97,8 @@ class WeightedAdditive(CompositionModel):
 
     def _train1(self, arg1_mat, arg2_mat, phrase_mat):    
         
-        print "Using %s MB " % (get_mem_usage())
+        # debug here
+        # print "Using %s MB " % (get_mem_usage())
         
         arg1_arg2_dot = arg1_mat.multiply(arg2_mat).sum()
         arg1_phrase_dot = arg1_mat.multiply(phrase_mat).sum()
