@@ -1,10 +1,10 @@
-'''
+"""
 Created on Oct 2, 2012
 
 @author: Georgiana Dinu, Pham The Nghia
-'''
-
+"""
 import numpy as np
+
 from similarity import Similarity
 
 
@@ -18,13 +18,6 @@ class LinSimilarity(Similarity):
     on which both vectors are strictly positive.
 
     """
-
-    _name = "lin"
-
-    def __init__(self):
-        '''
-        Constructor
-        '''
 
     def _sim(self, v1, v2):
 
