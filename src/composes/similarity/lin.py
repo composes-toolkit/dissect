@@ -5,7 +5,7 @@ Created on Oct 2, 2012
 """
 import numpy as np
 
-from similarity import Similarity
+from composes.similarity.similarity import Similarity
 
 
 class LinSimilarity(Similarity):

@@ -3,7 +3,7 @@ Created on Oct 2, 2012
 
 @author: Georgiana Dinu, Pham The Nghia
 """
-from similarity import Similarity
+from composes.similarity.similarity import Similarity
 
 
 class DotProdSimilarity(Similarity):

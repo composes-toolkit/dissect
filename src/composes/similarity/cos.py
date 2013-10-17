@@ -7,8 +7,8 @@ import numpy as np
 
 from composes.utils.py_matrix_utils import nonzero_invert
 
-from similarity import Similarity
-from dot_prod import DotProdSimilarity
+from composes.similarity.similarity import Similarity
+from composes.similarity.dot_prod import DotProdSimilarity
 
 
 class CosSimilarity(Similarity):
