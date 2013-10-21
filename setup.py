@@ -26,7 +26,7 @@ setup(
     author_email='georgiana.dinu@unitn.it,thenghia.pham@unitn.it',
     url='http://http://clic.cimec.unitn.it/composes/toolkit/',
     install_requires=['numpy', 'scipy', 'sparsesvd'],
-    tests_require=['pytest'],
+    tests_require=['pytest>=2.4.2'],
     cmdclass={'test': PyTest},
     package_dir={'': 'src'},
     packages=[

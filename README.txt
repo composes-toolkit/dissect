@@ -21,7 +21,7 @@ To install the package in an isolated environment for development run::
     source bin/activate
 
     pip install -e .
-    pip install pytest  # And any other tools you find useful.
+    pip install pytest>=2.4.2  # And any other tools you find useful.
 
 Now you are ready to develop and test your changes::
 
