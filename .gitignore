@@ -1,0 +1,6 @@
+*.pyc
+
+resource/unittest/pipelines_test_resources/
+
+.Python
+.coverage
