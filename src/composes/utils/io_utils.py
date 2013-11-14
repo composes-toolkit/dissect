@@ -5,7 +5,7 @@ Created on Oct 16, 2012
 '''
 
 import numpy as np
-import pickle
+import cPickle as pickle
 import os
 import gzip as gzip
 from warnings import warn
