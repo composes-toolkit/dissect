@@ -5,7 +5,10 @@ Created on Oct 16, 2012
 '''
 
 import numpy as np
-import cPickle as pickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 import os
 import gzip as gzip
 from warnings import warn
