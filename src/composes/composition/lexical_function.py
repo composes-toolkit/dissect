@@ -4,11 +4,15 @@ Created on Oct 11, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 
-import numpy as np
 import time
+import logging
+
+import numpy as np
+
 from composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from composes.utils.gen_utils import get_partitions
+from composes.utils.gen_utils import assert_valid_kwargs
 from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.utils.regression_learner import RegressionLearner
 from composes.utils.matrix_utils import resolve_type_conflict
@@ -17,9 +21,8 @@ from composes.utils.matrix_utils import padd_matrix
 from composes.utils.num_utils import is_integer
 from composes.utils.gen_utils import assert_is_instance
 from composes.exception.illegal_state_error import IllegalStateError
-
-import logging
 from composes.utils import log_utils as log
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,70 +30,83 @@ logger = logging.getLogger(__name__)
 class LexicalFunction(CompositionModel):
     """
     Implements the lexical function compositional model.
-
+    
         :math:`\\vec{p} = U \\vec{v}`
-
+     
     where :math:`\\vec{p}` is the vector of the composed phrase,
     :math:`U` is the matrix representation of the first component (the lexical function)
     and :math:`\\vec{v}` is the vector representation of the second component
-
+          
     """
 
     _name = "lexical_function"
+    _MIN_SAMPLES = 1
 
-    def __init__(self, function_space=None, intercept=False, learner=None, min_samples=1):
+    def __init__(self, **kwargs):
         """
         Constructor.
-
+        
         Args:
             function_space= : function space parameter, containing
             the lexical functions, of type Space. Optional, can be set through
             training.
-
+            
             intercept= : True/False, True if the function space has intercept.
-            Optional, default False. When training is used, intercept is set
+            Optional, default False. When training is used, intercept is set 
             to the intercept value of the regression learner used.
-
+        
             learner= : regression method of type RegressionLearner. Optional,
             default LstsqRegressionLearner.
-
-            min_samples= : minimum number of training samples required before a
-            LexicalFunction can be trained. Optional, default 1.
-
+            
         """
-        # assert_valid_kwargs(kwargs, ["function_space", "intercept", "learner"])
+        assert_valid_kwargs(kwargs, ["function_space", "intercept", "learner"])
 
+        self._regression_learner = LstsqRegressionLearner()
         self.composed_id2column = []
-        if learner and function_space:
-            raise ValueError("Cannot instantiate with both learner and function_space!")
+        self._function_space = None
+        self._has_intercept = False
 
-        self._regression_learner = learner if learner else LstsqRegressionLearner()
-        self._function_space = function_space
-        self._has_intercept = intercept
-        self._MIN_SAMPLES = min_samples
+        if "function_space" in kwargs:
+            space = kwargs["function_space"]
+            if not isinstance(space, Space):
+                raise TypeError("expected Space-type argument, received:"
+                                % type(space))
+            self._function_space = kwargs["function_space"]
 
+        if "intercept" in kwargs:
+            has_intercept = kwargs["intercept"]
+            if not isinstance(has_intercept, bool):
+                raise TypeError("expected bool-type argument, received:"
+                                % type(has_intercept))
+            self._has_intercept = has_intercept
+
+        if "learner" in kwargs:
+            if "function_space" in kwargs:
+                raise ValueError("cannot instantiate with both learner and function_space!")
+
+            self._regression_learner = kwargs["learner"]
 
     def train(self, train_data, arg_space, phrase_space):
         """
         Trains a lexical function composition model to learn a function
-        space and sets the function_space parameter.
-
+        space and sets the function_space parameter. 
+                
         Args:
-            train_data: list of string tuples. Each tuple contains 3
+            train_data: list of string tuples. Each tuple contains 3 
             string elements: (function_word, arg, phrase).
-
-            arg_space: argument space, of type Space. arg elements of
+            
+            arg_space: argument space, of type Space. arg elements of 
             train data are interpreted in this space.
-
-            phrase space: phrase space, of type Space. phrase elements of
+        
+            phrase space: phrase space, of type Space. phrase elements of 
             the train data are interpreted in this space.
-
-        Training tuples which contain strings not found in their
+            
+        Training tuples which contain strings not found in their 
         respective spaces are ignored. Function words containing less than
         _MIN_SAMPLES training instances are ignored. For example, if
         _MIN_SAMPLES=2 and function word "red" occurs in only one phrase, "red"
         is ignored.
-
+        
         The id2column attribute of the resulted composed space is set to
         be equal to that of the phrase space given as an input.
         """
@@ -125,8 +141,7 @@ class LexicalFunction(CompositionModel):
         for i in xrange(len(key_ranges)):
             idx_beg, idx_end = key_ranges[i]
 
-            print ("Training lexical function...%s with %d samples"
-                   % (keys[i], idx_end - idx_beg))
+            logging.info("Training lexical function...%s with %d samples", keys[i], idx_end - idx_beg)
 
             arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end])
             phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
@@ -163,21 +178,21 @@ class LexicalFunction(CompositionModel):
     def compose(self, data, arg_space):
         """
         Uses a lexical function composition model to compose elements.
-
+        
         Args:
             data: data to be composed. List of tuples, each containing 3
-            strings: (function_word, arg, composed_phrase). function_word and
-            arg are the elements to be composed and composed_phrase is the
+            strings: (function_word, arg, composed_phrase). function_word and 
+            arg are the elements to be composed and composed_phrase is the 
             string associated to their composition. function_word elements
-            are interpreted in self.function_space.
-
-            arg_space: argument space, of type Space. arg elements of data are
-            interpreted in this space.
-
+            are interpreted in self.function_space. 
+            
+            arg_space: argument space, of type Space. arg elements of data are 
+            interpreted in this space. 
+        
         Returns:
-            composed space: a new object of type Space, containing the
+            composed space: a new object of type Space, containing the 
             phrases obtained through composition.
-
+            
         """
         start = time.time()
 
@@ -252,7 +267,7 @@ class LexicalFunction(CompositionModel):
 
     function_space = property(get_function_space)
     """
-    Function space parameter, containing the lexical functions, of type Space.
+    Function space parameter, containing the lexical functions, of type Space. 
     Can be set through training or through initialization, default None.
     """
 
@@ -261,8 +276,8 @@ class LexicalFunction(CompositionModel):
 
     has_intercept = property(get_has_intercept)
     """
-    Has intercept parameter, boolean. If True, then the function_space is
-    assumed to contain intercept. Can be set through training or through
+    Has intercept parameter, boolean. If True, then the function_space is 
+    assumed to contain intercept. Can be set through training or through 
     initialization, default is assumed to be False.
     """
 
@@ -284,5 +299,6 @@ class LexicalFunction(CompositionModel):
         if self._function_space is None:
             raise IllegalStateError("cannot export an untrained LexicalFunction model.")
         self._function_space.export(filename, format="dm")
-
-
+            
+        
+            

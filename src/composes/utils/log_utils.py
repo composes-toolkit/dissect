@@ -4,11 +4,14 @@ Created on Oct 15, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 
-from numpy import double
 import logging
+
+from numpy import double
+
 from composes.utils.io_utils import create_parent_directories
 
-def config_logging(file_name, level = logging.INFO, format_ =""):
+
+def config_logging(file_name, level=logging.INFO, format_=""):
     if not file_name is None:
         create_parent_directories(file_name)
         logging.basicConfig(filename=file_name, level=level, format=format_)
@@ -18,6 +21,7 @@ def config_logging(file_name, level = logging.INFO, format_ =""):
 def get_ident(delim, ident_level):
     return delim * ident_level
 
+
 def print_matrix_info(logger_, matrix_, ident_level, intro_string):
     delim = "  "
     ident = get_ident(delim, ident_level)
@@ -26,13 +30,13 @@ def print_matrix_info(logger_, matrix_, ident_level, intro_string):
 
     logger_string += ("\n%sMatrix type:%s" % (ident, type(matrix_).__name__))
     logger_string += ("\n%sMatrix shape:%sx%s" % (ident, matrix_.shape[0],
-                                          matrix_.shape[1]))
+                                                  matrix_.shape[1]))
 
     if type(matrix_).__name__ == "SparseMatrix":
-        perc_nnz = 100 * matrix_.mat.nnz/double(matrix_.shape[0]*matrix_.shape[1])
+        perc_nnz = 100 * matrix_.mat.nnz / double(matrix_.shape[0] * matrix_.shape[1])
         logger_string += ("\n%sPerc. non-zero entries:%d" % (ident, perc_nnz))
 
-    logger_.info(logger_string)
+    logger_.debug(logger_string)
 
 
 def get_learner_info(learner, ident):
@@ -49,8 +53,8 @@ def get_learner_info(learner, ident):
 
     return logger_string
 
-def print_composition_model_info(logger_, model, ident_level, intro_string):
 
+def print_composition_model_info(logger_, model, ident_level, intro_string):
     delim = "  "
     ident = get_ident(delim, ident_level)
     logger_string = ident + intro_string
@@ -68,6 +72,7 @@ def print_composition_model_info(logger_, model, ident_level, intro_string):
 
     logger_.info(logger_string)
 
+
 def print_transformation_info(logger_, trans, ident_level, intro_string):
     delim = "  "
     ident = get_ident(delim, ident_level)
@@ -79,8 +84,8 @@ def print_transformation_info(logger_, trans, ident_level, intro_string):
     if hasattr(trans, '_reduced_dimension'):
         logger_string += ("\n%sReduced dimension:%s" % (ident, trans.reduced_dimension))
 
-
     logger_.info(logger_string)
+
 
 def print_info(logger_, ident_level, text):
     delim = "  "
@@ -89,6 +94,7 @@ def print_info(logger_, ident_level, text):
 
     logger_string += "\n%s%s" % (ident, text)
     logger_.info(logger_string)
+
 
 def print_name(logger_, object_, ident_level, intro_string):
     delim = "  "
@@ -100,6 +106,7 @@ def print_name(logger_, object_, ident_level, intro_string):
 
     logger_.info(logger_string)
 
+
 def print_time_info(logger_, end, beg, ident_level):
     delim = "  "
     ident = get_ident(delim, ident_level)
@@ -107,4 +114,4 @@ def print_time_info(logger_, end, beg, ident_level):
     logger_string += ("\n%sTiming:%s seconds" % (ident, end - beg))
 
     logger_.info(logger_string)
-
+     
