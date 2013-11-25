@@ -6,6 +6,7 @@ Created on Oct 11, 2012
 
 import time
 import logging
+from joblib import Parallel, delayed
 
 import numpy as np
 
@@ -86,7 +87,7 @@ class LexicalFunction(CompositionModel):
 
             self._regression_learner = kwargs["learner"]
 
-    def train(self, train_data, arg_space, phrase_space):
+    def train(self, train_data, arg_space, phrase_space, n_jobs=1):
         """
         Trains a lexical function composition model to learn a function
         space and sets the function_space parameter. 
@@ -138,23 +139,24 @@ class LexicalFunction(CompositionModel):
         else:
             new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0],)
 
-        for i in xrange(len(key_ranges)):
-            idx_beg, idx_end = key_ranges[i]
+        joblib_results = Parallel(n_jobs=n_jobs)(delayed(self._train_single)(i) for i in xrange(len(key_ranges)))
 
-            logging.info("Training lexical function...%s with %d samples", keys[i], idx_end - idx_beg)
-
-            arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end])
-            phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
-
-            #convert them to the same type
-            matrix_type = get_type_of_largest([arg_mat, phrase_mat])
-            [arg_mat, phrase_mat] = resolve_type_conflict([arg_mat, phrase_mat],
-                                                          matrix_type)
-
-            result_mat = self._regression_learner.train(arg_mat, phrase_mat).transpose()
+        for result_mat, arg_mat in joblib_results:
+            #idx_beg, idx_end = key_ranges[i]
+            #
+            #logging.info("Training lexical function...%s with %d samples", keys[i], idx_end - idx_beg)
+            #
+            #arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end])
+            #phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
+            #
+            ##convert them to the same type
+            #matrix_type = get_type_of_largest([arg_mat, phrase_mat])
+            #[arg_mat, phrase_mat] = resolve_type_conflict([arg_mat, phrase_mat],
+            #                                              matrix_type)
+            #
+            #result_mat = self._regression_learner.train(arg_mat, phrase_mat).transpose()
 
             result_mat.reshape((1, np.prod(new_element_shape)))
-
             result_mats.append(result_mat)
 
         new_space_mat = arg_mat.nary_vstack(result_mats)
@@ -174,6 +176,23 @@ class LexicalFunction(CompositionModel):
         log.print_matrix_info(logger, new_space_mat, 3,
                               "Semantic space of lexical functions:")
         log.print_time_info(logger, time.time(), start, 2)
+
+    def _train_single(self, key_ranges, i, arg_space, phrase_space, keys, arg_list, phrase_list):
+        idx_beg, idx_end = key_ranges[i]
+
+        logging.info("Training lexical function...%s with %d samples", keys[i], idx_end - idx_beg)
+
+        arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end])
+        phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
+
+        #convert them to the same type
+        matrix_type = get_type_of_largest([arg_mat, phrase_mat])
+        [arg_mat, phrase_mat] = resolve_type_conflict([arg_mat, phrase_mat],
+                                                      matrix_type)
+
+        result_mat = self._regression_learner.train(arg_mat, phrase_mat).transpose()
+
+        return result_mat, arg_mat
 
     def compose(self, data, arg_space):
         """
