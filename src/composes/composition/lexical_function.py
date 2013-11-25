@@ -139,7 +139,11 @@ class LexicalFunction(CompositionModel):
         else:
             new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0],)
 
-        joblib_results = Parallel(n_jobs=n_jobs)(delayed(self._train_single)(i) for i in xrange(len(key_ranges)))
+        joblib_results = Parallel(n_jobs=n_jobs)(delayed(_train_single)(self._regression_learner,
+                                                                        key_ranges, i,
+                                                                        arg_space, phrase_space,
+                                                                        keys, arg_list, phrase_list)
+                                                 for i in xrange(len(key_ranges)))
 
         for result_mat, arg_mat in joblib_results:
             #idx_beg, idx_end = key_ranges[i]
@@ -177,22 +181,6 @@ class LexicalFunction(CompositionModel):
                               "Semantic space of lexical functions:")
         log.print_time_info(logger, time.time(), start, 2)
 
-    def _train_single(self, key_ranges, i, arg_space, phrase_space, keys, arg_list, phrase_list):
-        idx_beg, idx_end = key_ranges[i]
-
-        logging.info("Training lexical function...%s with %d samples", keys[i], idx_end - idx_beg)
-
-        arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end])
-        phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
-
-        #convert them to the same type
-        matrix_type = get_type_of_largest([arg_mat, phrase_mat])
-        [arg_mat, phrase_mat] = resolve_type_conflict([arg_mat, phrase_mat],
-                                                      matrix_type)
-
-        result_mat = self._regression_learner.train(arg_mat, phrase_mat).transpose()
-
-        return result_mat, arg_mat
 
     def compose(self, data, arg_space):
         """
@@ -318,6 +306,21 @@ class LexicalFunction(CompositionModel):
         if self._function_space is None:
             raise IllegalStateError("cannot export an untrained LexicalFunction model.")
         self._function_space.export(filename, format="dm")
-            
-        
-            
+
+# end of class
+def _train_single(regression_learner, key_ranges, i, arg_space, phrase_space, keys, arg_list, phrase_list):
+    idx_beg, idx_end = key_ranges[i]
+
+    logging.info("Training lexical function...%s with %d samples", keys[i], idx_end - idx_beg)
+
+    arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end])
+    phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
+
+    #convert them to the same type
+    matrix_type = get_type_of_largest([arg_mat, phrase_mat])
+    [arg_mat, phrase_mat] = resolve_type_conflict([arg_mat, phrase_mat],
+                                                  matrix_type)
+
+    result_mat = regression_learner.train(arg_mat, phrase_mat).transpose()
+
+    return result_mat, arg_mat
