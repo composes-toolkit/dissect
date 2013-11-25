@@ -22,7 +22,7 @@ class WeightedAdditiveTest(unittest.TestCase):
         self.m22 = DenseMatrix(np.mat([[4,3],[2,1]]))
         self.ph2 = DenseMatrix(np.mat([[18,11],[24,7]]))
 
-        
+
         self.row = ["a", "b"]
         self.ft = ["f1","f2"]
         self.space1 = Space(DenseMatrix(self.m12), self.row, self.ft)
@@ -44,96 +44,96 @@ class WeightedAdditiveTest(unittest.TestCase):
                       (DenseMatrix(np.mat([[1,2,3]])),
                        DenseMatrix(np.mat([[2,4,6]])),
                        DenseMatrix(np.mat([[3,6,9]])), 0.6, 1.2),
-                      (DenseMatrix(np.mat([[0],[0]])), 
-                       DenseMatrix(np.mat([[0],[0]])), 
+                      (DenseMatrix(np.mat([[0],[0]])),
+                       DenseMatrix(np.mat([[0],[0]])),
                        DenseMatrix(np.mat([[0],[0]])), 0.0, 0.0)
                       ]
-        
+
         id2row_dict = {1:["a"],2:["a", "b"]}
         train_dict = {1:[("a", "a", "a")],2:[("a", "a", "a"), ("b", "b", "b")]}
-        
+
         for m1, m2, ph, expected_alpha, expected_beta in test_cases:
             model = WeightedAdditive()
-            
+
             arg_space1 = Space(m1, id2row_dict[m1.shape[0]],[])
             arg_space2 = Space(m2, id2row_dict[m1.shape[0]],[])
             ph_space = Space(ph, id2row_dict[m1.shape[0]],[])
             train_data = train_dict[m1.shape[0]]
-            
+
             #model._train(m1, m2, ph)
             model.train(train_data, (arg_space1, arg_space2), ph_space)
-            
-            self.assertAlmostEqual(model.alpha, expected_alpha, 8) 
-            self.assertAlmostEqual(model.beta, expected_beta, 8) 
+
+            self.assertAlmostEqual(model.alpha, expected_alpha, 8)
+            self.assertAlmostEqual(model.beta, expected_beta, 8)
 
     def test_compose(self):
-        
+
         model = WeightedAdditive(2,3)
         np.testing.assert_array_equal(model._compose(self.m11, self.m21).mat,
                                                       self.ph1.mat)
-        
+
         model = WeightedAdditive()
         np.testing.assert_array_equal(model._compose(self.m11, self.m21).mat,
                                                       np.mat([[7/2.],[11/2.]]))
-        
+
         model = WeightedAdditive(0.5)
         np.testing.assert_array_equal(model._compose(self.m11, self.m21).mat,
                                                       np.mat([[7/2.],[11/2.]]))
-        
+
     def test_space_train(self):
         test_cases = [ ([("a", "b", "a_b"), ("a", "a", "a_a")],
                         self.space1,
-                        Space(DenseMatrix(np.mat([[12,3],[6,2]])), 
+                        Space(DenseMatrix(np.mat([[12,3],[6,2]])),
                               ["a_b", "a_a"],["f1", "f2"]),
                         1, 1
                        ),
                       ([("a", "b", "a_b"), ("a", "a", "a_a")],
                         self.space1,
-                        Space(DenseMatrix(np.mat([[0,0],[0,0]])), 
+                        Space(DenseMatrix(np.mat([[0,0],[0,0]])),
                               ["a_b", "a_a"],["f1", "f2"]),
                         0, 0
                        ),
                       ([("a", "b", "a_b"), ("a", "a", "a_a")],
                         self.space1,
-                        Space(DenseMatrix(np.mat([[0,0],[0,0]])), 
+                        Space(DenseMatrix(np.mat([[0,0],[0,0]])),
                               ["a_b", "a_a"],[]),
                         0, 0
                        ),
                       ([("a", "b", "a_b")],
                         self.space1,
-                        Space(DenseMatrix(np.mat([[21,5]])), 
+                        Space(DenseMatrix(np.mat([[21,5]])),
                               ["a_b"],[]),
                         1, 2
                        ),
                        ([("a", "b", "a_b"), ("bla", "b", "a_b"), ("a", "bla", "a_b")],
                         self.space1,
-                        Space(DenseMatrix(np.mat([[21,5]])), 
+                        Space(DenseMatrix(np.mat([[21,5]])),
                               ["a_b"],[]),
                         1, 2
                        )
-                      ]    
-        
-        for in_data, arg_space, phrase_space, alpha, beta in test_cases: 
+                      ]
+
+        for in_data, arg_space, phrase_space, alpha, beta in test_cases:
             model = WeightedAdditive()
             model.train(in_data, arg_space, phrase_space)
-            
+
             self.assertAlmostEqual(model.alpha, alpha, 7)
             self.assertAlmostEqual(model.beta, beta, 7)
-            
+
             comp_space = model.compose(in_data, arg_space)
             self.assertListEqual(comp_space.id2row, phrase_space.id2row)
             self.assertListEqual(comp_space.id2column, phrase_space.id2column)
-            
+
             self.assertDictEqual(comp_space.row2id, phrase_space.row2id)
             self.assertDictEqual(comp_space.column2id, phrase_space.column2id)
-            
+
             np.testing.assert_array_almost_equal(comp_space.cooccurrence_matrix.mat,
-                                                 phrase_space.cooccurrence_matrix.mat, 
+                                                 phrase_space.cooccurrence_matrix.mat,
                                                  8)
-            
+
     def test_space_compose(self):
-        
-        test_cases = [(WeightedAdditive(1, 1), 
+
+        test_cases = [(WeightedAdditive(1, 1),
                        [("a", "b", "a_b"), ("a", "a", "a_a")],
                         self.space1,
                         ["a_b", "a_a"],
@@ -142,7 +142,7 @@ class WeightedAdditiveTest(unittest.TestCase):
                         {"f1":0, "f2":1},
                         np.mat([[12, 3],[6,2]])
                        ),
-                      (WeightedAdditive(0, 0), 
+                      (WeightedAdditive(0, 0),
                        [("a", "b", "a_b"), ("a", "a", "a_a")],
                         self.space1,
                         ["a_b", "a_a"],
@@ -151,7 +151,7 @@ class WeightedAdditiveTest(unittest.TestCase):
                         {"f1":0, "f2":1},
                         np.mat([[0,0],[0,0]])
                        ),
-                      (WeightedAdditive(1, 1), 
+                      (WeightedAdditive(1, 1),
                        [("a", "b", "a_b"), ("a", "a", "a_a")],
                         self.space2,
                         ["a_b", "a_a"],
@@ -160,7 +160,7 @@ class WeightedAdditiveTest(unittest.TestCase):
                         {},
                         np.mat([[12, 3],[6,2]])
                        ),
-                      (WeightedAdditive(1, 2), 
+                      (WeightedAdditive(1, 2),
                        [("a", "b", "a_b")],
                         self.space1,
                         ["a_b"],
@@ -169,8 +169,8 @@ class WeightedAdditiveTest(unittest.TestCase):
                         {"f1":0, "f2":1},
                         np.mat([[21,5]])
                        ),
-                       (WeightedAdditive(1, 2), 
-                       [("a", "bla", "a_b"), ("a", "b", "a_b"), 
+                       (WeightedAdditive(1, 2),
+                       [("a", "bla", "a_b"), ("a", "b", "a_b"),
                         ("a", "bla", "a_b"), ("bla", "b", "a_b")],
                         self.space1,
                         ["a_b"],
@@ -183,18 +183,18 @@ class WeightedAdditiveTest(unittest.TestCase):
 
         for model, in_data, space, id2row, row2id, id2col, col2id, mat_ in test_cases:
             comp_sp = model.compose(in_data, space)
-            
+
             self.assertListEqual(comp_sp.id2row, id2row)
             self.assertDictEqual(comp_sp.row2id, row2id)
-             
+
             self.assertListEqual(comp_sp.id2column, id2col)
             self.assertDictEqual(comp_sp.column2id, col2id)
-             
-            self.assertEqual(len(comp_sp.operations), 0) 
+
+            self.assertEqual(len(comp_sp.operations), 0)
             np.testing.assert_array_equal(comp_sp.cooccurrence_matrix.mat, mat_)
-             
-                                      
-            
+
+
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

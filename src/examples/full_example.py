@@ -1,9 +1,9 @@
 from composes.similarity.cos import CosSimilarity
 from composes.semantic_space.peripheral_space import PeripheralSpace
 from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
-from composes.transformation.dim_reduction.svd import Svd 
-from composes.transformation.feature_selection.top_feature_selection import TopFeatureSelection 
-from composes.composition.lexical_function import LexicalFunction 
+from composes.transformation.dim_reduction.svd import Svd
+from composes.transformation.feature_selection.top_feature_selection import TopFeatureSelection
+from composes.composition.lexical_function import LexicalFunction
 from composes.composition.full_additive import FullAdditive
 from composes.composition.weighted_additive import WeightedAdditive
 from composes.composition.multiplicative import Multiplicative
@@ -33,7 +33,7 @@ print "Creating peripheral space.."
 per_space = PeripheralSpace.build(space,
                                   data = data_path + "per.raw.SV.sm",
                                   cols = data_path + "per.raw.SV.cols",
-                                  format = "sm"                                
+                                  format = "sm"
                                   )
 
 #reading in train data
@@ -45,7 +45,7 @@ comp_model = LexicalFunction(learner = RidgeRegressionLearner(param=2))
 comp_model.train(train_data, space, per_space)
 
 print "Composing phrases..."
-test_phrases_file = data_path + "ML08nvs_test.txt" 
+test_phrases_file = data_path + "ML08nvs_test.txt"
 test_phrases = io_utils.read_tuple_list(test_phrases_file, fields=[0,1,2])
 composed_space = comp_model.compose(test_phrases, space)
 
@@ -60,7 +60,7 @@ pred = composed_space.get_sims(test_pairs, CosSimilarity())
 #use this composed space to assign similarities
 print "Scoring lexical function..."
 print scoring_utils.score(gold, pred, "spearman")
-                    
+
 
 print "Training Full Additive composition model..."
 comp_model = FullAdditive(learner = RidgeRegressionLearner(param=2))

@@ -19,24 +19,23 @@ class Test(unittest.TestCase):
 
 
     def test_simple(self):
-        
-        es.main(["evaluate_similarities.py", 
+
+        es.main(["evaluate_similarities.py",
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "pred1.txt",
                   "-m", "pearson,spearman",
-                  "-c", "1,3", 
-                  ])        
+                  "-c", "1,3",
+                  ])
 
-        es.main(["evaluate_similarities.py", 
+        es.main(["evaluate_similarities.py",
                   "-l", self.dir_ + "log1.txt",
                   "-i", self.dir_ + "pred1.txt",
                   "--in_dir", self.dir_,
                   "--filter", "pred",
                   "-m", "pearson,spearman",
-                  "-c", "1,3", 
-                  ]) 
-        
+                  "-c", "1,3",
+                  ])
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
-    
