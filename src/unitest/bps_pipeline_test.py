@@ -4,20 +4,21 @@ Created on Oct 18, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 import unittest
+
 import numpy as np
-from unitest import data_dir
+
 from pipelines import build_peripheral_space as bps
 from pipelines import build_core_space as bcs
 from composes.semantic_space.space import Space
 
-class Test(unittest.TestCase):
+from unitest import data_dir
+import pytest
 
+
+class Test(unittest.TestCase):
 
     def setUp(self):
         self.dir_ = data_dir + "pipelines_test_resources/"
-
-    def tearDown(self):
-        pass
 
     def _test_equal_spaces_structs(self, sp, new_sp):
         self.assertListEqual(sp.id2row, new_sp.id2row)
@@ -28,19 +29,23 @@ class Test(unittest.TestCase):
     def _test_equal_spaces_dense(self, sp, new_sp):
 
         self._test_equal_spaces_structs(sp, new_sp)
-        np.testing.assert_array_almost_equal(sp.cooccurrence_matrix.mat,
-                                      new_sp.cooccurrence_matrix.mat, 6)
+        np.testing.assert_array_almost_equal(sp.cooccurrence_matrix.mat, new_sp.cooccurrence_matrix.mat, 6)
 
     def _test_equal_spaces_sparse(self, sp, new_sp):
 
         self._test_equal_spaces_structs(sp, new_sp)
-        np.testing.assert_array_almost_equal(sp.cooccurrence_matrix.mat.todense(),
-                                      new_sp.cooccurrence_matrix.mat.todense(), 6)
+        np.testing.assert_array_almost_equal(sp.cooccurrence_matrix.mat.todense(), new_sp.cooccurrence_matrix.mat.todense(), 6)
 
     def test_raises(self):
+        with pytest.raises(SystemExit):
+            bps.main(["build_peripheral_space.py", "-h"])
 
-        self.assertRaises(SystemExit, bps.main,["build_peripheral_space.py","-h"])
-        self.assertRaises(SystemExit, bps.main,["build_peripheral_space.py","-l","-h"])
+        with pytest.raises(SystemExit):
+            bps.main([
+                "build_peripheral_space.py",
+                "-l", '/tmp/test_build_peripheral_space.log',
+                "-h",
+            ])
 
     def tttest_simple_sparse_batch(self):
 
@@ -56,7 +61,7 @@ class Test(unittest.TestCase):
 
         s1 = Space.build(data=self.dir_ + "mat1.sm",
                          cols=self.dir_ + "mat1.cols",
-                         format = "sm")
+                         format="sm")
         s2 = Space.build(data=self.dir_ + "PER_SS.mat1.CORE_SS.mat1.sm",
                          cols=self.dir_ + "PER_SS.mat1.CORE_SS.mat1.cols",
                          format="sm")
@@ -80,7 +85,7 @@ class Test(unittest.TestCase):
 
         s1 = Space.build(data=self.dir_ + "mat1.sm",
                          cols=self.dir_ + "mat1.cols",
-                         format = "sm")
+                         format="sm")
         s2 = Space.build(data=self.dir_ + "PER_SS.mat1.CORE_SS.mat1.sm",
                          cols=self.dir_ + "PER_SS.mat1.CORE_SS.mat1.cols",
                          format="sm")
@@ -96,7 +101,7 @@ class Test(unittest.TestCase):
                   "--input_format", "dm",
                   "--output_format", "dm"
                   ])
-        s1 = Space.build(data=self.dir_ + "mat2.dm", format = "dm")
+        s1 = Space.build(data=self.dir_ + "mat2.dm", format="dm")
         s2 = Space.build(data=self.dir_ + "PER_SS.mat2.CORE_SS.mat2.dm", format="dm")
 
         self._test_equal_spaces_dense(s1, s2)
@@ -128,7 +133,7 @@ class Test(unittest.TestCase):
             bps.main(["build_peripheral_space.py",
                       "-l", self.dir_ + "log1.txt",
                       "-i", self.dir_ + "mat3",
-                      "-o", self.dir_ ,
+                      "-o", self.dir_,
                       "-c", self.dir_ + core_mat + ".pkl",
                       "--input_format", "dm",
                       "--output_format", "dm"
@@ -142,7 +147,7 @@ class Test(unittest.TestCase):
             bps.main(["build_peripheral_space.py",
                       "-l", self.dir_ + "log1.txt",
                       "-i", self.dir_ + "mat3",
-                      "-o", self.dir_ ,
+                      "-o", self.dir_,
                       "-c", self.dir_ + core_mat + ".pkl",
                       "--input_format", "sm",
                       "--output_format", "dm"
@@ -153,10 +158,3 @@ class Test(unittest.TestCase):
             s2 = Space.build(data=data_file, format="dm")
 
             self._test_equal_spaces_dense(s1, s2)
-
-
-
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
-

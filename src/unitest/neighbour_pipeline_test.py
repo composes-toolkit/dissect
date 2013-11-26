@@ -9,6 +9,9 @@ from unitest import toolkit_dir
 import pipelines.compute_neighbours as find_neighbours
 from pipelines import build_core_space as bcs
 
+import pytest
+
+
 def read_neighbours_list(file_name):
     result = []
     word = None
@@ -31,6 +34,7 @@ def read_neighbours_list(file_name):
     return result
 
 
+@pytest.mark.xfail(run=False)
 class NeighboursPipelineTest(unittest.TestCase):
 
 

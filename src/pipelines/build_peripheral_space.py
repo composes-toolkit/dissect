@@ -25,7 +25,6 @@ import logging
 logger = logging.getLogger("test vector space construction pipeline")
 
 
-
 def usage(errno=0):
     print >>sys.stderr,\
     """Usage:
@@ -88,6 +87,7 @@ def build_space(in_file_prefix, in_format, out_dir, out_format, core_space_file,
     raw_per_space = build_raw_per_space(in_file_prefix, in_format, is_gz)
     transform_raw_per_space(raw_per_space, in_file_prefix, out_dir, out_format, core_space_file)
 
+
 def transform_raw_per_space(raw_per_space, in_file_prefix, out_dir, out_format, core_space_file):
 
     in_file_descr = "PER_SS." + in_file_prefix.split("/")[-1]
@@ -102,6 +102,7 @@ def transform_raw_per_space(raw_per_space, in_file_prefix, out_dir, out_format, 
     io_utils.save(space, out_file_prefix + ".pkl")
     if not out_format is None:
         space.export(out_file_prefix, format=out_format)
+
 
 def build_space_batch(in_file_prefix, in_format, out_dir, out_format,
                       core_in_dir, core_filter, is_gz):
@@ -135,7 +136,7 @@ def main(sys_argv):
     out_dir = None
     in_file_prefix = None
     core_space_file = None
-    log_file = None
+    log_file = './build_core_space.log'
     in_format = None
     out_format = None
     core_in_dir = None
@@ -144,7 +145,7 @@ def main(sys_argv):
 
     section = "build_peripheral_space"
 
-    if (len(argv) == 1):
+    if len(argv) == 1:
         config_file = argv[0]
         config = ConfigParser()
         config.read(config_file)
@@ -153,7 +154,7 @@ def main(sys_argv):
         core_space_file = utils.config_get(section, config, "core", None)
         core_in_dir = utils.config_get(section, config, "core_in_dir", None)
         core_filter = utils.config_get(section, config, "core_filter", "")
-        log_file = utils.config_get(section, config, "log", None)
+        log_file = utils.config_get(section, config, "log", './build_core_space.log')
         in_format = utils.config_get(section, config, "input_format", None)
         out_format = utils.config_get(section, config, "output_format", None)
         gz = utils.config_get(section, config, "gz", gz)
