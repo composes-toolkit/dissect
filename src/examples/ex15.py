@@ -26,8 +26,8 @@ print "\nA:", my_comp._mat_a_t.transpose()
 print "B:", my_comp._mat_b_t.transpose()
 
 #use the model to compose the train data
-composed_space  = my_comp.compose([("good", "bike", "good_bike")], 
+composed_space  = my_comp.compose([("good", "bike", "good_bike")],
                                   arg_space)
-print "\nComposed space:" 
+print "\nComposed space:"
 print composed_space.id2row
 print composed_space.cooccurrence_matrix
