@@ -21,7 +21,7 @@ def _translate_byblo_to_dissect(events_file, row_transform=lambda x: x):
     return output_file
 
 
-def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix):
+def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix, row_transform=lambda x: x):
     logging.info('Starting training')
     logging.info('Nouns file is %s', noun_events_file)
     logging.info('ANs file is %s', ANs_events_file)
@@ -29,15 +29,15 @@ def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix):
     # prepare the input files to be fed into Dissect
     #cleaned_an_file = '{}.uniq'.format(ANs_events_file)
     #noun_events_file = '{}.uniq'.format(noun_events_file)
-    cleaned_nouns_file = _translate_byblo_to_dissect(noun_events_file)
-    cleaned_an_file = _translate_byblo_to_dissect(ANs_events_file)
+    cleaned_nouns_file = _translate_byblo_to_dissect(noun_events_file, row_transform=row_transform)
+    cleaned_an_file = _translate_byblo_to_dissect(ANs_events_file, row_transform=row_transform)
 
     #my_space = Thesaurus([noun_events_file], aggressive_lowercasing=False).to_dissect_core_space()
     my_space = Space.build(data="{}.sm".format(cleaned_nouns_file),
                            rows="{}.rows".format(cleaned_nouns_file),
                            cols="{}.cols".format(cleaned_nouns_file),
                            format="sm")
-
+    logging.info('Each unigram vector has dimensionality %r', my_space.element_shape)
     #Linalg._NMF_MAX_ITER = 2
     #my_space = my_space.apply(Nmf(10))
 
@@ -49,7 +49,7 @@ def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix):
                                          # in the core space (including their order)!
                                          cols="{}.cols".format(cleaned_nouns_file),
                                          format="sm")
-
+    logging.info('Each peripheral vector has dimensionality %r', my_per_space.element_shape)
     #for a, b in product(my_space.row2id, my_space.row2id):
     #    sim = my_space.get_sim(a, b, lin)
     #    if sim > 0:
