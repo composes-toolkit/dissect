@@ -8,6 +8,7 @@ import time
 import logging
 from numpy import array
 from numpy import prod
+import scipy.io
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
@@ -508,7 +509,7 @@ class Space(object):
             
         if "format" in kwargs:
             format_ = kwargs["format"]
-            if not format_ in ["dm","sm"]:
+            if not format_ in ["dm","sm", "mat"]:
                 raise ValueError("Unrecognized format: %s" % format_)
         else:
             raise ValueError("Format of input files needs to be specified")
@@ -526,10 +527,21 @@ class Space(object):
                 [id2row], [row2id] = extract_indexing_structs(data_file, [0])
             mat = read_sparse_space_data(data_file, row2id, column2id)
 
-        else:
+        elif format_ =="dm":
             if id2row is None:
                 [id2row],[row2id] = extract_indexing_structs(data_file, [0])
             mat = read_dense_space_data(data_file, row2id)
+        elif format_ == "mat":
+            assert id2row is not None, "row file is mandatory for matlab format"
+            k,mat = scipy.io.loadmat(data_file).iteritems().next()
+            print "Loading matrix in variable", k
+            
+            if isinstance(mat, scipy.sparse.csc.csc_matrix):
+                mat = SparseMatrix(mat)
+            else:
+                mat = DenseMatrix(mat)
+            
+            
                 
         if id2column and len(id2column) != mat.shape[1]:
             raise ValueError("Columns provided inconsistent with shape of input matrix!")

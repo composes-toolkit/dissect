@@ -3,6 +3,7 @@ Created on Oct 17, 2012
 
 @author: Georgiana Dinu, Pham The Nghia
 '''
+from composes.transformation.external.matlab_nmf import MatlabNmf
 
 '''
 Created on Jun 12, 2012
@@ -123,7 +124,8 @@ def apply_selection(w_space, s):
           
 def apply_reduction(s_space, r):
     reductions_dict = {"svd": Svd,
-                       "nmf": Nmf}
+                       "nmf": Nmf,
+                       "mlabnmf": MatlabNmf}
         
     if not r in (None, "none"):
         print "Applying dimensionality reduction: %s" % r
@@ -180,7 +182,7 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
     in_file_descr = "CORE_SS." + in_file_prefix.split("/")[-1]
     data_file = '%s.%s' % (in_file_prefix, in_format)
     
-    if not in_format in ("sm", "dm", "pkl"):
+    if not in_format in ("sm", "dm", "pkl", "mat"):
         raise ValueError("Invalid input format:%s" % in_format) 
     
     if in_format == "pkl":
