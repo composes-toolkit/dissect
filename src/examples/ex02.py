@@ -14,7 +14,7 @@ print my_space.cooccurrence_matrix
 
 #save the Space object in pickle format
 io_utils.save(my_space, "./data/out/ex01.pkl")
-    
+
 #load the saved object
 my_space2 = io_utils.load("./data/out/ex01.pkl")
 

@@ -10,6 +10,6 @@ my_space = Space.build(data = "./data/in/ex01.sm",
 
 #export the space in sparse format
 my_space.export("./data/out/ex01", format = "sm")
-    
+
 #export the space in dense format
 my_space.export("./data/out/ex01", format = "dm")
