@@ -3,11 +3,10 @@ from scipy.io import savemat, loadmat
 from os import path,getcwd,chdir
 from subprocess import call
 from composes.matrix.dense_matrix import DenseMatrix
-from composes.transformation.external.external import External
 from composes.utils import io_utils
 
 
-class Matlab(External):
+class Matlab(object):
     '''
     Performs a transformation of the Matrix using matlab code
     '''
