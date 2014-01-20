@@ -6,7 +6,6 @@ Created on Oct 5, 2012
 
 from composition_model import CompositionModel
 from composes.utils.gen_utils import assert_is_instance
-from composes.utils.gen_utils import assert_valid_kwargs
 from composes.utils.matrix_utils import is_array_or_matrix
 from composes.utils.matrix_utils import padd_matrix
 from composes.utils.matrix_utils import to_compatible_matrix_types
@@ -33,7 +32,7 @@ class FullAdditive(CompositionModel):
     _mat_b_t = None
 
 
-    def __init__(self, **kwargs):
+    def __init__(self, A=None, B=None, learner=LstsqRegressionLearner()):
         #TODO here; very important, should be able to set the intercept
         #when mat a and mat b are given , to true or false. now by default is
         #is false
@@ -50,11 +49,9 @@ class FullAdditive(CompositionModel):
             learner= : regression learner object, of type RegressionLearner.
             Optional, default LstsqRegressionLearner.
         """
-        assert_valid_kwargs(kwargs, ["A", "B", "learner"])
-
-        if "A" in kwargs and "B" in kwargs:
-            mat_a = kwargs["A"]
-            mat_b = kwargs["B"]
+        if A is not None and B is not None:
+            mat_a = A
+            mat_b = B
             if not is_array_or_matrix(mat_a):
                 raise TypeError("expected matrix type, received: %s"
                                 % type(mat_a))
@@ -69,9 +66,7 @@ class FullAdditive(CompositionModel):
             self._has_intercept = False
 
         else:
-            self._regression_learner = LstsqRegressionLearner()
-            if "learner" in kwargs:
-                self._regression_learner = kwargs["learner"]
+            self._regression_learner = learner
             self._has_intercept = self._regression_learner.has_intercept()
 
 

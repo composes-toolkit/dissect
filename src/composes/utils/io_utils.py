@@ -16,7 +16,6 @@ from scipy.sparse import csr_matrix
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
 from composes.utils.gen_utils import assert_is_instance
-from composes.utils.gen_utils import assert_valid_kwargs
 import struct
 
 
@@ -87,14 +86,12 @@ def extract_indexing_structs(filename, field_list):
     return (id2str_list, str2id_list)
 
 
-def read_tuple_list(data_file, **kwargs):
+def read_tuple_list(data_file, fields=None):
     field_list = []
     result = []
 
-    assert_valid_kwargs(kwargs, ["fields"])
-
-    if "fields" in kwargs:
-        field_list = kwargs["fields"]
+    if fields:
+        field_list = fields
 
     with open(data_file) as f:
         for line in f:
@@ -134,8 +131,7 @@ def read_list(file_name, **kwargs):
     return result
 
 
-def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
-
+def read_sparse_space_data(matrix_file, row2id, column2id, dtype=np.double):
     if matrix_file.endswith(".gz"):
         f = gzip.open(matrix_file, "rb")
     else:
@@ -147,14 +143,7 @@ def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
     row = np.zeros(no_lines, dtype=np.int32)
     col = np.zeros(no_lines, dtype=np.int32)
 
-    assert_valid_kwargs(kwargs, ["dtype"])
-
-    if "dtype" in kwargs:
-        element_type = kwargs["dtype"]
-    else:
-        element_type = np.double
-
-    data = np.zeros(no_lines, dtype=element_type)
+    data = np.zeros(no_lines, dtype=dtype)
 
     if matrix_file.endswith(".gz"):
         f = gzip.open(matrix_file, "rb")
@@ -170,7 +159,7 @@ def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
                 if word1 in row2id and word2 in column2id:
                     row[i] = row2id[word1]
                     col[i] = column2id[word2]
-                    data[i] = element_type(count)
+                    data[i] = dtype(count)
                     i += 1
                     if i % 1000000 == 0:
                         print "Progress...%d" % i
@@ -193,7 +182,7 @@ def read_sparse_space_data(matrix_file, row2id, column2id, **kwargs):
     return m
 
 
-def read_dense_space_data(matrix_file, row2id, **kwargs):
+def read_dense_space_data(matrix_file, row2id, element_type=np.double):
     #get number of rows and columns
     if matrix_file.endswith(".gz"):
         f = gzip.open(matrix_file, "rb")
@@ -208,13 +197,6 @@ def read_dense_space_data(matrix_file, row2id, **kwargs):
 
     no_rows = len(row2id)
     row_string_set = set([])
-
-    assert_valid_kwargs(kwargs, ["dtype"])
-
-    if "dtype" in kwargs:
-        element_type = kwargs["dtype"]
-    else:
-        element_type = np.double
 
     m = np.mat(np.zeros(shape=(no_rows, no_cols), dtype=element_type))
 

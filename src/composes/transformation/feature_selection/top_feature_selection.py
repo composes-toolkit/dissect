@@ -4,7 +4,6 @@ Created on Oct 5, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 from warnings import warn
-from composes.utils.gen_utils import assert_valid_kwargs
 from feature_selection import FeatureSelection
 
 class TopFeatureSelection(FeatureSelection):
@@ -21,24 +20,18 @@ class TopFeatureSelection(FeatureSelection):
     """
 
     _name = "top_feature_selection"
-    _valid_criteria = ["sum", "length"]
-    criterion = "sum"
+    _valid_criteria = {"sum", "length"}
 
-    def __init__(self, reduced_dimension, **kwargs):
+    def __init__(self, reduced_dimension, criterion='sum'):
         '''
         Constructor
         '''
         super(TopFeatureSelection, self).__init__(reduced_dimension)
-        assert_valid_kwargs(kwargs, ["criterion"])
 
-        if kwargs:
-            if "criterion" in kwargs:
-                criterion = kwargs["criterion"]
-                if not criterion in self._valid_criteria:
-                    raise ValueError("Unrecognized criterion: %s" % criterion)
-                self.criterion = criterion
-            else:
-                raise ValueError("Unrecognized parameter: %s" % kwargs.keys())
+        if criterion:
+            if criterion not in self._valid_criteria:
+                raise ValueError("Unrecognized criterion: %s" % criterion)
+            self.criterion = criterion
 
     def apply(self, matrix_):
 

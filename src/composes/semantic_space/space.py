@@ -12,7 +12,6 @@ from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list
 from composes.utils.space_utils import assert_shape_consistent
 from composes.utils.gen_utils import assert_is_instance
-from composes.utils.gen_utils import assert_valid_kwargs
 from composes.utils.space_utils import add_items_to_dict
 from composes.utils.matrix_utils import resolve_type_conflict
 from composes.utils.matrix_utils import get_type_of_largest
@@ -59,7 +58,7 @@ class Space(object):
     """
 
     def __init__(self, matrix_, id2row, id2column, row2id=None, column2id=None,
-                 **kwargs):
+                 operations=[], element_shape=None):
         """
         Constructor.
         
@@ -89,7 +88,6 @@ class Space(object):
                  
         """
         assert_is_instance(matrix_, Matrix)
-        assert_valid_kwargs(kwargs, ["operations", "element_shape"])
         assert_is_instance(id2row, list)
         assert_is_instance(id2column, list)
 
@@ -110,22 +108,18 @@ class Space(object):
         self._id2row = id2row
         self._column2id = column2id
         self._id2column = id2column
-        if "operations" in kwargs:
-            self._operations = kwargs["operations"]
-        else:
-            self._operations = []
+        self._operations = operations
 
-        if "element_shape" in kwargs:
-            elem_shape = kwargs["element_shape"]
-            if prod(elem_shape) != self._cooccurrence_matrix.shape[1]:
+        if element_shape:
+            if prod(element_shape) != self._cooccurrence_matrix.shape[1]:
                 raise ValueError("Trying to assign invalid element shape:\
                                     element_shape: %s, matrix columns: %s"
-                                 % (str(elem_shape),
+                                 % (str(element_shape),
                                     str(self._cooccurrence_matrix.shape[1])))
 
-                # NOTE: watch out here, can cause bugs, if we change the dimension
-                # of a regular space and we do not create a new space
-            self._element_shape = kwargs["element_shape"]
+        # NOTE: watch out here, can cause bugs, if we change the dimension
+        # of a regular space and we do not create a new space
+            self._element_shape = element_shape
         else:
             self._element_shape = (self._cooccurrence_matrix.shape[1],)
 

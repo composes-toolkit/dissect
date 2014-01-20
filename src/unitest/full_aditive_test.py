@@ -35,7 +35,7 @@ class Test(unittest.TestCase):
 
     def test_space_compose_sparse(self):
         #WHAT TO DO HERE???
-        #PARAMTERS ARE GIVEN AS DENSE MATRICES, INPUT DATA AS SPARSE??
+        #PARAMETERS ARE GIVEN AS DENSE MATRICES, INPUT DATA AS SPARSE??
 
         test_cases = [([("a","b","a_b")], self.space1, self.space2, DenseMatrix.identity(2), DenseMatrix.identity(2)),
                       ([("a","b","a_b")], self.space1, self.space3, np.mat([[0,0],[0,0]]), np.mat([[0,0],[0,0]]))
