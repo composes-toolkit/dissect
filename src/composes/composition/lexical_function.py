@@ -39,9 +39,8 @@ class LexicalFunction(CompositionModel):
     """
 
     _name = "lexical_function"
-    _MIN_SAMPLES = 1
 
-    def __init__(self, **kwargs):
+    def __init__(self, min_samples=1, **kwargs):
         """
         Constructor.
         
@@ -56,7 +55,9 @@ class LexicalFunction(CompositionModel):
         
             learner= : regression method of type RegressionLearner. Optional,
             default LstsqRegressionLearner.
-            
+
+            min_samples= : minimum number of training samples required before a LexicalFunction can be trained
+
         """
         assert_valid_kwargs(kwargs, ["function_space", "intercept", "learner"])
 
@@ -64,6 +65,7 @@ class LexicalFunction(CompositionModel):
         self.composed_id2column = []
         self._function_space = None
         self._has_intercept = False
+        self._MIN_SAMPLES = min_samples
 
         if "function_space" in kwargs:
             space = kwargs["function_space"]
