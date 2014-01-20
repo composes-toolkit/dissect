@@ -1,6 +1,6 @@
 import numpy as np
-from composes.utils.gen_utils import assert_valid_kwargs
 from composes.matrix.linalg import Linalg
+
 
 class RegressionLearner(object):
     """
@@ -21,8 +21,8 @@ class RegressionLearner(object):
     def has_intercept(self):
         return self._intercept
 
-class LstsqRegressionLearner(RegressionLearner):
 
+class LstsqRegressionLearner(RegressionLearner):
     """
     This class performs Least Squares Regression.
 
@@ -33,20 +33,15 @@ class LstsqRegressionLearner(RegressionLearner):
     It can be used with intercept or without (by default intercept=True).
 
     """
-    def __init__(self, **kwargs):
 
-        assert_valid_kwargs(kwargs, ["intercept"])
-
-        self._intercept = True
-        if "intercept" in kwargs:
-            self._intercept = kwargs["intercept"]
+    def __init__(self, intercept=True):
+        self._intercept = intercept
 
     def train(self, matrix_a, matrix_b):
         return Linalg.lstsq_regression(matrix_a, matrix_b, self._intercept)
 
 
 class RidgeRegressionLearner(RegressionLearner):
-
     """
     This class performs Ridge Regression.
 
@@ -61,29 +56,16 @@ class RidgeRegressionLearner(RegressionLearner):
 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, intercept=True, param_range=None, crossvalidation=True, param=None):
+        self._intercept = intercept
+        self._param_range = param_range if param_range else np.linspace(0.0, 5, 11)
 
-        assert_valid_kwargs(kwargs, ["intercept", "param_range", "crossvalidation", "param"])
+        self._param = param
+        self._crossvalidation = crossvalidation
 
-        self._intercept = True
-        if "intercept" in kwargs:
-            self._intercept = kwargs["intercept"]
-
-        self._crossvalidation = True
-
-        self._param_range = np.linspace(0.0, 5, 11)
-        if "param_range" in kwargs:
-            if not kwargs["param_range"] is None:
-                self._param_range = kwargs["param_range"]
-
-        self._param = None
-        if "param" in kwargs:
-            if not kwargs["param"] is None:
-                self._crossvalidation = False
-                self._param = kwargs["param"]
-
-        if "crossvalidation" in kwargs:
-            self._crossvalidation = kwargs["crossvalidation"]
+        if param:
+            self._crossvalidation = False
+            self._param = param
 
         if not self._crossvalidation and self._param is None:
             raise ValueError("Cannot run (no-crossvalidation) RidgeRegression with no lambda value!")
@@ -98,7 +80,7 @@ class RidgeRegressionLearner(RegressionLearner):
 
         if not self._crossvalidation:
             return Linalg.ridge_regression(matrix_a, matrix_b, self._param,
-                                     self._intercept)[0]
+                                           self._intercept)[0]
 
         else:
             min_err_param = 0
@@ -109,11 +91,11 @@ class RidgeRegressionLearner(RegressionLearner):
             for param in self._param_range:
 
                 mat_x, S_trace, err1 = Linalg.ridge_regression(matrix_a, matrix_b, param,
-                                                self._intercept)
+                                                               self._intercept)
 
-                nom = pow(1 - S_trace/N, 2) * N
+                nom = pow(1 - S_trace / N, 2) * N
                 if nom != 0:
-                    gcv_err =  (err1 * err1)/nom
+                    gcv_err = (err1 * err1) / nom
 
                 if gcv_err < min_err:
                     min_err = gcv_err
@@ -121,4 +103,4 @@ class RidgeRegressionLearner(RegressionLearner):
 
             #print "lambda:", min_err_param
             return Linalg.ridge_regression(matrix_a, matrix_b, min_err_param,
-                                     self._intercept)[0]
+                                           self._intercept)[0]

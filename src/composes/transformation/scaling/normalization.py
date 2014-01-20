@@ -6,7 +6,6 @@ Created on Oct 4, 2012
 from numpy import double
 from warnings import warn
 from scaling import Scaling
-from composes.utils.gen_utils import assert_valid_kwargs
 
 class Normalization(Scaling):
     """
@@ -21,22 +20,16 @@ class Normalization(Scaling):
     """
     _name = "row_normalization"
     _valid_criteria = ["sum", "length"]
-    criterion = "sum"
     _uses_column_stats = True
 
-    def __init__(self, **kwargs):
+    def __init__(self, criterion='sum'):
         '''
         Constructor
         '''
-        assert_valid_kwargs(kwargs, ["criterion"])
-        if kwargs:
-            if "criterion" in kwargs:
-                criterion = kwargs["criterion"]
-                if not criterion in self._valid_criteria:
-                    raise ValueError("Unrecognized criterion: %s" % criterion)
-                self.criterion = criterion
-            else:
-                raise ValueError("Unrecognized parameter: %s" % kwargs.keys())
+        if criterion:
+            if criterion not in self._valid_criteria:
+                raise ValueError("Unrecognized criterion: %s" % criterion)
+            self.criterion = criterion
 
 
     def apply(self, matrix_, total=None):
