@@ -54,6 +54,8 @@ class LexicalFunction(CompositionModel):
             learner= : regression method of type RegressionLearner. Optional,
             default LstsqRegressionLearner.
 
+            min_samples= : minimum number of training samples required before a LexicalFunction can be trained
+
         """
         assert_valid_kwargs(kwargs, ["function_space", "intercept", "learner"])
 
