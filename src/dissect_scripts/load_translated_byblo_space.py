@@ -15,6 +15,7 @@ def _translate_byblo_to_dissect(events_file, row_transform=lambda x: x):
     :rtype: str
     """
     # remove duplicate head noun vectors, converting to a dissect sparse matrix format
+    logging.info('Converting %s to DISSECT format', events_file)
     t = Thesaurus.from_tsv([events_file], aggressive_lowercasing=False)
     output_file = '{}.uniq'.format(events_file)
     t.to_dissect_sparse_files(output_file, row_transform=row_transform)
@@ -22,6 +23,7 @@ def _translate_byblo_to_dissect(events_file, row_transform=lambda x: x):
 
 
 def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix, row_transform=lambda x: x):
+    logging.info('---------------------------')
     logging.info('Starting training')
     logging.info('Nouns file is %s', noun_events_file)
     logging.info('ANs file is %s', ANs_events_file)
@@ -49,22 +51,7 @@ def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix, row_
                                          # in the core space (including their order)!
                                          cols="{}.cols".format(cleaned_nouns_file),
                                          format="sm")
-    logging.info('Each peripheral vector has dimensionality %r', my_per_space.element_shape)
-    #for a, b in product(my_space.row2id, my_space.row2id):
-    #    sim = my_space.get_sim(a, b, lin)
-    #    if sim > 0:
-    #        logging.info('%s <> %s = %0.2f', a, b, sim)
-    #
-    #for i, noun in enumerate(my_space.row2id):
-    #    logging.info(my_space.get_neighbours(noun, 2, lin))
-    #    #logging.info(my_space.get_neighbours(noun, 2, lin, space2=my_per_space))
-
-
-
-    #export the space in sparse format
-    #my_space.export("./data/out/ex01", format="dm")
-    #my_space = my_space.apply(PpmiWeighting())
-    #my_space = my_space.apply(Svd(5))
+    logging.info('Each phrase vector has dimensionality %r', my_per_space.element_shape)
 
     # use the model to compose words in my_space
     all_data = []
@@ -90,7 +77,7 @@ def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix, row_
     # composed_data_file = output_prefix + '.composed_space.pkl'
     # io_utils.save(composed_space, composed_data_file)
     # logging.info('Saving composed training data to %s', composed_data_file)
-
+    logging.info('---------------------------')
     return model_file
     #similarity within the learned functional space
     #logging.info('Done')
@@ -102,10 +89,6 @@ def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix, row_
     ## this computes the sim by a brute force
     #composed_space.get_neighbours('african_army', 4, CosSimilarity(), space2=my_per_space)
     #composed_space.get_row('african/J_army/N').mat
-
-
-def _append_unless_exists(string, suffix):
-    return string if string.endswith(suffix) else '%s%s' % (string, suffix)
 
 
 if __name__ == '__main__':
