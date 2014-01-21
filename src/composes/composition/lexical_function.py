@@ -96,7 +96,7 @@ class LexicalFunction(CompositionModel):
         The id2column attribute of the resulted composed space is set to
         be equal to that of the phrase space given as an input.
         """
-
+        logging.info('Starting LexicalFunction training')
         start = time.time()
 
         self._has_intercept = self._regression_learner.has_intercept()
@@ -127,8 +127,8 @@ class LexicalFunction(CompositionModel):
         for i in xrange(len(key_ranges)):
             idx_beg, idx_end = key_ranges[i]
 
-            print ("Training lexical function...%s with %d samples"
-                   % (keys[i], idx_end - idx_beg))
+            logger.info("Training lexical function %s with %d samples"
+                        % (keys[i], idx_end - idx_beg))
 
             arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end])
             phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
@@ -151,15 +151,11 @@ class LexicalFunction(CompositionModel):
         self._function_space = Space(new_space_mat, keys, [],
                                      element_shape=new_element_shape)
 
-        log.print_composition_model_info(logger, self, 1, "\nTrained composition model:")
-        log.print_info(logger, 3, "Trained: %s lexical functions" % len(keys))
-        log.print_info(logger, 3, "With total data points:%s" % len(function_word_list))
-        log.print_matrix_info(logger, arg_space.cooccurrence_matrix, 3,
-                              "Semantic space of arguments:")
-        log.print_info(logger, 3, "Shape of lexical functions learned:%s"
-                                  % (new_element_shape,))
-        log.print_matrix_info(logger, new_space_mat, 3,
-                              "Semantic space of lexical functions:")
+        log.print_composition_model_info(logger, self, "Trained composition model: ")
+        logger.info("Done training %s lexical functions with %s data points" % (len(keys), len(function_word_list)))
+        log.print_matrix_info(logger, arg_space.cooccurrence_matrix, 3, "Semantic space of arguments:")
+        logger.info("Shape of lexical functions learned: %s" % (new_element_shape,))
+        log.print_matrix_info(logger, new_space_mat, 3, "Semantic space of lexical functions:")
         log.print_time_info(logger, time.time(), start, 2)
 
     def compose(self, data, arg_space):
@@ -206,10 +202,10 @@ class LexicalFunction(CompositionModel):
         result_element_shape = self._function_space.element_shape[0:-1]
         composed_ph_mat = composed_ph_vec.nary_vstack(composed_vec_list)
 
-        log.print_name(logger, self, 1, "\nComposed with composition model:")
-        log.print_info(logger, 3, "Composed total data points:%s" % len(arg1_list))
-        log.print_info(logger, 3, "Functional shape of the resulted (composed) elements:%s"
-                                  % (result_element_shape,))
+        logger.info("Composed with composition model: %s", self)
+        logger.info("Composed total data points:%s" % len(arg1_list))
+        logger.info("Functional shape of the resulted (composed) elements:%s"
+                    % (result_element_shape,))
         log.print_matrix_info(logger, composed_ph_mat, 4,
                               "Resulted (composed) semantic space:")
         log.print_time_info(logger, time.time(), start, 2)
