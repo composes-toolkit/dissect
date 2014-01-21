@@ -22,7 +22,7 @@ def _translate_byblo_to_dissect(events_file, row_transform=lambda x: x):
     return output_file
 
 
-def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix, row_transform=lambda x: x):
+def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix, row_transform=lambda x: x, threshold=10):
     logging.info('---------------------------')
     logging.info('Starting training')
     logging.info('Nouns file is %s', noun_events_file)
@@ -62,7 +62,7 @@ def train_baroni_composer(noun_events_file, ANs_events_file, output_prefix, row_
 
     #train a lexical function model on the data
     composer = LexicalFunction()
-    composer._MIN_SAMPLES = 10 # ensure we have some a min number of training examples
+    composer._MIN_SAMPLES = threshold # ensure we have some a min number of training examples
     composer.train(all_data, my_space, my_per_space)
     available_adjs = composer.function_space.id2row
     model_file = output_prefix + '.composer.pkl'
