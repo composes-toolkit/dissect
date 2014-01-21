@@ -292,8 +292,7 @@ class Space(object):
             i = sorted_perm[count]
             result.append((id2row[i], sims_to_matrix[i, 0]))
 
-        log.print_info(logger, 1, "\nGetting neighbours of:%s" % (word))
-        log.print_name(logger, similarity, 1, "Similarity:")
+        logger.info("Getting neighbours of:%s according to %s" % (word, similarity))
         log.print_time_info(logger, time.time(), start, 2)
         return result
 

@@ -3,6 +3,7 @@ Created on Oct 16, 2012
 
 @author: nghia
 '''
+import logging
 
 import numpy as np
 try:
@@ -17,6 +18,8 @@ from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.sparse_matrix import SparseMatrix
 from composes.utils.gen_utils import assert_is_instance
 import struct
+
+logger = logging.getLogger(__name__)
 
 
 def save(object_, file_name):
@@ -132,6 +135,7 @@ def read_list(file_name, **kwargs):
 
 
 def read_sparse_space_data(matrix_file, row2id, column2id, dtype=np.double):
+    logger.info('Loading sparse space from %s', matrix_file)
     if matrix_file.endswith(".gz"):
         f = gzip.open(matrix_file, "rb")
     else:
@@ -162,7 +166,7 @@ def read_sparse_space_data(matrix_file, row2id, column2id, dtype=np.double):
                     data[i] = dtype(count)
                     i += 1
                     if i % 1000000 == 0:
-                        print "Progress...%d" % i
+                        logger.info("Progress... %d", i)
             #if len(line_elements) > 3:
             #    warn("Invalid input line:%s. Expected 3 fields, ignoring additional ones!" % line.strip())
             else:
@@ -183,6 +187,7 @@ def read_sparse_space_data(matrix_file, row2id, column2id, dtype=np.double):
 
 
 def read_dense_space_data(matrix_file, row2id, element_type=np.double):
+    logger.info('Loading dense space from %s', matrix_file)
     #get number of rows and columns
     if matrix_file.endswith(".gz"):
         f = gzip.open(matrix_file, "rb")
