@@ -3,7 +3,7 @@ from composes.utils import io_utils
 from composes.composition.lexical_function import LexicalFunction
 from composes.semantic_space.peripheral_space import PeripheralSpace
 from composes.semantic_space.space import Space
-from thesisgenerator.plugins.thesaurus_loader import Thesaurus
+from discoutils.thesaurus_loader import Thesaurus
 
 
 def _translate_byblo_to_dissect(events_file, row_transform=lambda x: x):
