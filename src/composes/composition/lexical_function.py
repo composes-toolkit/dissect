@@ -9,7 +9,6 @@ import time
 from composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from composes.utils.gen_utils import get_partitions
-from composes.utils.gen_utils import assert_valid_kwargs
 from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.utils.regression_learner import RegressionLearner
 from composes.utils.matrix_utils import resolve_type_conflict
@@ -24,6 +23,7 @@ from composes.utils import log_utils as log
 
 logger = logging.getLogger(__name__)
 
+
 class LexicalFunction(CompositionModel):
     """
     Implements the lexical function compositional model.
@@ -37,9 +37,8 @@ class LexicalFunction(CompositionModel):
     """
 
     _name = "lexical_function"
-    _MIN_SAMPLES = 1
 
-    def __init__(self, **kwargs):
+    def __init__(self, function_space=None, intercept=False, learner=None, min_samples=1):
         """
         Constructor.
 
@@ -55,33 +54,21 @@ class LexicalFunction(CompositionModel):
             learner= : regression method of type RegressionLearner. Optional,
             default LstsqRegressionLearner.
 
+            min_samples= : minimum number of training samples required before a
+            LexicalFunction can be trained. Optional, default 1.
+
         """
-        assert_valid_kwargs(kwargs, ["function_space", "intercept", "learner"])
+        # assert_valid_kwargs(kwargs, ["function_space", "intercept", "learner"])
 
-        self._regression_learner = LstsqRegressionLearner()
         self.composed_id2column = []
-        self._function_space = None
-        self._has_intercept = False
+        if learner and function_space:
+            raise ValueError("Cannot instantiate with both learner and function_space!")
 
-        if "function_space" in kwargs:
-            space = kwargs["function_space"]
-            if not isinstance(space, Space):
-                raise TypeError("expected Space-type argument, received:"
-                                 % type(space))
-            self._function_space = kwargs["function_space"]
+        self._regression_learner = learner if learner else LstsqRegressionLearner()
+        self._function_space = function_space
+        self._has_intercept = intercept
+        self._MIN_SAMPLES = min_samples
 
-        if "intercept" in kwargs:
-            has_intercept = kwargs["intercept"]
-            if not isinstance(has_intercept, bool):
-                raise TypeError("expected bool-type argument, received:"
-                                 % type(has_intercept))
-            self._has_intercept = has_intercept
-
-        if "learner" in kwargs:
-            if "function_space" in kwargs:
-                raise ValueError("cannot instantiate with both learner and function_space!")
-
-            self._regression_learner = kwargs["learner"]
 
     def train(self, train_data, arg_space, phrase_space):
         """
@@ -128,7 +115,7 @@ class LexicalFunction(CompositionModel):
         if not keys:
             raise ValueError("No valid training data found!")
 
-        assert(len(arg_space.element_shape) == 1)
+        assert (len(arg_space.element_shape) == 1)
 
         if self._has_intercept:
             new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0] + 1,)
@@ -136,11 +123,10 @@ class LexicalFunction(CompositionModel):
             new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0],)
 
         for i in xrange(len(key_ranges)):
-
             idx_beg, idx_end = key_ranges[i]
 
             print ("Training lexical function...%s with %d samples"
-                     % (keys[i], idx_end - idx_beg))
+                   % (keys[i], idx_end - idx_beg))
 
             arg_mat = arg_space.get_rows(arg_list[idx_beg:idx_end])
             phrase_mat = phrase_space.get_rows(phrase_list[idx_beg:idx_end])
@@ -169,7 +155,7 @@ class LexicalFunction(CompositionModel):
         log.print_matrix_info(logger, arg_space.cooccurrence_matrix, 3,
                               "Semantic space of arguments:")
         log.print_info(logger, 3, "Shape of lexical functions learned:%s"
-                       % (new_element_shape,))
+                                  % (new_element_shape,))
         log.print_matrix_info(logger, new_space_mat, 3,
                               "Semantic space of lexical functions:")
         log.print_time_info(logger, time.time(), start, 2)
@@ -208,7 +194,7 @@ class LexicalFunction(CompositionModel):
 
             matrix_type = get_type_of_largest([arg1_vec, arg2_vec])
             [arg1_vec, arg2_vec] = resolve_type_conflict([arg1_vec, arg2_vec],
-                                                              matrix_type)
+                                                         matrix_type)
 
             composed_ph_vec = self._compose(arg1_vec, arg2_vec,
                                             self._function_space.element_shape)
@@ -221,19 +207,19 @@ class LexicalFunction(CompositionModel):
         log.print_name(logger, self, 1, "\nComposed with composition model:")
         log.print_info(logger, 3, "Composed total data points:%s" % len(arg1_list))
         log.print_info(logger, 3, "Functional shape of the resulted (composed) elements:%s"
-                       % (result_element_shape,))
+                                  % (result_element_shape,))
         log.print_matrix_info(logger, composed_ph_mat, 4,
                               "Resulted (composed) semantic space:")
         log.print_time_info(logger, time.time(), start, 2)
 
         return Space(composed_ph_mat, phrase_list, self.composed_id2column,
-                     element_shape = result_element_shape)
+                     element_shape=result_element_shape)
 
 
     def _compose(self, function_arg_vec, arg_vec, function_arg_element_shape):
 
         new_shape = (np.prod(function_arg_element_shape[0:-1]),
-                            function_arg_element_shape[-1])
+                     function_arg_element_shape[-1])
 
         function_arg_vec.reshape(new_shape)
 

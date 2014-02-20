@@ -6,7 +6,6 @@ Created on Oct 4, 2012
 
 from scaling import Scaling
 from composes.utils.py_matrix_utils import nonzero_invert
-from composes.utils.gen_utils import assert_valid_kwargs
 
 class RowNormalization(Scaling):
     """
@@ -22,21 +21,15 @@ class RowNormalization(Scaling):
     """
     _name = "row_normalization"
     _valid_criteria = ["sum", "length"]
-    criterion = "length"
 
-    def __init__(self, **kwargs):
+    def __init__(self, criterion='length'):
         '''
         Constructor
         '''
-        assert_valid_kwargs(kwargs, ["criterion"])
-        if kwargs:
-            if "criterion" in kwargs:
-                criterion = kwargs["criterion"]
-                if not criterion in self._valid_criteria:
-                    raise ValueError("Unrecognized criterion: %s" % criterion)
-                self.criterion = criterion
-            else:
-                raise ValueError("Unrecognized parameter: %s" % kwargs.keys())
+        if criterion:
+            if criterion not in self._valid_criteria:
+                raise ValueError("Unrecognized criterion: %s" % criterion)
+            self.criterion = criterion
 
 
     def apply(self, matrix_):
