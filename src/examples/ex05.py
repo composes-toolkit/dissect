@@ -12,7 +12,7 @@ my_space = my_space.apply(PpmiWeighting())
 print my_space.cooccurrence_matrix
 print my_space.id2row
 
-#create a peripheral space 
+#create a peripheral space
 my_per_space = PeripheralSpace.build(my_space,
                                      data="./data/in/ex05.sm",
                                      cols="./data/in/ex05.cols",

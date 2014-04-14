@@ -14,18 +14,18 @@ class Test(unittest.TestCase):
 
 
     def test_resolve_type_conflict(self):
-        
+
         arr = np.mat([1,2])
-        
+
         a = DenseMatrix(arr)
         b = SparseMatrix(arr)
-        
+
         [c,d] = resolve_type_conflict([a,b], DenseMatrix)
         [e,f,g] = resolve_type_conflict([b,a,a], DenseMatrix)
         h = resolve_type_conflict([], DenseMatrix)
-        
+
         [u,v] = resolve_type_conflict([arr, csr_matrix(arr)], DenseMatrix)
-        
+
         self.assertIsInstance(c, DenseMatrix)
         self.assertIsInstance(d, DenseMatrix)
         self.assertIsInstance(e, DenseMatrix)
@@ -34,11 +34,11 @@ class Test(unittest.TestCase):
         self.assertListEqual([], h)
 
         self.assertIsInstance(g, DenseMatrix)
-        
+
         self.assertIsInstance(u, DenseMatrix)
         self.assertIsInstance(v, DenseMatrix)
 
-        
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

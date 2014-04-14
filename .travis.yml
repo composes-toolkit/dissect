@@ -1,0 +1,18 @@
+language: python
+python:
+  - "2.7"
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq python-numpy python-scipy python-matplotlib
+  - rm /home/travis/virtualenv/python2.7/lib/python2.7/no-global-site-packages.txt
+# command to install dependencies
+install:
+  - pip install cython --use-mirrors
+  - pip install . --use-mirrors
+# command to run tests
+script: python setup.py test
+after_success:
+  - sudo apt-get install python-yaml
+  - pip install coveralls pytest-cov . --use-mirrors
+  - py.test --cov=composes --cov=pipelines --cov-report=term-missing src/unitest
+  - coveralls

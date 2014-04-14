@@ -14,7 +14,7 @@ my_comp = WeightedAdditive(alpha = 1, beta = 1)
 
 # use the model to compose words in my_space
 composed_space = my_comp.compose([("good", "book", "good_book"),
-                                  ("good", "car", "good_car")], 
+                                  ("good", "car", "good_car")],
                                  my_space)
 
 print composed_space.id2row

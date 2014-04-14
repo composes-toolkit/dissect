@@ -14,7 +14,7 @@ my_space = io_utils.load("./data/out/ex10.pkl")
 my_per_space = io_utils.load("./data/out/PER_SS.ex05.pkl")
 
 #apply the composition model to them
-composed_space = my_comp.compose([("good", "history_book", "good_history_book")], 
+composed_space = my_comp.compose([("good", "history_book", "good_history_book")],
                                  (my_space, my_per_space))
 
 print composed_space.id2row
