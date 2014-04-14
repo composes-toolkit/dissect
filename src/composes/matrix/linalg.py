@@ -215,11 +215,6 @@ class Linalg(object):
         extra_dims = int(reduced_dimension/10)
         
         ut, s, vt = sparsesvd(matrix_.mat.tocsc(), reduced_dimension + extra_dims)
-        print "sparsesvd"
-        print ut
-        print s
-        print vt
-        print "sparsesvd"
 
         u = SparseMatrix(ut.transpose())
         v = SparseMatrix(vt.transpose())
