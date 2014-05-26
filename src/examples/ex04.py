@@ -1,4 +1,4 @@
-#ex03.py
+#ex04.py
 #-------
 from composes.utils import io_utils
 from composes.transformation.dim_reduction.svd import Svd
