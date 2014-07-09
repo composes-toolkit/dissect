@@ -3,7 +3,7 @@ from composes.utils import io_utils
 from composes.composition.lexical_function import LexicalFunction
 from composes.semantic_space.peripheral_space import PeripheralSpace
 from composes.semantic_space.space import Space
-from discoutils.thesaurus_loader import Thesaurus
+from discoutils.thesaurus_loader import Vectors
 
 
 def _translate_byblo_to_dissect(events_file, row_transform=lambda x: x):
@@ -16,7 +16,7 @@ def _translate_byblo_to_dissect(events_file, row_transform=lambda x: x):
     """
     # remove duplicate head noun vectors, converting to a dissect sparse matrix format
     logging.info('Converting %s to DISSECT format', events_file)
-    t = Thesaurus.from_tsv([events_file], aggressive_lowercasing=False)
+    t = Vectors.from_tsv(events_file)
     output_file = '{}.uniq'.format(events_file)
     t.to_dissect_sparse_files(output_file, row_transform=row_transform)
     return output_file
