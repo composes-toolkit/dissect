@@ -1,5 +1,5 @@
 
-from scaling import Scaling
+from .scaling import Scaling
 from composes.utils.py_matrix_utils import nonzero_invert
 
 class EpmiWeighting(Scaling):

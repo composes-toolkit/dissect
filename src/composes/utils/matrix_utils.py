@@ -4,7 +4,7 @@ from composes.matrix.sparse_matrix import SparseMatrix
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.matrix.matrix import Matrix
 from scipy.sparse import issparse
-from py_matrix_utils import is_array
+from composes.utils.py_matrix_utils import is_array
 from warnings import warn
 
 def to_matrix(matrix_):

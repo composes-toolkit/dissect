@@ -19,10 +19,13 @@ Created on Jun 12, 2012
 import sys
 import getopt
 import os
-from ConfigParser import ConfigParser
+try:
+    from ConfigParser import ConfigParser # python 2
+except ImportError:
+    from configparser import ConfigParser # python 3
 from composes.utils import scoring_utils
 from composes.utils import log_utils
-import pipeline_utils as utils
+from . import pipeline_utils as utils
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
@@ -30,8 +33,7 @@ logger = logging.getLogger("test vector space construction pipeline")
 
 
 def usage(errno=0):
-    print >>sys.stderr,\
-    """Usage:
+    print("""Usage:
     python compute_similarities.py [options] [config_file]
 
     Options:
@@ -53,8 +55,9 @@ def usage(errno=0):
             config_file will be used.
 
     Example:
-    """
+    """)
     sys.exit(errno)
+
 
 def evaluate_sim(in_file, columns, corr_measures):
 
@@ -73,9 +76,9 @@ def evaluate_sim(in_file, columns, corr_measures):
                 prediction.append(float(elems[col1]))
 
     for corr_measure in corr_measures:
-        print "CORRELATION:%s" % corr_measure
+        print("CORRELATION:%s" % corr_measure)
         corr = scoring_utils.score(gold, prediction, corr_measure)
-        print "\t%f" % corr
+        print("\t%f" % corr)
 
 
 def evaluate_sim_batch(in_dir, columns, corr_measures, filter_=""):
@@ -88,7 +91,7 @@ def evaluate_sim_batch(in_dir, columns, corr_measures, filter_=""):
 
     for file_ in os.listdir(in_dir):
         if file_.find(filter_) != -1:
-            print file_
+            print(file_)
             evaluate_sim(in_dir + file_, columns, corr_measures)
 
 
@@ -98,8 +101,8 @@ def main(sys_argv):
                                    ["help", "input=", "correlation_measure=",
                                     "columns=", "log=", "in_dir=", "filter="])
 
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print(str(err))
         usage()
         sys.exit(1)
 

@@ -162,10 +162,10 @@ class Test(unittest.TestCase):
                   "--gz", "True"
                   ])
 
-        s1 = Space.build(data = self.dir_ + "mat2.dm", format = "dm")
-        s2 = Space.build(data = self.dir_ + "CORE_SS.mat2.dm", format="dm")
+        s1 = Space.build(data=self.dir_ + "mat2.dm", format="dm")
+        s2 = Space.build(data=self.dir_ + "CORE_SS.mat2.dm", format="dm")
         s3 = io_utils.load(self.dir_ + "CORE_SS.mat2.pkl", Space)
-        s4 = Space.build(data = self.dir_ + "mat2.dm.gz", format = "dm")
+        s4 = Space.build(data=self.dir_ + "mat2.dm.gz", format="dm")
 
         self._test_equal_spaces_dense(s1, s2)
         self._test_equal_spaces_dense(s1, s3)

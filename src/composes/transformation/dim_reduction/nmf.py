@@ -5,7 +5,7 @@ Created on Oct 1, 2012
 '''
 
 import numpy as np
-from dimensionality_reduction import DimensionalityReduction
+from .dimensionality_reduction import DimensionalityReduction
 from composes.matrix.linalg import Linalg
 from math import sqrt
 

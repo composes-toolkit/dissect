@@ -9,7 +9,7 @@ import logging
 
 import numpy as np
 
-from composition_model import CompositionModel
+from .composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from composes.utils.gen_utils import get_partitions
 from composes.utils.regression_learner import LstsqRegressionLearner
@@ -108,9 +108,9 @@ class LexicalFunction(CompositionModel):
 
         train_data = sorted(train_data, key=lambda tup: tup[0])
         function_word_list, arg_list, phrase_list = self.valid_data_to_lists(train_data,
-                                                                             (None,
-                                                                              arg_space.row2id,
-                                                                              phrase_space.row2id))
+                                                                             None,
+                                                                             arg_space.row2id,
+                                                                             phrase_space.row2id)
         #partitions the sorted input data
         keys, key_ranges = get_partitions(function_word_list, self._MIN_SAMPLES)
 
@@ -124,7 +124,7 @@ class LexicalFunction(CompositionModel):
         else:
             new_element_shape = phrase_space.element_shape + (arg_space.element_shape[0],)
 
-        for i in xrange(len(key_ranges)):
+        for i in range(len(key_ranges)):
             idx_beg, idx_end = key_ranges[i]
 
             logger.info("Training lexical function %s with %d samples"
@@ -181,12 +181,12 @@ class LexicalFunction(CompositionModel):
 
         assert_is_instance(arg_space, Space)
         arg1_list, arg2_list, phrase_list = self.valid_data_to_lists(data,
-                                                                     (self._function_space.row2id,
-                                                                      arg_space.row2id,
-                                                                      None))
+                                                                     self._function_space.row2id,
+                                                                     arg_space.row2id,
+                                                                     None)
 
         composed_vec_list = []
-        for i in xrange(len(arg1_list)):
+        for i in range(len(arg1_list)):
             arg1_vec = self._function_space.get_row(arg1_list[i])
             arg2_vec = arg_space.get_row(arg2_list[i])
 

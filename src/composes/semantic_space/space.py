@@ -467,7 +467,7 @@ class Space(object):
                                        element shape: %s" % self.element_shape)
 
     @classmethod
-    def build(cls, **kwargs):
+    def build(cls, data, format, rows=None, cols=None, **kwargs):
         """
         Reads in data files and extracts the data to construct a semantic space.
         
@@ -495,35 +495,26 @@ class Space(object):
         id2row = None
         id2column = None
 
-        if "data" in kwargs:
-            data_file = kwargs["data"]
-        else:
-            raise ValueError("Space data file needs to be specified")
+        if format not in ["dm", "sm"]:
+            raise ValueError("Unrecognized format: %s" % format)
 
-        if "format" in kwargs:
-            format_ = kwargs["format"]
-            if not format_ in ["dm", "sm"]:
-                raise ValueError("Unrecognized format: %s" % format_)
-        else:
-            raise ValueError("Format of input files needs to be specified")
+        if rows is not None:
+            [id2row], [row2id] = extract_indexing_structs(rows, [0])
 
-        if "rows" in kwargs and not kwargs["rows"] is None:
-            [id2row], [row2id] = extract_indexing_structs(kwargs["rows"], [0])
-
-        if "cols" in kwargs and not kwargs["cols"] is None:
-            [id2column], [column2id] = extract_indexing_structs(kwargs["cols"], [0])
-        elif format_ == "sm":
+        if cols is not None:
+            [id2column], [column2id] = extract_indexing_structs(cols, [0])
+        elif format == "sm":
             raise ValueError("Need to specify column file when input format is sm!")
 
-        if format_ == "sm":
+        if format == "sm":
             if id2row is None:
-                [id2row], [row2id] = extract_indexing_structs(data_file, [0])
-            mat = read_sparse_space_data(data_file, row2id, column2id)
+                [id2row], [row2id] = extract_indexing_structs(data, [0])
+            mat = read_sparse_space_data(data, row2id, column2id)
 
         else:
             if id2row is None:
-                [id2row], [row2id] = extract_indexing_structs(data_file, [0])
-            mat = read_dense_space_data(data_file, row2id)
+                [id2row], [row2id] = extract_indexing_structs(data, [0])
+            mat = read_dense_space_data(data, row2id)
 
         if id2column and len(id2column) != mat.shape[1]:
             raise ValueError("Columns provided inconsistent with shape of input matrix!")
@@ -535,7 +526,7 @@ class Space(object):
         log.print_time_info(logger, time.time(), start, 2)
         return Space(mat, id2row, id2column, row2id, column2id)
 
-    def export(self, file_prefix, **kwargs):
+    def export(self, file_prefix, format='dm'):
         """
         Exports the current space to disk.
         If the space has no column information, it cannot be exported in 
@@ -560,18 +551,15 @@ class Space(object):
 
         start = time.time()
         create_parent_directories(file_prefix)
-        format_ = "dm"
-        if "format" in kwargs:
-            format_ = kwargs["format"]
-            if not format_ in ["dm", "sm"]:
-                raise ValueError("Unrecognized format: %s" % format_)
-            elif format_ == "dm":
-                print_cooc_mat_dense_format(self.cooccurrence_matrix,
-                                            self.id2row, file_prefix)
-            else:
-                print_cooc_mat_sparse_format(self.cooccurrence_matrix,
-                                             self.id2row,
-                                             self.id2column, file_prefix)
+        if not format in ["dm", "sm"]:
+            raise ValueError("Unrecognized format: %s" % format)
+        elif format == "dm":
+            print_cooc_mat_dense_format(self.cooccurrence_matrix,
+                                        self.id2row, file_prefix)
+        else:
+            print_cooc_mat_sparse_format(self.cooccurrence_matrix,
+                                         self.id2row,
+                                         self.id2column, file_prefix)
         self._export_row_column(file_prefix)
 
         log.print_matrix_info(logger, self.cooccurrence_matrix, 1,

@@ -1,3 +1,4 @@
+from __future__ import print_function
 '''
 Created on Oct 17, 2012
 
@@ -10,23 +11,25 @@ Created on Jun 12, 2012
 @author: thenghia.pham
 '''
 
-
 import sys
 import getopt
 import os
-from ConfigParser import ConfigParser
+try:
+    from ConfigParser import ConfigParser # python 2
+except ImportError:
+    from configparser import ConfigParser # python 3
 from composes.semantic_space.peripheral_space import PeripheralSpace
 from composes.semantic_space.space import Space
 from composes.utils import io_utils
 from composes.utils import log_utils
-import pipeline_utils as utils
+import pipelines.pipeline_utils as utils
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
 
 
 def usage(errno=0):
-    print >>sys.stderr,\
+    print(
     """Usage:
     python build_peripheral_space.py [options] [config_file]
     \n\
@@ -51,7 +54,7 @@ def usage(errno=0):
             config_file will be used.
 
     Example:
-    """
+    """)
     sys.exit(errno)
 
 
@@ -76,7 +79,7 @@ def build_raw_per_space(in_file_prefix, in_format, is_gz):
             if in_format == "sm":
                 raise ValueError("Column file: %s needs to be provided!" % column_file)
             column_file = None
-        print "Building matrix..."
+        print("Building matrix...")
         space = Space.build(data=data_file, rows=row_file, cols=column_file, format=in_format)
 
     return space
@@ -97,7 +100,7 @@ def transform_raw_per_space(raw_per_space, in_file_prefix, out_dir, out_format, 
     space = PeripheralSpace(core_space, raw_per_space.cooccurrence_matrix,
                             raw_per_space.id2row, raw_per_space.row2id)
 
-    print "Printing..."
+    print("Printing...")
     out_file_prefix = "%s/%s.%s" % (out_dir, in_file_descr, core_descr)
     io_utils.save(space, out_file_prefix + ".pkl")
     if not out_format is None:
@@ -117,7 +120,7 @@ def build_space_batch(in_file_prefix, in_format, out_dir, out_format,
 
     for file_ in os.listdir(core_in_dir):
         if file_.find(core_filter) != -1 and file_.endswith(".pkl"):
-            print file_
+            print(file_)
             core_space_file = core_in_dir + file_
             transform_raw_per_space(raw_per_space, in_file_prefix, out_dir, out_format, core_space_file)
 
@@ -128,8 +131,8 @@ def main(sys_argv):
                                    ["help", "input=", "output=", "core=",
                                     "log=", "input_format=", "output_format=",
                                     "core_in_dir=", "core_filter=", "gz="])
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print(str(err))
         usage()
         sys.exit(1)
 

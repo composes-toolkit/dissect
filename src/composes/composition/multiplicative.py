@@ -4,7 +4,7 @@ Created on Oct 5, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 
-from composition_model import CompositionModel
+from .composition_model import CompositionModel
 from composes.exception.illegal_state_error import IllegalOperationError
 
 class Multiplicative(CompositionModel):

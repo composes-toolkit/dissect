@@ -4,7 +4,7 @@ Created on Oct 5, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 
-from composition_model import CompositionModel
+from .composition_model import CompositionModel
 from composes.utils.gen_utils import assert_is_instance
 from composes.utils.matrix_utils import is_array_or_matrix
 from composes.utils.matrix_utils import padd_matrix

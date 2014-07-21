@@ -18,7 +18,10 @@ Created on Jun 12, 2012
 
 import sys
 import getopt
-from ConfigParser import ConfigParser
+try:
+    from ConfigParser import ConfigParser # python 2
+except ImportError:
+    from configparser import ConfigParser # python 3
 from composes.semantic_space.space import Space
 from composes.similarity.cos import CosSimilarity
 from composes.similarity.lin import LinSimilarity
@@ -26,7 +29,7 @@ from composes.similarity.dot_prod import DotProdSimilarity
 from composes.similarity.euclidean import EuclideanSimilarity
 from composes.utils import io_utils
 from composes.utils import log_utils
-import pipeline_utils as utils
+import pipelines.pipeline_utils as utils
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
 
@@ -82,7 +85,7 @@ def compute_neighbours(in_file, no_neighbours, out_dir, sim_measure, space_files
 
     data = io_utils.read_list(in_file)
 
-    print "Computing neighbours: %s" % sim_measure
+    print("Computing neighbours: %s" % sim_measure)
     with open(out_file,"w") as out_stream:
         for word in data:
             out_stream.write("%s\n" % word)
@@ -95,8 +98,8 @@ def main(sys_argv):
         opts, argv = getopt.getopt(sys_argv[1:], "hi:o:s:m:n:l:",
                                    ["help", "input=", "output=", "sim_measures=",
                                     "space=", "log=", "no_neighbours="])
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print(str(err))
         usage()
         sys.exit(1)
 
