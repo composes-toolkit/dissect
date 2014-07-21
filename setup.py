@@ -14,6 +14,7 @@ class PyTest(TestCommand):
     def run_tests(self):
         #import here, cause outside the eggs aren't loaded
         import pytest
+
         errno = pytest.main(self.test_args)
         sys.exit(errno)
 
@@ -30,6 +31,7 @@ setup(
     cmdclass={'test': PyTest},
     package_dir={'': 'src'},
     packages=[
+        'dissect_scripts',
         'composes',
         'composes.composition',
         'composes.matrix',
