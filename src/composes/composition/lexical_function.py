@@ -12,7 +12,6 @@ import numpy as np
 from .composition_model import CompositionModel
 from composes.semantic_space.space import Space
 from composes.utils.gen_utils import get_partitions
-from composes.utils.gen_utils import assert_valid_kwargs
 from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.utils.regression_learner import RegressionLearner
 from composes.utils.matrix_utils import resolve_type_conflict
@@ -25,6 +24,7 @@ from composes.utils import log_utils as log
 
 
 logger = logging.getLogger(__name__)
+
 
 class LexicalFunction(CompositionModel):
     """
@@ -39,9 +39,8 @@ class LexicalFunction(CompositionModel):
     """
 
     _name = "lexical_function"
-    _MIN_SAMPLES = 1
 
-    def __init__(self, **kwargs):
+    def __init__(self, function_space=None, intercept=False, learner=None, min_samples=1):
         """
         Constructor.
         
@@ -56,34 +55,22 @@ class LexicalFunction(CompositionModel):
         
             learner= : regression method of type RegressionLearner. Optional,
             default LstsqRegressionLearner.
-            
+
+            min_samples= : minimum number of training samples required before a
+            LexicalFunction can be trained. Optional, default 1.
+
         """
-        assert_valid_kwargs(kwargs, ["function_space", "intercept", "learner"])
+        # assert_valid_kwargs(kwargs, ["function_space", "intercept", "learner"])
 
-        self._regression_learner = LstsqRegressionLearner()
         self.composed_id2column = []
-        self._function_space = None
-        self._has_intercept = False
+        if learner and function_space:
+            raise ValueError("Cannot instantiate with both learner and function_space!")
 
-        if "function_space" in kwargs:
-            space = kwargs["function_space"]
-            if not isinstance(space, Space):
-                raise TypeError("expected Space-type argument, received:"
-                                % type(space))
-            self._function_space = kwargs["function_space"]
+        self._regression_learner = learner if learner else LstsqRegressionLearner()
+        self._function_space = function_space
+        self._has_intercept = intercept
+        self._MIN_SAMPLES = min_samples
 
-        if "intercept" in kwargs:
-            has_intercept = kwargs["intercept"]
-            if not isinstance(has_intercept, bool):
-                raise TypeError("expected bool-type argument, received:"
-                                % type(has_intercept))
-            self._has_intercept = has_intercept
-
-        if "learner" in kwargs:
-            if "function_space" in kwargs:
-                raise ValueError("cannot instantiate with both learner and function_space!")
-
-            self._regression_learner = kwargs["learner"]
 
     def train(self, train_data, arg_space, phrase_space):
         """
