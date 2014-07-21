@@ -3,9 +3,10 @@ Created on Oct 16, 2012
 
 @author: nghia
 '''
+from io import TextIOWrapper
 import logging
-
 import numpy as np
+import sys
 try:
     import cPickle as pickle
 except ImportError:
@@ -25,16 +26,17 @@ logger = logging.getLogger(__name__)
 def save(object_, file_name):
     create_parent_directories(file_name)
     try:
-        with open(file_name, 'w') as f:
+        with open(file_name, 'wb') as f:
             pickle.dump(object_, f, 2)
     except struct.error:
         warn("object is too big, using pickle with protocol 0")
-        with open(file_name, 'w') as f:
+        with open(file_name, 'wb') as f:
             pickle.dump(object_, f, 0)
 
 
 def load(file_name, data_type=None):
-    with open(file_name) as f:
+    print(file_name)
+    with open(file_name, 'rb') as f:
         result = pickle.load(f)
 
     if not data_type is None:
@@ -60,15 +62,15 @@ def extract_indexing_structs(filename, field_list):
     id2str = []
     no_fields = len(field_list)
 
-    str2id_list = [str2id.copy() for i in xrange(no_fields)]
-    id2str_list = [list(id2str) for i in xrange(no_fields)]
-    index_list = [0 for i in xrange(no_fields)]
+    str2id_list = [str2id.copy() for _ in range(no_fields)]
+    id2str_list = [list(id2str) for _ in range(no_fields)]
+    index_list = [0 for i in range(no_fields)]
     max_field = max(field_list)
 
     if filename.endswith(".gz"):
-        input_stream = gzip.open(filename, "rb")
+        input_stream = open_gzip(filename)
     else:
-        input_stream = open(filename, "rb")
+        input_stream = open(filename)
 
     for line in input_stream:
         if line.strip() != "":
@@ -86,7 +88,8 @@ def extract_indexing_structs(filename, field_list):
     for id2str in id2str_list:
         if not id2str:
             raise ValueError("Found no valid data in file: %s!" % filename)
-    return (id2str_list, str2id_list)
+    input_stream.close()
+    return id2str_list, str2id_list
 
 
 def read_tuple_list(data_file, fields=None):
@@ -113,11 +116,8 @@ def read_tuple_list(data_file, fields=None):
     return result
 
 
-def read_list(file_name, **kwargs):
-    field = None
+def read_list(file_name, field=None, **kwargs):
     result = []
-    if "field" in kwargs:
-        field = kwargs["field"]
 
     with open(file_name) as f:
         for line in f:
@@ -137,9 +137,9 @@ def read_list(file_name, **kwargs):
 def read_sparse_space_data(matrix_file, row2id, column2id, dtype=np.double):
     logger.info('Loading sparse space from %s', matrix_file)
     if matrix_file.endswith(".gz"):
-        f = gzip.open(matrix_file, "rb")
+        f = open_gzip(matrix_file)
     else:
-        f = open(matrix_file, "rb")
+        f = open(matrix_file)
 
     no_lines = sum(1 for line in f if line.strip() != "")
     f.close()
@@ -150,9 +150,9 @@ def read_sparse_space_data(matrix_file, row2id, column2id, dtype=np.double):
     data = np.zeros(no_lines, dtype=dtype)
 
     if matrix_file.endswith(".gz"):
-        f = gzip.open(matrix_file, "rb")
+        f = open_gzip(matrix_file)
     else:
-        f = open(matrix_file, "rb")
+        f = open(matrix_file)
 
     i = 0
     for line in f:
@@ -186,15 +186,27 @@ def read_sparse_space_data(matrix_file, row2id, column2id, dtype=np.double):
     return m
 
 
+def open_gzip(filename):
+    """
+    On Python 3 gzip always reads in bytes instead of a string
+    make sure strings are read
+    source: http://bugs.python.org/issue13989
+    """
+    if sys.version_info >= (2, 8):
+        f = TextIOWrapper(gzip.open(filename, "r"))
+    else:
+        f = gzip.open(filename, mode='r')
+    return f
+
 def read_dense_space_data(matrix_file, row2id, element_type=np.double):
     logger.info('Loading dense space from %s', matrix_file)
     #get number of rows and columns
     if matrix_file.endswith(".gz"):
-        f = gzip.open(matrix_file, "rb")
+        f = open_gzip(matrix_file)
     else:
-        f = open(matrix_file, "rb")
+        f = open(matrix_file)
 
-    first_line = f.next()
+    first_line = next(f)
     no_cols = len(first_line.strip().split()) - 1
     if no_cols <= 0:
         raise ValueError("Invalid row: %s, expected at least %d fields" % (first_line.strip(), 2))
@@ -206,9 +218,9 @@ def read_dense_space_data(matrix_file, row2id, element_type=np.double):
     m = np.mat(np.zeros(shape=(no_rows, no_cols), dtype=element_type))
 
     if matrix_file.endswith(".gz"):
-        f = gzip.open(matrix_file, "rb")
+        f = open_gzip(matrix_file)
     else:
-        f = open(matrix_file, "rb")
+        f = open(matrix_file)
 
     for line in f:
         if not line.strip() == "":
@@ -233,7 +245,7 @@ def read_dense_space_data(matrix_file, row2id, element_type=np.double):
 def print_list(list_, file_name):
     with open(file_name, 'w') as f:
         for item in list_:
-            f.write(item + "\n")
+            f.write('%s\n' % item)
 
 
 def print_cooc_mat_sparse_format(matrix_, id2row, id2column, file_prefix):
@@ -252,7 +264,7 @@ def print_cooc_mat_sparse_format(matrix_, id2row, id2column, file_prefix):
             row_index = 0
             next_row = row_indices[1]
             row = id2row[0]
-            for i in xrange(len(data)):
+            for i in range(len(data)):
                 while i == next_row:
                     row_index += 1
                     next_row = row_indices[row_index + 1]
@@ -273,5 +285,5 @@ def print_cooc_mat_dense_format(matrix_, id2row, file_prefix):
         for i, row in enumerate(id2row):
             v = DenseMatrix(matrix_[i]).mat.flat
             line = "\t".join([row] + [repr(v[j]) for j in range(len(v))])
-            f.write("%s\n" % (line))
+            f.write("%s\n" % line)
 

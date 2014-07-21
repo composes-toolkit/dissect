@@ -43,8 +43,8 @@ class DimReductionTest(unittest.TestCase):
             #print hd_mat.mat
             #print ws_mat.mat.todense()
             #print hs_mat.mat.todense()
-            print "V:", in_mat
-            print "WH:", (ws_mat*hs_mat).mat.todense()
+            print("V:", in_mat)
+            print("WH:", (ws_mat*hs_mat).mat.todense())
 
             np.testing.assert_array_almost_equal(wd_mat.mat,
                                                  ws_mat.mat.todense(), 2)

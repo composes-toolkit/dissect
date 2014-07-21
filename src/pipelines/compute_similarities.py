@@ -1,3 +1,4 @@
+from __future__ import print_function
 '''
 Created on Oct 17, 2012
 
@@ -20,7 +21,10 @@ import sys
 import os
 import getopt
 from warnings import warn
-from ConfigParser import ConfigParser
+try:
+    from ConfigParser import ConfigParser # python 2
+except ImportError:
+    from configparser import ConfigParser # python 3
 from composes.semantic_space.space import Space
 from composes.similarity.cos import CosSimilarity
 from composes.similarity.lin import LinSimilarity
@@ -28,16 +32,14 @@ from composes.similarity.dot_prod import DotProdSimilarity
 from composes.similarity.euclidean import EuclideanSimilarity
 from composes.utils import io_utils
 from composes.utils import log_utils
-import pipeline_utils as utils
+import pipelines.pipeline_utils as utils
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
 
 
-
 def usage(errno=0):
-    print >>sys.stderr,\
-    """Usage:
+    print("""Usage:
     python compute_similarities.py [options] [config_file]
 
     Options:
@@ -60,7 +62,7 @@ def usage(errno=0):
             config_file will be used.
 
     Example:
-    """
+    """)
     sys.exit(errno)
 
 
@@ -76,7 +78,7 @@ def compute_sim_batch(in_file, columns, out_dir, sim_measures, in_dir):
         if file_.endswith(".pkl"):
             space_file = in_dir + file_
 
-            print space_file
+            print(space_file)
             compute_sim(in_file, columns, out_dir, sim_measures, [space_file])
 
 
@@ -108,7 +110,7 @@ def compute_sim(in_file, columns, out_dir, sim_measures, space_files):
     descr = ".".join(["SIMS", in_file.split("/")[-1], space_descr])
 
     for sim_measure in sim_measures:
-        print "Computing similarities: %s" % sim_measure
+        print("Computing similarities: %s" % sim_measure)
         if not sim_measure in sim_dict:
             warn("Similarity measure:%s not defined" % sim_measure)
             continue
@@ -133,8 +135,8 @@ def main(sys_argv):
         opts, argv = getopt.getopt(sys_argv[1:], "hi:o:s:m:c:l:",
                                    ["help", "input=", "output=", "sim_measures=",
                                     "space=", "in_dir=", "columns=", "log=" ])
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print(str(err))
         usage()
         sys.exit(1)
 

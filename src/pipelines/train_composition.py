@@ -18,7 +18,10 @@ Created on Jun 12, 2012
 
 import sys
 import getopt
-from ConfigParser import ConfigParser
+try:
+    from ConfigParser import ConfigParser # python 2
+except ImportError:
+    from configparser import ConfigParser # python 3
 from composes.semantic_space.space import Space
 from composes.composition.dilation import Dilation
 from composes.composition.full_additive import FullAdditive
@@ -28,7 +31,7 @@ from composes.utils.regression_learner import RidgeRegressionLearner
 from composes.utils.regression_learner import LstsqRegressionLearner
 from composes.utils import io_utils
 from composes.utils import log_utils
-import pipeline_utils as utils
+import pipelines.pipeline_utils as utils
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
@@ -74,7 +77,7 @@ def usage(errno=0):
 def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, regression,
                 crossvalid, intercept, param, param_range, export_params):
 
-    print "Reading in data..."
+    print("Reading in data...")
     in_descr = in_file.split("/")[-1]
 
     model_dict = {"weighted_add": WeightedAdditive,
@@ -115,13 +118,13 @@ def train_model(in_file, out_dir, model, arg_space_files, phrase_space_file, reg
 
     train_data = io_utils.read_tuple_list(in_file, fields=[0, 1, 2])
 
-    print "Training %s model" % model
+    print("Training %s model" % model)
     if arg_space2 is None or model == "lexical_func":
         model_obj.train(train_data, arg_space, phrase_space)
     else:
         model_obj.train(train_data, (arg_space, arg_space2), phrase_space)
 
-    print "Printing..."
+    print("Printing...")
     out_file = ".".join([out_dir + "/TRAINED_COMP_MODEL", model, in_descr])
     io_utils.save(model_obj, "%s.pkl" % out_file)
 
@@ -136,8 +139,8 @@ def main(sys_argv):
                                     "regression=", "intercept=", "arg_space=",
                                     "phrase_space=", "export_params=", "log=",
                                     "crossvalidation=", "lambda_range=", "lambda="])
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print(str(err))
         usage()
         sys.exit(1)
 

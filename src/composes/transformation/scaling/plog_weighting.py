@@ -1,5 +1,5 @@
 
-from scaling import Scaling
+from .scaling import Scaling
 
 class PlogWeighting(Scaling):
     """

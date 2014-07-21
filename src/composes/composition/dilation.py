@@ -4,7 +4,7 @@ Created on Oct 15, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 import numpy as np
-from composition_model import CompositionModel
+from .composition_model import CompositionModel
 from composes.utils.num_utils import is_numeric
 from composes.utils.py_matrix_utils import nonzero_invert
 

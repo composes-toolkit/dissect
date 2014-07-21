@@ -4,7 +4,7 @@ Created on Oct 5, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 from warnings import warn
-from feature_selection import FeatureSelection
+from .feature_selection import FeatureSelection
 
 class TopFeatureSelection(FeatureSelection):
     """

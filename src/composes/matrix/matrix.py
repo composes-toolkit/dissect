@@ -52,6 +52,10 @@ class Matrix(object):
             raise TypeError("expected numeric type, received %s" % (type(factor)))
         return type(self)(self.mat / float(factor))
 
+    def __truediv__(self, other):
+        # python 3
+        return self.__div__(other)
+
     def __rmul__(self, factor):
         ''' * operation'''
         if is_numeric(factor):

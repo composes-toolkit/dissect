@@ -4,7 +4,7 @@ Created on Sep 26, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 
-from space import Space
+from .space import Space
 from numpy import array
 from composes.utils.space_utils import list2dict
 from composes.utils.space_utils import assert_dict_match_list

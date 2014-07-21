@@ -124,7 +124,7 @@ class Linalg(object):
         try:
             tmp_mat = Linalg.pinv(((matrix_a_t * matrix_a) + lambda_diag))
         except np.linalg.LinAlgError:
-            print "Warning! LinAlgError"
+            print("Warning! LinAlgError")
             tmp_mat = matrix_type.identity(lambda_diag.shape[0])
 
         tmp_res = tmp_mat * matrix_a_t
@@ -234,7 +234,7 @@ class Linalg(object):
     @staticmethod
     def _dense_svd(matrix_, reduced_dimension):
 
-        print "Running dense svd"
+        print("Running dense svd")
         u, s, vt = np.linalg.svd(matrix_.mat, False, True)
         rank = len(s[s > Linalg._SVD_TOL])
 
@@ -277,11 +277,11 @@ class Linalg(object):
 
         #sub_loop_time = time()
 
-        for iteration in xrange(1, maxiter):
+        for iteration in range(1, maxiter):
             grad = w_t_w * h - w_t_v
 
             # search step size
-            for inner_iter in xrange(1, 20):
+            for inner_iter in range(1, 20):
                 hn = h - alpha * grad
                 hn = hn.get_non_negative()
                 d = hn - h
@@ -349,7 +349,7 @@ class Linalg(object):
         tolH = tolW
 
         #loop_time = init_time
-        for iteration in xrange(1, Linalg._NMF_MAX_ITER):
+        for iteration in range(1, Linalg._NMF_MAX_ITER):
             log.print_info(logger, 5, "Iteration: %d(%d)" % (iteration, Linalg._NMF_MAX_ITER))
 
             if time() - init_time > Linalg._NMF_TIME_LIMIT:

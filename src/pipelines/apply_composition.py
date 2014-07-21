@@ -1,3 +1,4 @@
+from __future__ import print_function
 '''
 Created on Oct 17, 2012
 
@@ -6,7 +7,10 @@ Created on Oct 17, 2012
 
 import sys
 import getopt
-from ConfigParser import ConfigParser
+try:
+    from ConfigParser import ConfigParser # python 2
+except ImportError:
+    from configparser import ConfigParser # python 3
 from composes.semantic_space.space import Space
 from composes.composition.composition_model import CompositionModel
 from composes.composition.dilation import Dilation
@@ -15,14 +19,14 @@ from composes.composition.lexical_function import LexicalFunction
 from composes.composition.multiplicative import Multiplicative
 from composes.utils import io_utils
 from composes.utils import log_utils
-import pipeline_utils as utils
+import pipelines.pipeline_utils as utils
 
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
 
+
 def usage(errno=0):
-    print >>sys.stderr,\
-    """Usage:
+    print("""Usage:
     python apply_composition.py [options] [config_file]
 
     Options:
@@ -51,8 +55,9 @@ def usage(errno=0):
             config_file will be used.
 
     Example:
-    """
+    """)
     sys.exit(errno)
+
 
 def create_model(model, alpha, beta, lambda_):
 
@@ -76,7 +81,7 @@ def create_model(model, alpha, beta, lambda_):
 def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
                 alpha, beta, lambda_, out_format):
 
-    print "Reading in data..."
+    print("Reading in data...")
     in_descr = in_file.split("/")[-1]
 
     if not model is None:
@@ -93,13 +98,13 @@ def apply_model(in_file, out_dir, model, trained_model, arg_space_files,
 
     data = io_utils.read_tuple_list(in_file, fields=[0, 1, 2])
 
-    print "Applying composition model:%s" % model_descr
+    print("Applying composition model:%s" % model_descr)
     if arg_space2 is None or type(model_obj) is LexicalFunction:
         composed_space = model_obj.compose(data, arg_space)
     else:
         composed_space = model_obj.compose(data, (arg_space, arg_space2))
 
-    print "Printing..."
+    print("Printing...")
     out_file = ".".join([out_dir + "/COMPOSED_SS", model_descr, in_descr])
     io_utils.save(composed_space, "%s.pkl" % out_file)
 
@@ -114,8 +119,8 @@ def main(sys_argv):
                                     "alpha=", "beta=", "lambda=", "arg_space=",
                                     "load_model=", "output_format=", "log="])
 
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print(str(err))
         usage()
         sys.exit(1)
 
@@ -149,7 +154,7 @@ def main(sys_argv):
         log_file = utils.config_get(section, config, "log", None)
         out_format = utils.config_get(section, config, "output_format", None)
 
-    print opts
+    print(opts)
     for opt, val in opts:
         if opt in ("-i", "--input"):
             in_file = val
