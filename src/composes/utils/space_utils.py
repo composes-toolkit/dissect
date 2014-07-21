@@ -31,7 +31,7 @@ def assert_dict_match_list(dict_, list_):
 
     if not len(list_) == len(dict_):
         raise match_err
-    for (k, v) in dict_.iteritems():
+    for (k, v) in dict_.items():
         if not list_[v] == k:
             raise match_err
 

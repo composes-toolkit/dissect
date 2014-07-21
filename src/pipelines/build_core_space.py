@@ -1,3 +1,4 @@
+from __future__ import print_function
 '''
 Created on Oct 17, 2012
 
@@ -15,7 +16,10 @@ import sys
 import getopt
 import os
 from warnings import warn
-from ConfigParser import ConfigParser
+try:
+    from ConfigParser import ConfigParser # python 2
+except ImportError:
+    from configparser import ConfigParser # python 3
 from composes.semantic_space.space import Space
 from composes.transformation.scaling.epmi_weighting import EpmiWeighting
 from composes.transformation.scaling.ppmi_weighting import PpmiWeighting
@@ -28,16 +32,14 @@ from composes.transformation.scaling.normalization import Normalization
 from composes.transformation.scaling.row_normalization import RowNormalization
 from composes.utils import io_utils
 from composes.utils import log_utils
-import pipeline_utils as utils
-
+from . import pipeline_utils as utils
 import logging
 logger = logging.getLogger("test vector space construction pipeline")
 
 
 
 def usage(errno=0):
-    print >>sys.stderr,\
-    """
+    print("""
     Usage:
     python build_core_space.py [options] [config_file]
     \n\
@@ -69,7 +71,7 @@ def usage(errno=0):
             config_file will be used. Optional.
 
     Example:
-    """
+    """)
     sys.exit(errno)
 
 
@@ -81,7 +83,7 @@ def apply_weighting(space, w):
                       "plmi":PlmiWeighting()}
 
     if not w in (None, "none"):
-        print "Applying weighting: %s" % w
+        print(("Applying weighting: %s" % w))
         if not w in weightings_dict:
             warn("Weigthing scheme: %s not defined" % w)
             return space
@@ -99,7 +101,7 @@ def apply_selection(w_space, s):
     selection_crit_list = ["sum", "length"]
 
     if not s in (None, "none"):
-        print "Applying feature selection: %s" % s
+        print(("Applying feature selection: %s" % s))
         sel_els = s.split("_")
         if not len(sel_els) == 3:
             warn("Feature selection: %s not defined" % s)
@@ -126,7 +128,7 @@ def apply_reduction(s_space, r):
                        "nmf": Nmf}
 
     if not r in (None, "none"):
-        print "Applying dimensionality reduction: %s" % r
+        print(("Applying dimensionality reduction: %s" % r))
         red_els = r.split("_")
         if not len(red_els) == 2:
             warn("Dimensionality reduction: %s not defined" % r)
@@ -149,7 +151,7 @@ def apply_normalization(r_space, n):
                            "row": RowNormalization}
 
     if not n in (None, "none"):
-        print "Applying normalization: %s" % n
+        print("Applying normalization: %s" % n)
         if not n in normalizations_dict:
             warn("Normalization: %s not defined" % n)
             return r_space
@@ -198,7 +200,7 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
                                  % column_file)
             column_file = None
 
-        print "Building matrix..."
+        print("Building matrix...")
         space = Space.build(data=data_file, rows=row_file, cols=column_file,
                             format=in_format)
 
@@ -214,7 +216,7 @@ def build_spaces(in_file_prefix, in_format, out_dir, out_format, weightings,
                 for n in normalizations:
                     n_space = apply_normalization(r_space, n)
 
-                    print "Printing..."
+                    print("Printing...")
                     print_space(n_space, out_dir, [in_file_descr, w, s, r, n], out_format)
 
 
@@ -226,8 +228,8 @@ def main(sys_argv):
                                     "weighting=", "selection=", "reduction=",
                                      "normalization=", "log=", "gz=",
                                      "input_format=", "output_format="])
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print(str(err))
         usage()
         sys.exit(1)
 

@@ -4,6 +4,7 @@ Created on Oct 5, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 import time
+from six.moves import builtins
 from warnings import warn
 from composes.semantic_space.space import Space
 from composes.matrix.dense_matrix import DenseMatrix
@@ -60,11 +61,9 @@ class CompositionModel(object):
 
         arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
         arg1_list, arg2_list, phrase_list = self.valid_data_to_lists(train_data,
-                                                                     (arg1_space.row2id,
-                                                                      arg2_space.row2id,
-                                                                      phrase_space.row2id)
-                                                                     )
-
+                                                                     arg1_space.row2id,
+                                                                     arg2_space.row2id,
+                                                                     phrase_space.row2id)
 
         self.xxx(arg1_space, arg2_space, phrase_space,
                  arg1_list, arg2_list, phrase_list)
@@ -119,9 +118,9 @@ class CompositionModel(object):
 
         arg1_space, arg2_space = self.extract_arg_spaces(arg_space)
         arg1_list, arg2_list, phrase_list = self.valid_data_to_lists(data,
-                                                                     (arg1_space.row2id,
+                                                                     arg1_space.row2id,
                                                                       arg2_space.row2id,
-                                                                      None))
+                                                                      None)
 
         arg1_mat = arg1_space.get_rows(arg1_list)
         arg2_mat = arg2_space.get_rows(arg2_list)
@@ -132,8 +131,8 @@ class CompositionModel(object):
         if self.composed_id2column is None:
             self.composed_id2column = self._build_id2column(arg1_space, arg2_space)
 
-        log.print_name(logger, self, 1, "\nComposed with composition model:")
-        log.print_info(logger, 3, "Composed total data points:%s" % arg1_mat.shape[0])
+        logger.info("Composed with composition model: %s", self)
+        logger.info("Composed total data points:%s" % arg1_mat.shape[0])
         log.print_matrix_info(logger, composed_phrase_mat, 4,
                               "Resulted (composed) semantic space::")
         log.print_time_info(logger, time.time(), start, 2)
@@ -175,7 +174,7 @@ class CompositionModel(object):
         return arg1_space.id2column
 
 
-    def valid_data_to_lists(self, data, (row2id1, row2id2, row2id3)):
+    def valid_data_to_lists(self, data, row2id1, row2id2, row2id3):
         """
         TO BE MOVED TO A UTILS MODULE!
         """
@@ -184,7 +183,7 @@ class CompositionModel(object):
         list3 = []
 
         j = 0
-        for i in xrange(len(data)):
+        for i in range(len(data)):
             sample = data[i]
 
             cond = True

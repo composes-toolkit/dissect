@@ -1,6 +1,6 @@
 
-from scaling import Scaling
-from epmi_weighting import EpmiWeighting
+from .scaling import Scaling
+from .epmi_weighting import EpmiWeighting
 
 class PpmiWeighting(Scaling):
     """

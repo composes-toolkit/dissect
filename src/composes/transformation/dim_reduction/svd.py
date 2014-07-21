@@ -4,7 +4,7 @@ Created on Sep 28, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 
-from dimensionality_reduction import DimensionalityReduction
+from .dimensionality_reduction import DimensionalityReduction
 from composes.matrix.linalg import Linalg
 
 class Svd(DimensionalityReduction):

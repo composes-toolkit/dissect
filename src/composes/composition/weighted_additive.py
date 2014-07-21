@@ -4,7 +4,7 @@ Created on Oct 5, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 
-from composition_model import CompositionModel
+from .composition_model import CompositionModel
 from composes.matrix.dense_matrix import DenseMatrix
 from composes.utils.num_utils import is_numeric
 # from composes.utils.mem_utils import get_mem_usage
@@ -62,7 +62,6 @@ class WeightedAdditive(CompositionModel):
         if not alpha is None and beta is None:
             self._beta = 1 - self._alpha
 
-
     def xxx(self, arg1_space, arg2_space, phrase_space, arg1_list, arg2_list, phrase_list):
 
         # we try to achieve at most MAX_MEM_OVERHEAD*phrase_space memory overhead
@@ -72,7 +71,7 @@ class WeightedAdditive(CompositionModel):
 
         arg1_arg2_dot, arg1_phrase_dot, arg2_phrase_dot, arg1_norm_sqr, arg2_norm_sqr = (0, 0, 0, 0, 0)
 
-        for i in range(len(arg1_list) / chunk_size):
+        for i in range(int(len(arg1_list) // chunk_size)):
             beg, end = i*chunk_size, min((i+1)*chunk_size, len(arg1_list))
 
             arg1_mat = arg1_space.get_rows(arg1_list[beg:end])

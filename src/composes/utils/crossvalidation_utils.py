@@ -17,7 +17,7 @@ def get_split_indices(range_len, fold):
         return get_split_indices(range_len, range_len)
 
     range_ = range(range_len)
-    shuffle(range_)
+    shuffle(list(range_))
     current_index = 0
     for i in range(fold):
         if i < len(range_)%fold:

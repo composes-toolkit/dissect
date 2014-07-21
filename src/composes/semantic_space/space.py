@@ -41,51 +41,51 @@ logger = logging.getLogger(__name__)
 class Space(object):
     """
     This class implements semantic spaces.
-
+    
     A semantic space describes a list of targets (words, phrases, etc.)
-    in terms of co-occurrence with contextual features.
-
+    in terms of co-occurrence with contextual features. 
+    
     It contains a matrix storing (some type of) co-occurrence
     strength values between targets and contextual features: by convention,
     targets are rows and features are columns. The space also stores structures
     that encode the mappings between the matrix row/column indices and the
     associated target/context-feature strings.
-
-    Transformations which rescale the matrix elements can be applied
-    to a semantic space. A semantic also space allows for similarity
-    computations between row elements of the space.
-
+    
+    Transformations which rescale the matrix elements can be applied 
+    to a semantic space. A semantic also space allows for similarity 
+    computations between row elements of the space. 
+    
     """
 
     def __init__(self, matrix_, id2row, id2column, row2id=None, column2id=None,
                  operations=[], element_shape=None):
         """
         Constructor.
-
+        
         Args:
             matrix_: Matrix type, the data matrix of the space
             id2row: list, the row elements
             id2column: list, the column elements
-            row2id: dictionary, maps row strings to ids. Optional, built from
+            row2id: dictionary, maps row strings to ids. Optional, built from 
                 id2row by default.
             column2id: dictionary, maps col strings to ids. Optional, built
                 from id2column by default
             operations: list of operations already performed on the input
                 matrix, Optional, by default set to empty.
-            element_shape: tuple of int, the shape on row elements. Optional,
+            element_shape: tuple of int, the shape on row elements. Optional, 
                 by default row elements are one-dimensional and element_shape is
                 (no_cols, ). Used in 3D composition.
-
+             
          Returns:
              A semantic space (type Space)
-
+             
          Raises:
              TypeError: if matrix_ is not of the correct type
-             ValueError: if element shape is not consistent with
+             ValueError: if element shape is not consistent with 
                          the size of matrix rows
-                         if the matrix and the provided row and column
+                         if the matrix and the provided row and column 
                          indexing structures are not of consistent shapes.
-
+                 
         """
         assert_is_instance(matrix_, Matrix)
         assert_is_instance(id2row, list)
@@ -127,32 +127,31 @@ class Space(object):
     def apply(self, transformation):
         """
         Applies a transformation on the current space.
-
-        All transformations affect the data matrix. If the transformation
+        
+        All transformations affect the data matrix. If the transformation 
         reduces the dimensionality of the space, the column indexing
         structures are also updated. The operation applied is appended
-        to the list of operations that the space holds.
-
+        to the list of operations that the space holds. 
+        
         Args:
-            transformation: of type Scaling, DimensionalityReduction or
-              FeatureSelection
+            transformation: of type Scaling, DimensionalityReduction or 
+              FeatureSelection  
 
         Returns:
             A new space on which the transformation has been applied.
-
+            
         """
         start = time.time()
         #TODO , FeatureSelection, DimReduction ..
         assert_is_instance(transformation, (Scaling, DimensionalityReduction,
                                             FeatureSelection))
         op = transformation.create_operation()
-        new_matrix =  op.apply(self.cooccurrence_matrix)
+        new_matrix = op.apply(self.cooccurrence_matrix)
 
         new_operations = list(self.operations)
         new_operations.append(op)
 
         id2row, row2id = list(self.id2row), self.row2id.copy()
-
 
         if isinstance(op, DimensionalityReductionOperation):
             self.assert_1dim_element()
@@ -165,7 +164,7 @@ class Space(object):
                 id2column = list(array(op.original_columns)[op.selected_columns])
                 column2id = list2dict(id2column)
             else:
-                id2column, column2id = [],{}
+                id2column, column2id = [], {}
         else:
             id2column, column2id = list(self.id2column), self.column2id.copy()
 
@@ -177,25 +176,25 @@ class Space(object):
         log.print_time_info(logger, time.time(), start, 2)
 
         return Space(new_matrix, id2row, id2column,
-                     row2id, column2id, operations = new_operations)
+                     row2id, column2id, operations=new_operations)
 
     def get_sim(self, word1, word2, similarity, space2=None):
         """
-        Computes the similarity between two targets in the semantic
+        Computes the similarity between two targets in the semantic 
         space.
 
         If one of the two targets to be compared is not found, it returns 0..
-
+        
         Args:
             word1: string
             word2: string
             similarity: of type Similarity, the similarity measure to be used
-            space2: Space type, Optional. If provided, word2 is interpreted in
+            space2: Space type, Optional. If provided, word2 is interpreted in 
                 this space, rather than the current space. Default, both words
                 are interpreted in the current space.
         Returns:
             scalar, similarity score
-
+            
         """
 
         assert_is_instance(similarity, Similarity)
@@ -203,7 +202,7 @@ class Space(object):
         try:
             v1 = self.get_row(word1)
         except KeyError:
-            print "Row string %s not found, returning 0.0" % (word1)
+            logging.info("Row string %s not found, returning 0.0" % (word1))
             return 0.0
         try:
             if space2 is None:
@@ -211,7 +210,7 @@ class Space(object):
             else:
                 v2 = space2.get_row(word2)
         except KeyError:
-            print "Row string %s not found, returning 0.0" % (word2)
+            logging.info("Row string %s not found, returning 0.0" % (word2))
             return 0.0
 
         [v1, v2] = resolve_type_conflict([v1, v2], DenseMatrix)
@@ -219,20 +218,20 @@ class Space(object):
 
     def get_sims(self, word_pair_list, similarity, space2=None):
         """
-        Computes the similarity between two LIST of targets in the semantic
+        Computes the similarity between two LIST of targets in the semantic 
         space.
 
         If one of the two targets to be compared is not found, it returns 0..
-
+        
         Args:
             word_pair_list: list of (string, string) tuples. Words to be compared.
             similarity: of type Similarity, the similarity measure to be used
             space2: Space type, Optional. If provided, the second word of the word pairs
-                is interpreted in this space, rather than the current space.
+                is interpreted in this space, rather than the current space. 
                 Default, both words are interpreted in the current space.
         Returns:
             list, list of similarity scores
-
+            
         """
         sims = []
 
@@ -250,16 +249,16 @@ class Space(object):
             word: string, target word
             no_neighbours: int, the number of neighbours desired
             similarity: of type Similarity, the similarity measure to be used
-            space2: Space type, Optional. If provided, the neighbours are
-                retrieved from this space, rather than the current space.
+            space2: Space type, Optional. If provided, the neighbours are 
+                retrieved from this space, rather than the current space. 
                 Default, neighbours are retrieved from the current space.
-
+                
         Returns:
             list of (neighbour_string, similarity_value) tuples.
-
+            
         Raises:
             KeyError: if the word is not found in the semantic space.
-
+            
         """
 
         start = time.time()
@@ -269,14 +268,14 @@ class Space(object):
         if space2 is None:
             id2row = self.id2row
             sims_to_matrix = similarity.get_sims_to_matrix(vector,
-                                                          self.cooccurrence_matrix)
+                                                           self.cooccurrence_matrix)
         else:
             mat_type = type(space2.cooccurrence_matrix)
             if not isinstance(vector, mat_type):
                 vector = mat_type(vector)
 
             sims_to_matrix = similarity.get_sims_to_matrix(vector,
-                                         space2.cooccurrence_matrix)
+                                                           space2.cooccurrence_matrix)
             id2row = space2.id2row
 
         sorted_perm = sims_to_matrix.sorted_permutation(sims_to_matrix.sum, 1)
@@ -285,10 +284,9 @@ class Space(object):
 
         for count in range(no_neighbours):
             i = sorted_perm[count]
-            result.append((id2row[i], sims_to_matrix[i,0]))
+            result.append((id2row[i], sims_to_matrix[i, 0]))
 
-        log.print_info(logger, 1, "\nGetting neighbours of:%s" % (word))
-        log.print_name(logger, similarity, 1, "Similarity:")
+        logger.info("Getting neighbours of:%s according to %s" % (word, similarity))
         log.print_time_info(logger, time.time(), start, 2)
         return result
 
@@ -296,19 +294,19 @@ class Space(object):
     def vstack(cls, space1, space2):
         """
         Classmethod. Stacks two semantic spaces.
-
+        
         The rows in the two spaces are concatenated.
-
+            
         Args:
             space1, space2: spaces to be stacked, of type Space
-
+            
         Returns:
             Stacked space, type Space.
-
+            
         Raises:
             ValueError: if the spaces have different number of columns
                         or their columns are not identical
-
+            
         """
         if space1.cooccurrence_matrix.shape[1] != space2.cooccurrence_matrix.shape[1]:
             raise ValueError("Inconsistent shapes: %s, %s"
@@ -354,27 +352,27 @@ class Space(object):
     def get_row(self, word):
         """
         Returns the row vector of a word.
-
+        
         Args:
             word: string
 
         Returns: Matrix type (of shape (1, no_cols)), the row of the word argument.
-
+        
         Raises:
             KeyError: if the word is not found in the space
         """
-        return self.cooccurrence_matrix[self.row2id[word],:]
+        return self.cooccurrence_matrix[self.row2id[word], :]
 
     def get_rows(self, words):
         """
         Returns the sub-matrix corresponding to a list of words.
-
+        
         Args:
             words: list of strings
 
         Returns: Matrix type (of shape (len(words), no_cols)),
                  the sub-matrix containing the words given as an input.
-
+        
         Raises:
             KeyError: if one of words is not found in the space
         """
@@ -383,12 +381,12 @@ class Space(object):
         for word in words:
             row_ids.append(self.row2id[word])
 
-        return self.cooccurrence_matrix[row_ids,:]
+        return self.cooccurrence_matrix[row_ids, :]
 
     def set_cooccurrence_matrix(self, matrix_):
         assert_is_instance(matrix_, Matrix)
         assert_shape_consistent(matrix_, self.row2id, self.id2row,
-                                       self.column2id, self.id2column)
+                                self.column2id, self.id2column)
         self._cooccurrence_matrix = matrix_
 
     def get_cooccurrence_matrix(self):
@@ -397,8 +395,9 @@ class Space(object):
     cooccurrence_matrix = property(get_cooccurrence_matrix)
     """
     Co-occurrence matrix associated to the semantic space, of type Matrix.
-
+    
     """
+
     def get_row2id(self):
         return self._row2id
 
@@ -414,6 +413,7 @@ class Space(object):
     """
     List of strings, the row elements.
     """
+
     def get_column2id(self):
         return self._column2id
 
@@ -435,10 +435,10 @@ class Space(object):
 
     element_shape = property(get_element_shape)
     """
-    Shape of row elements, of type tuple. By default, in standard spaces,
-    element_shape=(no_cols,).
-
-    Used in composition models which build
+    Shape of row elements, of type tuple. By default, in standard spaces, 
+    element_shape=(no_cols,). 
+    
+    Used in composition models which build 
     word representations which are matrices or higher order tensors, instead
     of simple vectors. If the representation of a word is a matrix of shape
     (2,2) for example, then element_shape=(2,2). The actual space matrix
@@ -452,7 +452,7 @@ class Space(object):
     """
     List of operations which have been applied on the semantic space. List of
     Operation type objects.
-
+    
     The operations, together with their associated side information, are stored
     because they may need to be projected on peripheral data.
     """
@@ -460,70 +460,61 @@ class Space(object):
     def assert_1dim_element(self):
         """
         Asserts that the elements of the space are one dimensional.
-
+        
         """
         if len(self.element_shape) > 1:
             raise IllegalOperationError("Operation not allowed on spaces with\
                                        element shape: %s" % self.element_shape)
 
     @classmethod
-    def build(cls, **kwargs):
+    def build(cls, data, format, rows=None, cols=None, **kwargs):
         """
         Reads in data files and extracts the data to construct a semantic space.
-
-        If the data is read in dense format and no columns are provided,
+        
+        If the data is read in dense format and no columns are provided, 
         the column indexing structures are set to empty.
-
+         
         Args:
             data: file containing the counts
             format: format on the input data file: one of sm/dm
             rows: file containing the row elements. Optional, if not provided,
                 extracted from the data file.
             cols: file containing the column elements
-
+           
         Returns:
             A semantic space build from the input data files.
-
+            
         Raises:
             ValueError: if one of data/format arguments is missing.
                         if cols is missing and format is "sm"
                         if the input columns provided are not consistent with
                         the shape of the matrix (for "dm" format)
-
+            
         """
         start = time.time()
         id2row = None
         id2column = None
 
-        if "data" in kwargs:
-            data_file = kwargs["data"]
-        else:
-            raise ValueError("Space data file needs to be specified")
+        if format not in ["dm", "sm"]:
+            raise ValueError("Unrecognized format: %s" % format)
 
-        if "format" in kwargs:
-            format_ = kwargs["format"]
-            if not format_ in ["dm","sm"]:
-                raise ValueError("Unrecognized format: %s" % format_)
-        else:
-            raise ValueError("Format of input files needs to be specified")
+        if rows is not None:
+            [id2row], [row2id] = extract_indexing_structs(rows, [0])
 
-        if "rows" in kwargs and not kwargs["rows"] is None:
-            [id2row], [row2id] = extract_indexing_structs(kwargs["rows"], [0])
-
-        if "cols" in kwargs and not kwargs["cols"] is None:
-            [id2column], [column2id] = extract_indexing_structs(kwargs["cols"], [0])
-        elif format_ == "sm":
+        if cols is not None:
+            [id2column], [column2id] = extract_indexing_structs(cols, [0])
+        elif format == "sm":
             raise ValueError("Need to specify column file when input format is sm!")
 
-        if format_ == "sm":
+        if format == "sm":
             if id2row is None:
-                [id2row], [row2id] = extract_indexing_structs(data_file, [0])
-            mat = read_sparse_space_data(data_file, row2id, column2id)
+                [id2row], [row2id] = extract_indexing_structs(data, [0])
+            mat = read_sparse_space_data(data, row2id, column2id)
 
         else:
             if id2row is None:
-                [id2row],[row2id] = extract_indexing_structs(data_file, [0])
-            mat = read_dense_space_data(data_file, row2id)
+                [id2row], [row2id] = extract_indexing_structs(data, [0])
+            mat = read_dense_space_data(data, row2id)
 
         if id2column and len(id2column) != mat.shape[1]:
             raise ValueError("Columns provided inconsistent with shape of input matrix!")
@@ -535,43 +526,40 @@ class Space(object):
         log.print_time_info(logger, time.time(), start, 2)
         return Space(mat, id2row, id2column, row2id, column2id)
 
-    def export(self, file_prefix, **kwargs):
+    def export(self, file_prefix, format='dm'):
         """
         Exports the current space to disk.
-        If the space has no column information, it cannot be exported in
+        If the space has no column information, it cannot be exported in 
         sparse format (sm).
-
+        
         Args:
             file_prefix: string, prefix of the files to be exported
             format: string, one of dm/sm
-
-        Prints:
-            - matrix in file_prefix.<format>
+       
+        Prints: 
+            - matrix in file_prefix.<format> 
             - row elements in file_prefix.<row>
             - col elements in file_prefix.<col>
-
+        
         Raises:
             ValueError: if the space has no column info and "sm" exporting
                 is attempted
             NotImplementedError: the space matrix is dense and "sm" exporting
                 is attempted
-
+        
         """
 
         start = time.time()
         create_parent_directories(file_prefix)
-        format_ = "dm"
-        if "format" in kwargs:
-            format_ = kwargs["format"]
-            if not format_ in ["dm","sm"]:
-                raise ValueError("Unrecognized format: %s" %format_)
-            elif format_ == "dm":
-                print_cooc_mat_dense_format(self.cooccurrence_matrix,
-                                            self.id2row, file_prefix)
-            else:
-                print_cooc_mat_sparse_format(self.cooccurrence_matrix,
-                                             self.id2row,
-                                             self.id2column, file_prefix)
+        if not format in ["dm", "sm"]:
+            raise ValueError("Unrecognized format: %s" % format)
+        elif format == "dm":
+            print_cooc_mat_dense_format(self.cooccurrence_matrix,
+                                        self.id2row, file_prefix)
+        else:
+            print_cooc_mat_sparse_format(self.cooccurrence_matrix,
+                                         self.id2row,
+                                         self.id2column, file_prefix)
         self._export_row_column(file_prefix)
 
         log.print_matrix_info(logger, self.cooccurrence_matrix, 1,
@@ -579,14 +567,13 @@ class Space(object):
         log.print_time_info(logger, time.time(), start, 2)
 
     def _export_row_column(self, file_prefix):
-        row_file = "%s.%s" %(file_prefix, "rows")
-        column_file = "%s.%s" %(file_prefix, "cols")
+        row_file = "%s.%s" % (file_prefix, "rows")
+        column_file = "%s.%s" % (file_prefix, "cols")
 
         if self.column2id:
             print_list(self.id2column, column_file)
 
         print_list(self.id2row, row_file)
-
 
 
 """
@@ -595,25 +582,25 @@ FANCY BUILD
         start = time.time()
         id2row = None
         id2column = None
-
+        
         if "data" in kwargs:
             data_file = kwargs["data"]
         else:
             raise ValueError("Space data file needs to be specified")
-
+            
         if "format" in kwargs:
             format_ = kwargs["format"]
             if not format_ in ["dm","sm"]:
                 raise ValueError("Unrecognized format: %s" % format_)
         else:
             raise ValueError("Format of input files needs to be specified")
-
+        
         if "rows" in kwargs and not kwargs["rows"] is None:
             [id2row], [row2id] = extract_indexing_structs(kwargs["rows"], [0])
-
+            
         if "cols" in kwargs and not kwargs["cols"] is None:
             [id2column], [column2id] = extract_indexing_structs(kwargs["cols"], [0])
-
+        
         if format_ == "sm":
             if id2row is None and id2column is None:
                 ([id2row, id2column],
@@ -622,28 +609,29 @@ FANCY BUILD
                 [id2row], [row2id] = extract_indexing_structs(data_file, [0])
             if id2column is None:
                 [id2column], [column2id] = extract_indexing_structs(data_file, [1])
-
+                
             mat = read_sparse_space_data(data_file, row2id, column2id)
         else:
             if id2row is None:
                 [id2row],[row2id] = extract_indexing_structs(data_file, [0])
             if id2column is None:
                 id2column, column2id = [], {}
-
+             
             mat = read_dense_space_data(data_file, row2id)
-
+                
         if id2column and len(id2column) != mat.shape[1]:
             raise ValueError("Columns provided inconsistent with shape of input matrix!")
-
+            
         log.print_matrix_info(logger, mat, 1, "Built semantic space:")
-        log.print_time_info(logger, time.time(), start, 2)
+        log.print_time_info(logger, time.time(), start, 2)    
         return Space(mat, id2row, id2column, row2id, column2id)
 FANCY BUILD
 
 
-
+    
     Some transformations, such as weighings, only scale the values
     in the space matrix, while others, such as dimensionality
-    reduction, or feature selection, alter the set of
+    reduction, or feature selection, alter the set of 
     contextual features.
 """
+    

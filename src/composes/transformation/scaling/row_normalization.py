@@ -4,7 +4,7 @@ Created on Oct 4, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 
-from scaling import Scaling
+from .scaling import Scaling
 from composes.utils.py_matrix_utils import nonzero_invert
 
 class RowNormalization(Scaling):
