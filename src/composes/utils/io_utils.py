@@ -48,7 +48,7 @@ def create_directories(directory):
 def create_parent_directories(file_name):
     parent_dir = os.path.dirname(file_name)
 
-    if not os.path.exists(parent_dir):
+    if parent_dir != "" and not os.path.exists(parent_dir):
         os.makedirs(parent_dir)
 
 
