@@ -70,7 +70,7 @@ class FullAdditive(CompositionModel):
             self._has_intercept = self._regression_learner.has_intercept()
 
 
-    def _train(self, arg1_mat, arg2_mat, phrase_mat):
+    def _solve(self, arg1_mat, arg2_mat, phrase_mat):
 
         self._has_intercept = self._regression_learner.has_intercept()
 

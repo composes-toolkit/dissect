@@ -108,7 +108,7 @@ class Test(unittest.TestCase):
 
         for m1, m2, ph, expected_a, expected_b in test_cases:
             comp_model = FullAdditive(learner=LstsqRegressionLearner(intercept=False))
-            comp_model._train(m1, m2, ph)
+            comp_model._solve(m1, m2, ph)
             np.testing.assert_array_almost_equal(comp_model._mat_a_t.transpose().mat,
                                                  expected_a, 10)
             np.testing.assert_array_almost_equal(comp_model._mat_b_t.transpose().mat,
@@ -128,7 +128,7 @@ class Test(unittest.TestCase):
             ph = np.mat(expected_a*m1.T + expected_b*m2.T)
 
             comp_model = FullAdditive(learner=LstsqRegressionLearner(intercept=False))
-            comp_model._train(DenseMatrix(m1),DenseMatrix(m2),
+            comp_model._solve(DenseMatrix(m1),DenseMatrix(m2),
                                        DenseMatrix(ph).transpose())
             np.testing.assert_array_almost_equal(comp_model._mat_a_t.transpose().mat,
                                                  expected_a, 10)
@@ -144,7 +144,7 @@ class Test(unittest.TestCase):
             ph = np.mat(expected_a*m1.T + expected_b*m2.T)
 
             comp_model = FullAdditive(learner=LstsqRegressionLearner(intercept=True))
-            comp_model._train(DenseMatrix(m1),DenseMatrix(m2),
+            comp_model._solve(DenseMatrix(m1),DenseMatrix(m2),
                                        DenseMatrix(ph).transpose())
             np.testing.assert_array_almost_equal(comp_model._mat_a_t.transpose().mat,
                                                  expected_a, 10)

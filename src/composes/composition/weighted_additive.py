@@ -63,7 +63,7 @@ class WeightedAdditive(CompositionModel):
             self._beta = 1 - self._alpha
 
 
-    def xxx(self, arg1_space, arg2_space, phrase_space, arg1_list, arg2_list, phrase_list):
+    def _train(self, arg1_space, arg2_space, phrase_space, arg1_list, arg2_list, phrase_list):
 
         # we try to achieve at most MAX_MEM_OVERHEAD*phrase_space memory overhead
         # the /3.0 is needed
@@ -84,7 +84,7 @@ class WeightedAdditive(CompositionModel):
                                                                       phrase_mat],
                                                                       DenseMatrix)
 
-            res = self._train1(arg1_mat, arg2_mat, phrase_mat)
+            res = self._process(arg1_mat, arg2_mat, phrase_mat)
             arg1_arg2_dot += res[0]
             arg1_phrase_dot += res[1]
             arg2_phrase_dot += res[2]
@@ -92,10 +92,10 @@ class WeightedAdditive(CompositionModel):
             arg2_norm_sqr += res[4]
 
 
-        self._train2(arg1_arg2_dot, arg1_phrase_dot, arg2_phrase_dot, arg1_norm_sqr, arg2_norm_sqr)
+        self._solve(arg1_arg2_dot, arg1_phrase_dot, arg2_phrase_dot, arg1_norm_sqr, arg2_norm_sqr)
 
 
-    def _train1(self, arg1_mat, arg2_mat, phrase_mat):
+    def _process(self, arg1_mat, arg2_mat, phrase_mat):
 
         # debug here
         # remove when done
@@ -110,7 +110,7 @@ class WeightedAdditive(CompositionModel):
 
         return arg1_arg2_dot, arg1_phrase_dot, arg2_phrase_dot, arg1_norm_sqr, arg2_norm_sqr
 
-    def _train2(self, arg1_arg2_dot, arg1_phrase_dot, arg2_phrase_dot, arg1_norm_sqr, arg2_norm_sqr):
+    def _solve(self, arg1_arg2_dot, arg1_phrase_dot, arg2_phrase_dot, arg1_norm_sqr, arg2_norm_sqr):
 
         a = np.linalg.pinv(np.mat([[arg1_norm_sqr,arg1_arg2_dot],
                                    [arg1_arg2_dot,arg2_norm_sqr]]))

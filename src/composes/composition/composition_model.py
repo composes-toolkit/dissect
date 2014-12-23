@@ -66,7 +66,7 @@ class CompositionModel(object):
                                                                      )
 
 
-        self.xxx(arg1_space, arg2_space, phrase_space,
+        self._train(arg1_space, arg2_space, phrase_space,
                  arg1_list, arg2_list, phrase_list)
 
         self.composed_id2column = phrase_space.id2column
@@ -82,7 +82,7 @@ class CompositionModel(object):
         log.print_time_info(logger, time.time(), start, 2)
 
 
-    def xxx(self, arg1_space, arg2_space, phrase_space, arg1_list, arg2_list, phrase_list):
+    def _train(self, arg1_space, arg2_space, phrase_space, arg1_list, arg2_list, phrase_list):
 
         arg1_mat = arg1_space.get_rows(arg1_list)
         arg2_mat = arg2_space.get_rows(arg2_list)
@@ -93,7 +93,7 @@ class CompositionModel(object):
                                                                   phrase_mat],
                                                                   DenseMatrix)
 
-        self._train(arg1_mat, arg2_mat, phrase_mat)
+        self._solve(arg1_mat, arg2_mat, phrase_mat)
 
     def compose(self, data, arg_space):
         """

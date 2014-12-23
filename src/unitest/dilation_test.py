@@ -58,7 +58,7 @@ class Test(unittest.TestCase):
 
         for arg1, arg2, phrase, lambda_ in test_cases:
             m = Dilation()
-            m._train(arg1, arg2, phrase)
+            m._solve(arg1, arg2, phrase)
             self.assertAlmostEqual(m._lambda, lambda_)
 #
     def test_compose_exact(self):
@@ -70,7 +70,7 @@ class Test(unittest.TestCase):
         for arg1, arg2, phrase, lambda_ in test_cases:
 
             m = Dilation()
-            m._train(arg1, arg2, phrase)
+            m._solve(arg1, arg2, phrase)
             res = m._compose(arg1, arg2)
             np.testing.assert_array_almost_equal(res.mat, phrase.mat, 2)
 
@@ -92,7 +92,7 @@ class Test(unittest.TestCase):
             result_p = m._compose(DenseMatrix(m1), DenseMatrix(m2))
 
             m = Dilation()
-            m._train(DenseMatrix(m1),DenseMatrix(m2),result_p)
+            m._solve(DenseMatrix(m1),DenseMatrix(m2),result_p)
             self.assertAlmostEqual(lambda_, m._lambda)
 
 

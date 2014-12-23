@@ -40,7 +40,7 @@ class Dilation(CompositionModel):
             else:
                 self._lambda = lambda_
 
-    def _train(self, arg1_mat, arg2_mat, phrase_mat):
+    def _solve(self, arg1_mat, arg2_mat, phrase_mat):
 
         v1_row_norms = arg1_mat.norm(1)
         v1_row_sqr_norms = np.multiply(v1_row_norms, v1_row_norms)
