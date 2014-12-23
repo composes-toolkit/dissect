@@ -10,6 +10,7 @@ from composes.utils.num_utils import is_numeric
 # from composes.utils.mem_utils import get_mem_usage
 from composes.utils.matrix_utils import resolve_type_conflict
 import numpy as np
+import math
 
 class WeightedAdditive(CompositionModel):
     """
@@ -72,7 +73,7 @@ class WeightedAdditive(CompositionModel):
 
         arg1_arg2_dot, arg1_phrase_dot, arg2_phrase_dot, arg1_norm_sqr, arg2_norm_sqr = (0, 0, 0, 0, 0)
 
-        for i in range(len(arg1_list) / chunk_size):
+        for i in range(int(math.ceil(len(arg1_list) / float(chunk_size)))):
             beg, end = i*chunk_size, min((i+1)*chunk_size, len(arg1_list))
 
             arg1_mat = arg1_space.get_rows(arg1_list[beg:end])
