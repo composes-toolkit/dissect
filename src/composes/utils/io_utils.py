@@ -22,16 +22,16 @@ import struct
 def save(object_, file_name):
     create_parent_directories(file_name)
     try:
-        with open(file_name, 'w') as f:
+        with open(file_name, 'wb') as f:
             pickle.dump(object_, f, 2)
     except struct.error:
         warn("object is too big, using pickle with protocol 0")
-        with open(file_name, 'w') as f:
+        with open(file_name, 'wb') as f:
             pickle.dump(object_, f, 0)
 
 
 def load(file_name, data_type=None):
-    with open(file_name) as f:
+    with open(file_name, 'rb') as f:
         result = pickle.load(f)
 
     if not data_type is None:
