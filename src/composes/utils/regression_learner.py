@@ -58,7 +58,7 @@ class RidgeRegressionLearner(RegressionLearner):
 
     def __init__(self, intercept=True, param_range=None, crossvalidation=True, param=None):
         self._intercept = intercept
-        self._param_range = param_range if param_range else np.linspace(0.0, 5, 11)
+        self._param_range = param_range if param_range is not None else np.linspace(0.0, 5, 11)
 
         self._param = param
         self._crossvalidation = crossvalidation

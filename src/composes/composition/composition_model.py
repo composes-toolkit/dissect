@@ -4,6 +4,7 @@ Created on Oct 5, 2012
 @author: Georgiana Dinu, Pham The Nghia
 '''
 import time
+import math
 from warnings import warn
 from composes.semantic_space.space import Space
 from composes.matrix.dense_matrix import DenseMatrix
@@ -23,6 +24,13 @@ class CompositionModel(object):
 
     _name = "no name"
 
+    MAX_MEM_OVERHEAD = 0.2
+    
+    """
+    double, in interval [0,1]
+    maximum overhead allowed: MAX_MEM_OVERHEAD ratio of argument space memory 
+    when composing
+    """
     composed_id2column = None
     """
     List of strings, the column strings of the resulted composed space.
@@ -122,13 +130,27 @@ class CompositionModel(object):
                                                                      (arg1_space.row2id,
                                                                       arg2_space.row2id,
                                                                       None))
+        
+        # we try to achieve at most MAX_MEM_OVERHEAD*phrase_space memory overhead
+        # the /3.0 is needed
+        # because the composing data needs 3 * len(train_data) memory (arg1 vector, arg2 vector, phrase vector)
+        chunk_size = int(max(arg1_space.cooccurrence_matrix.shape[0],arg2_space.cooccurrence_matrix.shape[0],len(phrase_list))
+                          * self.MAX_MEM_OVERHEAD / 3.0) + 1
+        
+        composed_mats = []
+        for i in range(int(math.ceil(len(arg1_list) / float(chunk_size)))):
+            beg, end = i*chunk_size, min((i+1)*chunk_size, len(arg1_list))
 
-        arg1_mat = arg1_space.get_rows(arg1_list)
-        arg2_mat = arg2_space.get_rows(arg2_list)
+            arg1_mat = arg1_space.get_rows(arg1_list[beg:end])
+            arg2_mat = arg2_space.get_rows(arg2_list[beg:end])
 
-        [arg1_mat, arg2_mat] = resolve_type_conflict([arg1_mat, arg2_mat], DenseMatrix)
-
-        composed_phrase_mat = self._compose(arg1_mat, arg2_mat)
+            [arg1_mat, arg2_mat] = resolve_type_conflict([arg1_mat, arg2_mat],
+                                                                    DenseMatrix)
+            composed_mat = self._compose(arg1_mat, arg2_mat)
+            composed_mats.append(composed_mat)
+        
+        composed_phrase_mat = composed_mat.nary_vstack(composed_mats)
+        
         if self.composed_id2column is None:
             self.composed_id2column = self._build_id2column(arg1_space, arg2_space)
 
@@ -137,7 +159,7 @@ class CompositionModel(object):
         log.print_matrix_info(logger, composed_phrase_mat, 4,
                               "Resulted (composed) semantic space::")
         log.print_time_info(logger, time.time(), start, 2)
-
+        
         return Space(composed_phrase_mat, phrase_list, self.composed_id2column)
 
     @classmethod

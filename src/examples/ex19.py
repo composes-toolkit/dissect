@@ -67,6 +67,11 @@ svo_composed_space = expanded_vo_model.compose([("hate_woman", "woman", "woman_h
                                                 n_space)
 
 #print the composed spaces:
+print "\nVO composed space:"
+print vo_composed_space.id2row
+print vo_composed_space.cooccurrence_matrix
+
+#print the composed spaces:
 print "\nSVO composed space:"
 print svo_composed_space.id2row
 print svo_composed_space.cooccurrence_matrix
