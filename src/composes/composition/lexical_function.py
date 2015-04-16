@@ -202,9 +202,9 @@ class LexicalFunction(CompositionModel):
         result_element_shape = self._function_space.element_shape[0:-1]
         composed_ph_mat = composed_ph_vec.nary_vstack(composed_vec_list)
 
-        logger.info("Composed with composition model: %s", self)
-        logger.info("Composed total data points:%s" % len(arg1_list))
-        logger.info("Functional shape of the resulted (composed) elements:%s"
+        logger.debug("Composed with composition model: %s", self)
+        logger.debug("Composed total data points:%s" % len(arg1_list))
+        logger.debug("Functional shape of the resulted (composed) elements:%s"
                     % (result_element_shape,))
         log.print_matrix_info(logger, composed_ph_mat, 4,
                               "Resulted (composed) semantic space:")
