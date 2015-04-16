@@ -131,8 +131,8 @@ class CompositionModel(object):
         if self.composed_id2column is None:
             self.composed_id2column = self._build_id2column(arg1_space, arg2_space)
 
-        logger.info("Composed with composition model: %s", self)
-        logger.info("Composed total data points:%s" % arg1_mat.shape[0])
+        logger.debug("Composed with composition model: %s", self)
+        logger.debug("Composed total data points:%s" % arg1_mat.shape[0])
         log.print_matrix_info(logger, composed_phrase_mat, 4,
                               "Resulted (composed) semantic space::")
         log.print_time_info(logger, time.time(), start, 2)
