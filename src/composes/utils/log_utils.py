@@ -88,5 +88,5 @@ def print_transformation_info(logger_, trans, ident_level, intro_string):
 
 
 def print_time_info(logger_, end, beg, *args):
-    logger_.info("Timing: %s seconds" % (end - beg))
+    logger_.debug("Timing: %s seconds" % (end - beg))
      
