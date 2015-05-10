@@ -574,6 +574,15 @@ class Space(object):
             print_list(self.id2column, column_file)
 
         print_list(self.id2row, row_file)
+    def __len__(self):
+        '''Together with __getitem__, implements the Sequence protocol.'''
+        return len(self.id2row)
+    def __getitem__(self, key):
+        '''Together with __len__, implements the Sequence protocol.'''
+        return self.id2row
+    def __contains__(self, item):
+        '''Potentially faster element lookup?'''
+        return item in self.id2row
 
 
 """
