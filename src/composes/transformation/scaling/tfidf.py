@@ -30,8 +30,3 @@ class TfidfWeighting(Scaling):
 
     def get_column_stats(self, matrix_):
         return matrix_.sum(0)
-
-    """
-    :math:`ppmi(r,c)=\\begin{cases}pmi(rc) & \\text{if }pmi(r,c)\\geq0
-                      0 & \\text{otherwise}\\end{cases}`
-    """
