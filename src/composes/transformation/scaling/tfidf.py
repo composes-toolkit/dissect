@@ -1,4 +1,4 @@
-
+import numpy as np
 from .scaling import Scaling
 from .epmi_weighting import EpmiWeighting
 
@@ -11,22 +11,23 @@ class TfidfWeighting(Scaling):
     """
 
     _name = "tfidf"
-    _uses_column_stats = True
+    _uses_column_stats = False
 
     def apply(self, matrix_):
-        colsums = np.sum(matrix_, axis=0)
-        doccount = mat.shape[1]
-        matrix_ = np.array([TfidfWeighting._tfidf_row_func(row, colsums, doccount) for row in matrix_])
+        doccount = matrix_.shape[1]
+        '''Returns a matrix of non-zero cells per row,
+        a.k.a. the divisor of the IDF'''
+        matrix_type = type(matrix_)
+        non_zero = (matrix_.get_mat() != 0).sum(1).flatten()
+        idf = matrix_type(np.log(doccount / non_zero))
+        A=None
+        for row, rowf in zip(matrix_, idf.transpose()):
+            if not A:
+                A = row*rowf[0,0]
+            else:
+                A = matrix_type.vstack(A, row*rowf[0,0])
+        matrix_ = A
         return matrix_
-
-    @staticmethod
-    def _tfidf_row_func(row, colsums, doccount):
-        df = float(len([x for x in row if x > 0]))
-        idf = 0.0
-        if df > 0.0 and df != doccount:
-            idf = np.log(doccount / df)
-        tfs = row/colsums
-        return tfs * idf
 
     def get_column_stats(self, matrix_):
         return matrix_.sum(0)
