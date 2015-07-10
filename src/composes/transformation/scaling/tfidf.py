@@ -20,13 +20,7 @@ class TfidfWeighting(Scaling):
         matrix_type = type(matrix_)
         non_zero = (matrix_.get_mat() != 0).sum(1).flatten()
         idf = matrix_type(np.log(doccount / non_zero))
-        A=None
-        for row, rowf in zip(matrix_, idf.transpose()):
-            if not A:
-                A = row*rowf[0,0]
-            else:
-                A = matrix_type.vstack(A, row*rowf[0,0])
-        matrix_ = A
+        matrix_ = SparseMatrix.nary_vstack([row*rowf[0,0] for row, rowf in zip(matrix_, idf.transpose()])
         return matrix_
 
     def get_column_stats(self, matrix_):
