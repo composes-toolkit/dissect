@@ -27,7 +27,7 @@ def save(object_, file_name):
     create_parent_directories(file_name)
     try:
         with open(file_name, 'wb') as f:
-            pickle.dump(object_, f, 2)
+            pickle.dump(object_, f, 4)
     except struct.error:
         warn("object is too big, using pickle with protocol 0")
         with open(file_name, 'wb') as f:
